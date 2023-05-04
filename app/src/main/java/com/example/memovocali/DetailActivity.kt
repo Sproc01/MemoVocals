@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import java.io.File
 
@@ -21,10 +22,12 @@ class DetailActivity : AppCompatActivity() {
         val buStopSubstitute:Button=findViewById(R.id.buttonStopSubstitute)
         val buStopPlay:Button=findViewById(R.id.buttonStopDetail)
         val buPlay:Button=findViewById(R.id.buttonPlayDetail)
+        val progB: ProgressBar =findViewById(R.id.progressBarDetail)
+        progB.visibility= View.INVISIBLE
         var timerPlay:CountDownTimer?=null
         val timerRecord:CountDownTimer=object : CountDownTimer(30000,1000){
             override fun onTick(millisUntilFinished: Long) {
-                txtDuration.text=String.format("00:%02d", 30-millisUntilFinished/1000)
+                progB.progress=30-(millisUntilFinished/1000).toInt()
             }
 
             override fun onFinish() {
@@ -32,14 +35,13 @@ class DetailActivity : AppCompatActivity() {
             }
         }
 
-
         //buttons invisible
         buStopPlay.visibility= View.INVISIBLE
         buStopSubstitute.visibility= View.INVISIBLE
         //read intent from data
         val name=(intent.getStringExtra("recordName") ?: "")
         val path=(intent.getStringExtra("recordPath") ?: "")
-        val duration=(intent.getIntExtra("recordDuration",0))
+        var duration=(intent.getIntExtra("recordDuration",0))
         txtpath.text=path
         txtpath.isEnabled=false
         txtDuration.text=String.format("00:%02d", duration/1000)
@@ -54,7 +56,9 @@ class DetailActivity : AppCompatActivity() {
             if(path!="" && name!="") {
                 val file= File(path,name)
                 file.delete()
-                txtDuration.text=""
+                txtDuration.text="--:--"
+                progB.max=30
+                progB.visibility= View.VISIBLE
                 startRecord(path, name)
                 timerRecord.start()
                 buStopSubstitute.visibility= View.VISIBLE
@@ -66,25 +70,31 @@ class DetailActivity : AppCompatActivity() {
         }
 
         buStopSubstitute.setOnClickListener{
-            //TODO update duration in recordList della main activity
             val r=stopRecord()
             timerRecord.cancel()
+            duration=r.getDuration()
+            txtDuration.text=String.format("00:%02d", duration/1000)
             buStopSubstitute.visibility= View.INVISIBLE
             buSubstitute.visibility= View.VISIBLE
             buPlay.visibility= View.VISIBLE
             buStopPlay.visibility= View.INVISIBLE
             buClose.visibility= View.VISIBLE
+            progB.visibility= View.INVISIBLE
         }
 
         buPlay.setOnClickListener{
             if(path!="" && name!="") {
+                progB.max=duration/1000
                 startPlay(path + name)
                 buStopPlay.visibility = View.VISIBLE
+                progB.visibility= View.VISIBLE
                 buPlay.visibility = View.INVISIBLE
                 buStopSubstitute.visibility = View.INVISIBLE
                 buSubstitute.visibility = View.INVISIBLE
                 timerPlay = object : CountDownTimer(duration.toLong(), 1000) {
-                    override fun onTick(millisUntilFinished: Long) {}
+                    override fun onTick(millisUntilFinished: Long) {
+                        progB.progress = (duration - millisUntilFinished.toInt())/1000
+                    }
 
                     override fun onFinish() {
                         buStopPlay.callOnClick()
@@ -95,6 +105,7 @@ class DetailActivity : AppCompatActivity() {
         }
         buStopPlay.setOnClickListener{
             stopPlay()
+            progB.visibility= View.INVISIBLE
             timerPlay?.cancel()
             buStopPlay.visibility= View.INVISIBLE
             buPlay.visibility= View.VISIBLE

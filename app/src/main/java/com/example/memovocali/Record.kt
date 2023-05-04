@@ -3,7 +3,7 @@ package com.example.memovocali
 /**
  * Class for manage a single record with all the data necessary for the application
  */
-class Record(private val title:String, private val filename:String, private val duration:Int) {
+class Record(private val title:String, private val filename:String, private var duration:Int) {
 
     /**
      * @return the title of the record
@@ -19,5 +19,7 @@ class Record(private val title:String, private val filename:String, private val 
      * @return the duration of the record
      */
     fun getDuration():Int { return duration }
+
+    fun updateDuration(newDuration:Int) { duration=newDuration }
 
 }

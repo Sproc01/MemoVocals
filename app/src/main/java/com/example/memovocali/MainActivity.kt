@@ -5,7 +5,6 @@ import android.media.MediaMetadataRetriever
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.PersistableBundle
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -23,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private var txtName:TextView?=null
     private var progB: ProgressBar?=null
     private var dataMedia:MediaMetadataRetriever?=null
+    private var rc:RecyclerView?=null
     private var timer: CountDownTimer =object: CountDownTimer(30000, 1000) {
 
         override fun onTick(millisUntilFinished: Long) {
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         buStop=findViewById(R.id.floating_action_button_Stop)
         txtName=findViewById(R.id.textName)
         progB=findViewById(R.id.progressBar)
-        val rc:RecyclerView=findViewById(R.id.recyclerView)
+        rc=findViewById(R.id.recyclerView)
 
         //read files in the directory if present otherwise it create a new directory
         val file= File(applicationContext.filesDir,"Memo")
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                 RecordList.add(Record(f.name,file.absolutePath+File.separator,
                     dataMedia?.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt() ?: 0))
             }
-        rc.adapter=RecordAdapter(RecordList)
+        rc?.adapter=RecordAdapter(RecordList)
         //restore state if necessary
         /*if(savedInstanceState!=null)
         {
@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity() {
 
         buStop?.setOnClickListener{
             val r=stopRecord()
-            (rc.adapter as RecordAdapter).addRecord(r)
+            (rc?.adapter as RecordAdapter).addRecord(r)
             buStop?.hide()
             timer.cancel()
             buAdd?.show()
@@ -132,6 +132,15 @@ class MainActivity : AppCompatActivity() {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PermissionChecker.PERMISSION_GRANTED)
                 requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_CODE)
+        //update duration of the records if one is modified in the detailActivity
+        for (i in RecordList) {
+            dataMedia = MediaMetadataRetriever()
+            dataMedia?.setDataSource(i.getPath()+i.getTitle())
+            i.updateDuration(
+                dataMedia?.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                    ?.toInt() ?: 0
+            )
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
