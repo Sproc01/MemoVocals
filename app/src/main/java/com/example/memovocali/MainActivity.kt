@@ -1,6 +1,7 @@
 package com.example.memovocali
 
 import android.Manifest
+import android.content.Intent
 import android.media.MediaMetadataRetriever
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         txtName?.visibility=TextView.INVISIBLE
 
         buAdd?.setOnClickListener {
-
+            //val intent= Intent(this,DetailActivity::class.java)
             if(txtName?.visibility==TextView.INVISIBLE)
             {
                 txtName?.visibility=TextView.VISIBLE
