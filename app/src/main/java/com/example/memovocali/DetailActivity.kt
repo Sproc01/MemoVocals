@@ -13,7 +13,7 @@ class DetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-
+        //initialize variables referring to the layout
         val buClose: Button =findViewById(R.id.buttonClose)
         val title:TextView=findViewById(R.id.NameRecordDetail)
         val txtpath:TextView=findViewById(R.id.RecordPath)
@@ -23,7 +23,7 @@ class DetailActivity : AppCompatActivity() {
         val buStopPlay:Button=findViewById(R.id.buttonStopDetail)
         val buPlay:Button=findViewById(R.id.buttonPlayDetail)
         val progB: ProgressBar =findViewById(R.id.progressBarDetail)
-        progB.visibility= View.INVISIBLE
+        //timer: one for record, one for player
         var timerPlay:CountDownTimer?=null
         val timerRecord:CountDownTimer=object : CountDownTimer(30000,1000){
             override fun onTick(millisUntilFinished: Long) {
@@ -35,7 +35,8 @@ class DetailActivity : AppCompatActivity() {
             }
         }
 
-        //buttons invisible
+        //components invisible
+        progB.visibility= View.INVISIBLE
         buStopPlay.visibility= View.INVISIBLE
         buStopSubstitute.visibility= View.INVISIBLE
         //read intent from data
