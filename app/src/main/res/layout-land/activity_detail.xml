@@ -112,7 +112,7 @@
 
     <Button
         android:id="@+id/buttonPlayDetail"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+        style="@style/Widget.Material3.Button.TextButton.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/play"
@@ -126,7 +126,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/stop"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+        style="@style/Widget.Material3.Button.TextButton.Icon"
         app:icon="@drawable/baseline_pause_24"
         app:layout_constraintStart_toEndOf="@id/buttonPlayDetail"
         app:layout_constraintEnd_toEndOf="parent"

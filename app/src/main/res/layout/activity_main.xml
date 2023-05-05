@@ -38,7 +38,7 @@
         android:contentDescription="@string/floatingAddDescription"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/baseline_add_24" />
+        app:srcCompat="@drawable/baseline_add_24"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_action_button_Stop"
@@ -50,8 +50,8 @@
         android:contentDescription="@string/stop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/baseline_stop_24"/>
-    
+        app:srcCompat="@drawable/baseline_stop_24" />
+
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/textName"
         android:layout_width="wrap_content"
@@ -62,6 +62,5 @@
         android:text=""
         app:layout_constraintBottom_toTopOf="@id/floating_action_button_Add"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
