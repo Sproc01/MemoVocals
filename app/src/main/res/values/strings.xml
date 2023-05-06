@@ -3,6 +3,8 @@
     <string name="delete">Delete</string>
     <string name="floatingAddDescription">Add</string>
     <string name="labelInput">Insert title</string>
+    <string name="Dialogtitle">Insert record title</string>
+    <string name="DialogErrorTitle">Title error</string>
     <string name="play">Play</string>
     <string name="stop">Stop</string>
     <string name="record">Record</string>
@@ -17,4 +19,6 @@
     <string name="labelDuration">Duration:</string>
     <string name="pauseRecord">Pause</string>
     <string name="resumeRecord">Resume</string>
+    <string name="labelOk">Ok</string>
+    <string name="labelCancel">Cancel</string>
 </resources>

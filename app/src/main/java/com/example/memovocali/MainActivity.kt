@@ -1,16 +1,20 @@
 package com.example.memovocali
 
 import android.Manifest
-import android.content.Intent
+import android.content.DialogInterface
 import android.media.MediaMetadataRetriever
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.view.LayoutInflater
+import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.dialog.MaterialDialogs
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
 
@@ -44,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         //initialize variables referring to the layout
         buAdd=findViewById(R.id.floating_action_button_Add)
         buStop=findViewById(R.id.floating_action_button_Stop)
-        txtName=findViewById(R.id.textName)
         progB=findViewById(R.id.progressBar)
         rc=findViewById(R.id.recyclerView)
 
@@ -79,32 +82,42 @@ class MainActivity : AppCompatActivity() {
         txtName?.visibility=TextView.INVISIBLE
 
         buAdd?.setOnClickListener {
-            //val intent= Intent(this,DetailActivity::class.java)
-            if(txtName?.visibility==TextView.INVISIBLE)
-            {
-                txtName?.visibility=TextView.VISIBLE
-                return@setOnClickListener
+            val dialog=MaterialAlertDialogBuilder(this)
+            val viewDialog=LayoutInflater.from(this).inflate(R.layout.dialog,null)
+            dialog.setView(viewDialog)
+            txtName=viewDialog.findViewById(R.id.input)
+            dialog.setTitle(getString(R.string.Dialogtitle))
+            dialog.setPositiveButton(getString(R.string.labelOk)
+            ) { DialogInterface, i ->
+                if(txtName?.text.toString().isNotEmpty())
+                {
+                    try {
+                        startRecord(applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator,txtName?.text.toString()+".aac")
+                        //start a timer to limit 30 second for the record
+                        timer.start()
+                        buStop?.show()
+                        buAdd?.hide()
+                        progB?.visibility=ProgressBar.VISIBLE
+                    }
+                    catch (e:FileExistException){
+                        val error=MaterialAlertDialogBuilder(this)
+                        error.setTitle(getString(R.string.DialogErrorTitle))
+                        error.setMessage(getString(R.string.errorAlreadyPresent))
+                        error.setPositiveButton(getString(R.string.labelOk),null)
+                        error.show()
+                    }
+                }
+                else
+                {
+                    val error=MaterialAlertDialogBuilder(this)
+                    error.setTitle(getString(R.string.DialogErrorTitle))
+                    error.setMessage(getString(R.string.errorInsert))
+                    error.setPositiveButton(getString(R.string.labelOk),null)
+                    error.show()
+                }
             }
-            if(txtName?.text.toString().isEmpty())
-            {
-                txtName?.error=getString(R.string.errorInsert)
-                return@setOnClickListener
-            }
-            try {
-                startRecord(applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator,txtName?.text.toString()+".aac")
-                //start a timer to limit 30 second for the record
-                timer.start()
-            }
-            catch (e:FileExistException){
-                txtName?.error=getString(R.string.errorAlreadyPresent)
-                return@setOnClickListener
-            }
-            txtName?.visibility=TextView.INVISIBLE
-            buStop?.show()
-            buAdd?.hide()
-            progB?.visibility=ProgressBar.VISIBLE
-            txtName?.text=""
-            txtName?.hint=getString(R.string.Recording)
+            dialog.setNegativeButton(getString(R.string.labelCancel),null)
+            dialog.show()
         }
 
         buStop?.setOnClickListener{
