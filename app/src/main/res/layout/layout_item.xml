@@ -7,9 +7,8 @@
 
     <TextView
         android:id="@+id/txtTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="203dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:text="TextView"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -38,8 +37,7 @@
         app:icon="@drawable/baseline_play_arrow_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/buttonDelete"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/txtTitle" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonStopPlay"
@@ -50,6 +48,5 @@
         app:icon="@drawable/baseline_pause_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/buttonDelete"
-        app:layout_constraintStart_toEndOf="@id/txtTitle"/>
+        app:layout_constraintEnd_toStartOf="@id/buttonDelete" />
 </androidx.constraintlayout.widget.ConstraintLayout>
