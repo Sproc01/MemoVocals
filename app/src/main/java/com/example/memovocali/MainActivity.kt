@@ -91,24 +91,27 @@ class MainActivity : AppCompatActivity() {
             ) { DialogInterface, i ->
                 if(txtName?.text.toString().isNotEmpty())
                 {
-                    try {
-                        startRecord(applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator,txtName?.text.toString()+".aac")
+                    if(txtName?.text.toString().contains(".aac"))
+                        txtName?.text=txtName?.text.toString().replace(".aac","")
+                    for(i in RecordList)
+                        if(txtName?.text.toString()+".aac"==i.getTitle())
+                        {
+                            val error=MaterialAlertDialogBuilder(this)
+                            error.setTitle(getString(R.string.DialogErrorTitle))
+                            error.setMessage(getString(R.string.errorAlreadyPresent))
+                            error.setPositiveButton(getString(R.string.labelOk),null)
+                            error.show()
+                            return@setPositiveButton
+                        }
+                    if(startRecord(applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator,txtName?.text.toString()+".aac")==0) {
                         //start a timer to limit 30 second for the record
                         timer.start()
                         buStop?.show()
                         buAdd?.hide()
-                        progB?.visibility=ProgressBar.VISIBLE
-                    }
-                    catch (e:FileExistException){
-                        val error=MaterialAlertDialogBuilder(this)
-                        error.setTitle(getString(R.string.DialogErrorTitle))
-                        error.setMessage(getString(R.string.errorAlreadyPresent))
-                        error.setPositiveButton(getString(R.string.labelOk),null)
-                        error.show()
+                        progB?.visibility = ProgressBar.VISIBLE
                     }
                 }
-                else
-                {
+                else {
                     val error=MaterialAlertDialogBuilder(this)
                     error.setTitle(getString(R.string.DialogErrorTitle))
                     error.setMessage(getString(R.string.errorInsert))

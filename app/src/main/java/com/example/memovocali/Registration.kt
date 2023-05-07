@@ -7,7 +7,7 @@ import android.os.CountDownTimer
 import java.io.File
 
 private var Recorder:MediaRecorder?=null
-private var p:String?=null
+private var path:String?=null
 private var title:String?=null
 private var player:MediaPlayer?=null
 
@@ -19,21 +19,21 @@ class FileExistException(message:String):Exception(message)
 /**
  * Function for start the record
  */
-fun startRecord(path:String, name:String){
+fun startRecord(p:String, name:String):Int{
+    if(Recorder!=null || player!=null)
+        return -1
     Recorder = MediaRecorder()
     Recorder?.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
     Recorder?.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
     Recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
     Recorder?.setMaxDuration(30000)
     title=name
-    p=path
-    val file= File(p,title)
-    if(!file.exists()) {
-        Recorder?.setOutputFile(file.absolutePath)
-        Recorder?.prepare()
-        Recorder?.start()
-    }
-    else throw FileExistException("File already exists")
+    path=p
+    //val file= File(path,name)
+    Recorder?.setOutputFile(path+ title)
+    Recorder?.prepare()
+    Recorder?.start()
+    return 0
 }
 
 /**
@@ -43,8 +43,8 @@ fun stopRecord():Record{
     Recorder?.stop()
     Recorder?.release()
     val data=MediaMetadataRetriever()
-    data.setDataSource(p+title)
-    val r=Record(title!!,p!!,
+    data.setDataSource(path+title)
+    val r=Record(title!!,path!!,
         data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt() ?: 0)
     Recorder=null
     return r
@@ -67,12 +67,14 @@ fun resumeRecord(){
 /**
  * Function for start the play
  */
-fun startPlay(path:String){
+fun startPlay(path:String):Int{
+    if(player!=null || Recorder!=null)
+        return -1
     player= MediaPlayer()
     player?.setDataSource(path)
     player?.prepare()
     player?.start()
-
+    return 0
     /*player?.setOnCompletionListener {
         stopPlay()
     }*/

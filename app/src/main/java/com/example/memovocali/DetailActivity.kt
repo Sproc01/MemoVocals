@@ -54,14 +54,14 @@ class DetailActivity : AppCompatActivity() {
         }
 
         buSubstitute.setOnClickListener{
-            if(path!="" && name!="") {
-                val file= File(path,name)
-                file.delete()
-                txtDuration.text="--:--"
+            //val file= File(path,name)
+            //file.delete()
+            if(startRecord(path, name)==0)
+            {
                 progB.max=30
-                progB.visibility= View.VISIBLE
-                startRecord(path, name)
                 timerRecord.start()
+                txtDuration.text="--:--"
+                progB.visibility= View.VISIBLE
                 buStopSubstitute.visibility= View.VISIBLE
                 buSubstitute.visibility= View.INVISIBLE
                 buPlay.visibility= View.INVISIBLE
@@ -84,14 +84,8 @@ class DetailActivity : AppCompatActivity() {
         }
 
         buPlay.setOnClickListener{
-            if(path!="" && name!="") {
+            if(startPlay(path + name)==0) {
                 progB.max=duration/1000
-                startPlay(path + name)
-                buStopPlay.visibility = View.VISIBLE
-                progB.visibility= View.VISIBLE
-                buPlay.visibility = View.INVISIBLE
-                buStopSubstitute.visibility = View.INVISIBLE
-                buSubstitute.visibility = View.INVISIBLE
                 timerPlay = object : CountDownTimer(duration.toLong(), 1000) {
                     override fun onTick(millisUntilFinished: Long) {
                         progB.progress = (duration - millisUntilFinished.toInt())/1000
@@ -102,6 +96,11 @@ class DetailActivity : AppCompatActivity() {
                     }
                 }
                 timerPlay?.start()
+                buStopPlay.visibility = View.VISIBLE
+                progB.visibility= View.VISIBLE
+                buPlay.visibility = View.INVISIBLE
+                buStopSubstitute.visibility = View.INVISIBLE
+                buSubstitute.visibility = View.INVISIBLE
             }
         }
         buStopPlay.setOnClickListener{

@@ -41,19 +41,21 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
 
         buPlay.setOnClickListener{
             val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+h.getTxt())
-            startPlay(file.absolutePath)
-            buStopPlay.visibility=View.VISIBLE
-            buPlay.visibility=View.INVISIBLE
-            buDelete.visibility=View.INVISIBLE
+            if(startPlay(file.absolutePath)==0)
+            {
+                buStopPlay.visibility=View.VISIBLE
+                buPlay.visibility=View.INVISIBLE
+                buDelete.visibility=View.INVISIBLE
 
-            timer=object:CountDownTimer(Records[h.getPos()].getDuration().toLong(),1000){
-                override fun onTick(millisUntilFinished: Long) {}
+                timer=object:CountDownTimer(Records[h.getPos()].getDuration().toLong(),1000){
+                    override fun onTick(millisUntilFinished: Long) {}
 
-                override fun onFinish() {
-                    buStopPlay.callOnClick()
+                    override fun onFinish() {
+                        buStopPlay.callOnClick()
+                    }
                 }
+                timer?.start()
             }
-            timer?.start()
         }
 
         buStopPlay.setOnClickListener{
