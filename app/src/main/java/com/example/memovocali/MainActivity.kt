@@ -9,6 +9,7 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
@@ -22,10 +23,10 @@ import java.io.File
 class MainActivity : AppCompatActivity() {
 
     private var buAdd:FloatingActionButton?=null
-    private var buStop:FloatingActionButton?=null
+    private var buStop:Button?=null
     private val RecordList:MutableList<Record> = mutableListOf()
     private var txtName:TextView?=null
-    private var progB: ProgressBar?=null
+    private var progB: SeekBar?=null
     private var dataMedia:MediaMetadataRetriever?=null
     private var rc:RecyclerView?=null
     private var timer: CountDownTimer =object: CountDownTimer(30000, 1000) {
@@ -47,10 +48,10 @@ class MainActivity : AppCompatActivity() {
 
         //initialize variables referring to the layout
         buAdd=findViewById(R.id.floating_action_button_Add)
-        buStop=findViewById(R.id.floating_action_button_Stop)
+        buStop=findViewById(R.id.action_button_Stop)
         progB=findViewById(R.id.progressBar)
         rc=findViewById(R.id.recyclerView)
-
+        progB?.isEnabled=false
         //read files in the directory if present otherwise it create a new directory
         val file= File(applicationContext.filesDir,"Memo")
         if(!file.exists())
@@ -77,8 +78,8 @@ class MainActivity : AppCompatActivity() {
             buStop?.hide()
             progB?.visibility=ProgressBar.INVISIBLE
         }*/
-        buStop?.hide()
-        progB?.visibility=ProgressBar.INVISIBLE
+        buStop?.visibility=Button.INVISIBLE
+        progB?.visibility=SeekBar.INVISIBLE
         txtName?.visibility=TextView.INVISIBLE
 
         buAdd?.setOnClickListener {
@@ -106,9 +107,9 @@ class MainActivity : AppCompatActivity() {
                     if(startRecord(applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator,txtName?.text.toString()+".aac")==0) {
                         //start a timer to limit 30 second for the record
                         timer.start()
-                        buStop?.show()
+                        buStop?.visibility=Button.VISIBLE
                         buAdd?.hide()
-                        progB?.visibility = ProgressBar.VISIBLE
+                        progB?.visibility = SeekBar.VISIBLE
                     }
                 }
                 else {
@@ -126,10 +127,10 @@ class MainActivity : AppCompatActivity() {
         buStop?.setOnClickListener{
             val r=stopRecord()
             (rc?.adapter as RecordAdapter).addRecord(r)
-            buStop?.hide()
+            buStop?.visibility=Button.INVISIBLE
             timer.cancel()
             buAdd?.show()
-            progB?.visibility=ProgressBar.INVISIBLE
+            progB?.visibility=SeekBar.INVISIBLE
             txtName?.hint=getString(R.string.labelInput)
         }
     }
