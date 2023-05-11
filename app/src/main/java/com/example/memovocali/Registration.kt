@@ -12,11 +12,6 @@ private var title:String?=null
 private var player:MediaPlayer?=null
 
 /**
- * Exception for file already exists in the directory
- */
-class FileExistException(message:String):Exception(message)
-
-/**
  * Function for start the record
  */
 fun startRecord(p:String, name:String):Int{
@@ -87,5 +82,19 @@ fun stopPlay(){
     player?.stop()
     player?.release()
     player=null
+}
+
+fun pausePlay(){
+    player?.pause()
+}
+
+fun resumePlay(){
+    player?.start()
+}
+
+fun seekPlay(sec:Int){
+    player?.pause()
+    player?.seekTo(sec*1000)
+    player?.start()
 }
 

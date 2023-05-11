@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private var timer: CountDownTimer =object: CountDownTimer(30000, 1000) {
 
         override fun onTick(millisUntilFinished: Long) {
-            progB?.progress=30-(millisUntilFinished/1000).toInt()
+            progB?.progress=(30000-millisUntilFinished).toInt()
         }
 
         override fun onFinish() {
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         buStop=findViewById(R.id.action_button_Stop)
         progB=findViewById(R.id.progressBar)
         rc=findViewById(R.id.recyclerView)
-        progB?.isEnabled=false
+
         //read files in the directory if present otherwise it create a new directory
         val file= File(applicationContext.filesDir,"Memo")
         if(!file.exists())
@@ -60,24 +60,13 @@ class MainActivity : AppCompatActivity() {
                 RecordList.add(Record(f.name,file.absolutePath+File.separator,
                     dataMedia?.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt() ?: 0))
             }
+
         rc?.adapter=RecordAdapter(RecordList)
-        //restore state if necessary
-        /*if(savedInstanceState!=null)
-        {
-            txtName?.text=savedInstanceState.getString("txtName")
-            txtName?.hint=savedInstanceState.getString("txtNameHint")
-            buAdd?.visibility=savedInstanceState.getInt("buAddVisibility")
-            buStop?.visibility=savedInstanceState.getInt("buStopVisibility")
-            progB?.visibility=savedInstanceState.getInt("progBVisibility")
-        }
-        else
-        {
-            buStop?.hide()
-            progB?.visibility=ProgressBar.INVISIBLE
-        }*/
         buStop?.visibility=Button.INVISIBLE
         progB?.visibility=SeekBar.INVISIBLE
         txtName?.visibility=TextView.INVISIBLE
+        progB?.isEnabled=false
+        progB?.max=30000
 
         buAdd?.setOnClickListener {
             val dialog=MaterialAlertDialogBuilder(this)
@@ -160,7 +149,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if(buStop?.visibility==FloatingActionButton.VISIBLE)
+        if(buStop?.visibility==Button.VISIBLE)
             buStop?.callOnClick()
     }
 
