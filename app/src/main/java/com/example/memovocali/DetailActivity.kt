@@ -23,6 +23,7 @@ class Timer(private val x:Long, private val flag:Boolean,private val activity:De
         }
 
     }
+
 class DetailActivity : AppCompatActivity() {
 
     private var buClose: Button ? =null

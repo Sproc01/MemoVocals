@@ -140,10 +140,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        /*outState.putString("name",txtName?.text.toString())
-        outState.putInt("visibilityProgress",progB?.visibility ?: ProgressBar.INVISIBLE)
-        outState.putInt("visibilityButtonStop",buStop?.visibility ?: FloatingActionButton.INVISIBLE)
-        outState.putInt("visibilityButtonAdd",buAdd?.visibility ?: FloatingActionButton.VISIBLE)*/
         //TODO save state
     }
 
