@@ -88,13 +88,11 @@ fun pausePlay(){
     player?.pause()
 }
 
-fun resumePlay(){
-    player?.start()
-}
-
 fun seekPlay(sec:Int){
     player?.pause()
-    player?.seekTo(sec*1000)
-    player?.start()
+    player?.seekTo(sec)
+    player?.setOnSeekCompleteListener {
+        player?.start()
+    }
 }
 

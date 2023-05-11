@@ -9,6 +9,20 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
+class Timer(private val x:Long, private val flag:Boolean,private val activity:DetailActivity):CountDownTimer(x,500)
+    {
+        override fun onTick(millisUntilFinished: Long) {
+            activity.progB?.progress=activity.progB?.progress?.plus(500)!!
+        }
+
+        override fun onFinish() {
+            if(flag)
+                activity.buStopSubstitute?.callOnClick()
+            else
+                activity.buStopPlay?.callOnClick()
+        }
+
+    }
 class DetailActivity : AppCompatActivity() {
 
     private var buClose: Button ? =null
@@ -16,29 +30,15 @@ class DetailActivity : AppCompatActivity() {
     private var txtpath:TextView? =null
     private var txtDuration:TextView? =null
     private var buSubstitute:Button? =null
-    private var buStopSubstitute:Button? =null
-    private var buStopPlay:Button? =null
     private var buPlay:Button? =null
-    var progB: SeekBar? =null
-
-    /*class timer(private val x:Long, private val flag:Boolean):CountDownTimer(x,500)
-    {
-        override fun onTick(millisUntilFinished: Long) {
-            progB?.progress=(x-millisUntilFinished).toInt()
-        }
-
-        override fun onFinish() {
-            if(flag)
-                buStopSubstitute?.callOnClick()
-            else
-                buStopPlay?.callOnClick()
-        }
-
-    }*/
+    internal var buStopSubstitute:Button? =null
+    internal var buStopPlay:Button? =null
+    internal var progB: SeekBar? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
+
         //initialize variables referring to the layout
         buClose =findViewById(R.id.buttonClose)
         title=findViewById(R.id.NameRecordDetail)
@@ -49,24 +49,14 @@ class DetailActivity : AppCompatActivity() {
         buStopPlay=findViewById(R.id.buttonStopDetail)
         buPlay=findViewById(R.id.buttonPlayDetail)
         progB =findViewById(R.id.progressBarDetail)
-
-        //timer: one for record, one for player
-        var timerPlay:CountDownTimer?=null
-        val timerRecord:CountDownTimer=object : CountDownTimer(30000,1000){
-            override fun onTick(millisUntilFinished: Long) {
-                progB?.progress=(30000-millisUntilFinished).toInt()
-            }
-
-            override fun onFinish() {
-                buStopSubstitute?.callOnClick()
-            }
-        }
+        var time:Timer?=null
 
         //components invisible
         progB?.visibility= View.INVISIBLE
         buStopPlay?.visibility= View.INVISIBLE
         buStopSubstitute?.visibility= View.INVISIBLE
-        //read intent from data
+
+        //read data from intent
         val name=(intent.getStringExtra("recordName") ?: "")
         val path=(intent.getStringExtra("recordPath") ?: "")
         var duration=(intent.getIntExtra("recordDuration",0))
@@ -75,19 +65,21 @@ class DetailActivity : AppCompatActivity() {
         title?.text=getString(R.string.TitleDetail,name)
 
         buClose?.setOnClickListener{
-            stopPlay()
+            stopRecord()
             finish()
         }
 
         progB?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                pausePlay()
+            }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 seekPlay(seekBar.progress)
-                /*timer?.cancel()
-                timer=null
-                time=timer(seekBar.progress*1000, false)*/
+                time?.cancel()
+                time=Timer(duration.toLong()-seekBar.progress, false,this@DetailActivity)
+                time?.start()
             }
         })
 
@@ -95,7 +87,9 @@ class DetailActivity : AppCompatActivity() {
             if(startRecord(path, name)==0)
             {
                 progB?.max=30000
-                timerRecord.start()
+                time=Timer(30000, true,this)
+                progB?.progress=0
+                time?.start()
                 txtDuration?.text="--:--"
                 progB?.visibility= View.VISIBLE
                 buStopSubstitute?.visibility= View.VISIBLE
@@ -109,7 +103,8 @@ class DetailActivity : AppCompatActivity() {
 
         buStopSubstitute?.setOnClickListener{
             val r=stopRecord()
-            timerRecord.cancel()
+            time?.cancel()
+            time=null
             duration=r.getDuration()
             txtDuration?.text=String.format("00:%02d", duration/1000)
             buStopSubstitute?.visibility= View.INVISIBLE
@@ -124,16 +119,9 @@ class DetailActivity : AppCompatActivity() {
         buPlay?.setOnClickListener{
             if(startPlay(path + name)==0) {
                 progB?.max=duration
-                timerPlay = object : CountDownTimer(duration.toLong(), 1000) {
-                    override fun onTick(millisUntilFinished: Long) {
-                        progB?.progress = duration - millisUntilFinished.toInt()
-                    }
-
-                    override fun onFinish() {
-                        buStopPlay?.callOnClick()
-                    }
-                }
-                timerPlay?.start()
+                time=Timer(duration.toLong(), false,this)
+                progB?.progress=0
+                time?.start()
                 buStopPlay?.visibility = View.VISIBLE
                 progB?.visibility= View.VISIBLE
                 buPlay?.visibility = View.INVISIBLE
@@ -144,7 +132,8 @@ class DetailActivity : AppCompatActivity() {
         buStopPlay?.setOnClickListener{
             stopPlay()
             progB?.visibility= View.INVISIBLE
-            timerPlay?.cancel()
+            time?.cancel()
+            time=null
             buStopPlay?.visibility= View.INVISIBLE
             buPlay?.visibility= View.VISIBLE
             buStopSubstitute?.visibility= View.INVISIBLE
