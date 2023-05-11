@@ -9,7 +9,19 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
-class Timer(private val x:Long, private val flag:Boolean,private val activity:DetailActivity):CountDownTimer(x,500)
+class DetailActivity : AppCompatActivity() {
+
+    private var buClose: Button ? =null
+    private var title:TextView? =null
+    private var txtpath:TextView? =null
+    private var txtDuration:TextView? =null
+    private var buSubstitute:Button? =null
+    private var buPlay:Button? =null
+    private var buStopSubstitute:Button? =null
+    private var buStopPlay:Button? =null
+    private var progB: SeekBar? =null
+
+    class Timer(private val x:Long, private val flag:Boolean,private val activity:DetailActivity):CountDownTimer(x,500)
     {
         override fun onTick(millisUntilFinished: Long) {
             activity.progB?.progress=activity.progB?.progress?.plus(500)!!
@@ -23,19 +35,6 @@ class Timer(private val x:Long, private val flag:Boolean,private val activity:De
         }
 
     }
-
-class DetailActivity : AppCompatActivity() {
-
-    private var buClose: Button ? =null
-    private var title:TextView? =null
-    private var txtpath:TextView? =null
-    private var txtDuration:TextView? =null
-    private var buSubstitute:Button? =null
-    private var buPlay:Button? =null
-    internal var buStopSubstitute:Button? =null
-    internal var buStopPlay:Button? =null
-    internal var progB: SeekBar? =null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
