@@ -136,17 +136,8 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             != PermissionChecker.PERMISSION_GRANTED)
-        {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PermissionChecker.PERMISSION_GRANTED)
-                requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_CODE)
-            else
                 requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_CODE)
-        }
-        else
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PermissionChecker.PERMISSION_GRANTED)
-                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_CODE)
+
         //update duration of the records if one is modified in the detailActivity
         for (i in RecordList) {
             dataMedia = MediaMetadataRetriever()
