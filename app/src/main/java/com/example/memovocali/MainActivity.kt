@@ -1,21 +1,18 @@
 package com.example.memovocali
 
 import android.Manifest
-import android.content.DialogInterface
 import android.media.MediaMetadataRetriever
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.dialog.MaterialDialogs
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
 

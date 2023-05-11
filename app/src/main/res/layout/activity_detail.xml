@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/close"/>
 
-    <com.google.android.material.progressindicator.LinearProgressIndicator
+    <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/progressBarDetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

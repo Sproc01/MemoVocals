@@ -5,9 +5,8 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.Button
-import android.widget.ProgressBar
+import android.widget.SeekBar
 import android.widget.TextView
-import java.io.File
 
 class DetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +21,8 @@ class DetailActivity : AppCompatActivity() {
         val buStopSubstitute:Button=findViewById(R.id.buttonStopSubstitute)
         val buStopPlay:Button=findViewById(R.id.buttonStopDetail)
         val buPlay:Button=findViewById(R.id.buttonPlayDetail)
-        val progB: ProgressBar =findViewById(R.id.progressBarDetail)
+        val progB: SeekBar =findViewById(R.id.progressBarDetail)
+        progB.isEnabled=false
         //timer: one for record, one for player
         var timerPlay:CountDownTimer?=null
         val timerRecord:CountDownTimer=object : CountDownTimer(30000,1000){
