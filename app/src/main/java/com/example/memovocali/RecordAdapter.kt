@@ -82,6 +82,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+getTxt())
                 if(startPlay(file.absolutePath)==0)
                 {
+                    seekb.progress=0
                     seekb.max=rA.Records[getPos()].getDuration()
                     timer=Time(rA.Records[getPos()].getDuration(), this@ViewHolderRecord)
                     timer?.start()
