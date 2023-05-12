@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/buttonClose"
+        style="@style/ShapeAppearanceOverlay.Material3.Button"
         app:layout_constraintTop_toBottomOf="@id/buttonStopSubstitute"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/close"/>
@@ -18,6 +19,7 @@
         android:id="@+id/buttonSubstitute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:text="@string/Substitute"
         app:icon="@drawable/baseline_circle_24"
         app:layout_constraintTop_toTopOf="parent"
@@ -29,6 +31,7 @@
         android:id="@+id/buttonStopSubstitute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:text="@string/stop"
         app:icon="@drawable/baseline_stop_24"
         app:layout_constraintTop_toBottomOf="@id/buttonSubstitute"
