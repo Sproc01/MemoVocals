@@ -1,11 +1,13 @@
 package com.example.memovocali
 
+import android.content.Context
 import android.content.Intent
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
@@ -102,7 +104,12 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                             if(txtName.text.toString().contains(".aac"))
                                 txtName.text=txtName.text.toString().replace(".aac","")
                             v.clearFocus()
-                            rA.Records[getPos()].setTitle(v.text.toString())
+                            if(txtName.text.toString().contains(".aac"))
+                                rA.Records[getPos()].setTitle(v.text.toString())
+                            else
+                                rA.Records[getPos()].setTitle(v.text.toString()+".aac")
+                            val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            imm.hideSoftInputFromWindow(v.windowToken, 0)
                             true
                         }
                     }

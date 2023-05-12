@@ -15,11 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    private var buAdd:FloatingActionButton?=null
+    private var buAdd:Button?=null
     private var buStop:Button?=null
     private val records:MutableList<Record> = mutableListOf()
     private var txtName:TextView?=null
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //initialize variables referring to the layout
-        buAdd=findViewById(R.id.floating_action_button_Add)
+        buAdd=findViewById(R.id.action_button_Add)
         buStop=findViewById(R.id.action_button_Stop)
         progB=findViewById(R.id.progressBar)
         rc=findViewById(R.id.recyclerView)
@@ -69,45 +70,17 @@ class MainActivity : AppCompatActivity() {
         progB?.max=30000
 
         buAdd?.setOnClickListener {
-            val dialog=MaterialAlertDialogBuilder(this)
-            val viewDialog=LayoutInflater.from(this).inflate(R.layout.dialog,null)
-            dialog.setView(viewDialog)
-            txtName=viewDialog.findViewById(R.id.input)
-            dialog.setTitle(getString(R.string.Dialogtitle))
-            dialog.setPositiveButton(getString(R.string.labelOk)
-            ) { _, _ ->
-                if(txtName?.text.toString().isNotEmpty())
-                {
-                    if(txtName?.text.toString().contains(".aac"))
-                        txtName?.text=txtName?.text.toString().replace(".aac","")
-                    for(i in records)
-                        if(txtName?.text.toString()+".aac"==i.getTitle())
-                        {
-                            val error=MaterialAlertDialogBuilder(this)
-                            error.setTitle(getString(R.string.DialogErrorTitle))
-                            error.setMessage(getString(R.string.errorAlreadyPresent))
-                            error.setPositiveButton(getString(R.string.labelOk),null)
-                            error.show()
-                            return@setPositiveButton
-                        }
-                    if(startRecord(applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator,txtName?.text.toString()+".aac")==0) {
-                        //start a timer to limit 30 second for the record
-                        timer.start()
-                        buStop?.visibility=Button.VISIBLE
-                        buAdd?.hide()
-                        progB?.visibility = SeekBar.VISIBLE
-                    }
-                }
-                else {
-                    val error=MaterialAlertDialogBuilder(this)
-                    error.setTitle(getString(R.string.DialogErrorTitle))
-                    error.setMessage(getString(R.string.errorInsert))
-                    error.setPositiveButton(getString(R.string.labelOk),null)
-                    error.show()
-                }
+            if (startRecord(
+                    applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator,
+                    Calendar.getInstance().time.toString() + ".aac"
+                ) == 0
+            ) {
+                //start a timer to limit 30 second for the record
+                timer.start()
+                buStop?.visibility = Button.VISIBLE
+                buAdd?.visibility=Button.INVISIBLE
+                progB?.visibility = SeekBar.VISIBLE
             }
-            dialog.setNegativeButton(getString(R.string.labelCancel),null)
-            dialog.show()
         }
 
         buStop?.setOnClickListener{
@@ -115,7 +88,7 @@ class MainActivity : AppCompatActivity() {
             (rc?.adapter as RecordAdapter).addRecord(r!!)
             buStop?.visibility=Button.INVISIBLE
             timer.cancel()
-            buAdd?.show()
+            buAdd?.visibility=Button.VISIBLE
             progB?.visibility=SeekBar.INVISIBLE
             txtName?.hint=getString(R.string.labelInput)
         }
