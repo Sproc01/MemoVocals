@@ -51,20 +51,6 @@ fun stopRecord():Record?{
 }
 
 /**
- * Function for pause the record
- */
-fun pauseRecord(){
-    Recorder?.pause()
-}
-
-/**
- * Function for resume the record
- */
-fun resumeRecord(){
-    Recorder?.resume()
-}
-
-/**
  * Function for start the play
  */
 fun startPlay(path:String):Int{

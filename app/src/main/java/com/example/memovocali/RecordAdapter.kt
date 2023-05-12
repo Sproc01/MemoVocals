@@ -5,10 +5,12 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 
 class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): RecyclerView.Adapter<RecordAdapter.ViewHolderRecord>()
@@ -45,6 +47,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         private val buStopPlay:Button=itemView.findViewById(R.id.buttonStopPlay)
         private val txtName:TextView=itemView.findViewById(R.id.txtTitle)
         private val seekb:SeekBar =itemView.findViewById(R.id.seekBar)
+        private val buOpen:Button=itemView.findViewById(R.id.buttonOpen)
         var timer:Time?=null
 
         init{
@@ -63,10 +66,8 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
 
                 }
             })
-            seekb.visibility=View.INVISIBLE
-            buStopPlay.visibility=View.INVISIBLE
 
-            txtName.setOnClickListener{
+            buOpen.setOnClickListener{
                 val intent= Intent(parent.context,DetailActivity::class.java)
                 intent.putExtra("recordName", rA.Records[getPos()].getTitle())
                 intent.putExtra("recordPath", rA.Records[getPos()].getPath())
@@ -74,12 +75,47 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 parent.context.startActivity(intent)
             }
 
+            txtName.setOnEditorActionListener { v, actionId, _ ->
+                return@setOnEditorActionListener when (actionId) {
+                    EditorInfo.IME_ACTION_DONE -> {
+                        if(txtName.text.toString()=="")
+                            return@setOnEditorActionListener false
+                        val n=rA.Records[getPos()].getTitle()
+                        val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+n)
+                        val newFile:File = if(txtName.text.toString().contains(".aac"))
+                            File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+v.text.toString())
+                        else
+                            File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+v.text.toString()+".aac")
+                        if(newFile.exists())
+                        {
+                            v.text=n.subSequence(0,n.length-4)
+                            val error= MaterialAlertDialogBuilder(parent.context)
+                            error.setTitle(parent.context.getString(R.string.DialogErrorTitle))
+                            error.setMessage(parent.context.getString(R.string.errorAlreadyPresent))
+                            error.setPositiveButton(parent.context.getString(R.string.labelOk),null)
+                            error.show()
+                            false
+                        }
+                        else
+                        {
+                            file.renameTo(newFile)
+                            if(txtName.text.toString().contains(".aac"))
+                                txtName.text=txtName.text.toString().replace(".aac","")
+                            v.clearFocus()
+                            rA.Records[getPos()].setTitle(v.text.toString())
+                            true
+                        }
+                    }
+                    else -> false
+                }
+            }
+
             buDelete.setOnClickListener {
-                rA.removeRecord(getPos(),File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+getTxt()) )
+                rA.removeRecord(getPos(),File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+rA.Records[getPos()].getTitle()))
             }
 
             buPlay.setOnClickListener{
-                val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+getTxt())
+                val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+rA.Records[getPos()].getTitle())
                 if(startPlay(file.absolutePath)==0)
                 {
                     seekb.progress=0
@@ -90,6 +126,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                     buStopPlay.visibility=Button.VISIBLE
                     buPlay.visibility=Button.INVISIBLE
                     buDelete.visibility=Button.INVISIBLE
+                    buOpen.visibility=Button.INVISIBLE
                 }
             }
 
@@ -100,11 +137,11 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 buStopPlay.visibility=Button.INVISIBLE
                 buPlay.visibility=Button.VISIBLE
                 buDelete.visibility=Button.VISIBLE
+                buOpen.visibility=Button.VISIBLE
             }
-        }
 
-        fun getTxt():String{
-            return txtTitle.text.toString()
+            seekb.visibility=View.INVISIBLE
+            buStopPlay.visibility=View.INVISIBLE
         }
 
         fun getPos():Int{
@@ -113,7 +150,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
 
         fun bind(record:Record,position:Int)
         {
-            txtTitle.text=record.getTitle()
+            txtTitle.text=record.getTitle().subSequence(0,record.getTitle().length-4)
             pos=position
         }
 

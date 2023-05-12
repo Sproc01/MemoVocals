@@ -10,17 +10,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.70" />
+        app:layout_constraintGuide_percent="0.6" />
 
-    <TextView
+    <EditText
         android:id="@+id/txtTitle"
         android:layout_width="203dp"
+        style="@style/MaterialAlertDialog.Material3.Title.Text"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:inputType="text"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/guideline"
-        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
@@ -54,6 +54,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/buttonDelete" />
+
+    <Button
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonOpen"
+        app:icon="@drawable/baseline_open_in_full_24"
+        style="@style/Widget.Material3.Button.TextButton.Icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/buttonPlay"
+        />
 
     <androidx.appcompat.widget.AppCompatSeekBar
         android:layout_width="match_parent"
