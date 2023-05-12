@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     private var buAdd:FloatingActionButton?=null
     private var buStop:Button?=null
-    private val RecordList:MutableList<Record> = mutableListOf()
+    private val records:MutableList<Record> = mutableListOf()
     private var txtName:TextView?=null
     private var progB: SeekBar?=null
     private var dataMedia:MediaMetadataRetriever?=null
@@ -57,11 +57,11 @@ class MainActivity : AppCompatActivity() {
             for (f in file.listFiles()!!){
                 dataMedia=MediaMetadataRetriever()
                 dataMedia?.setDataSource(f.absolutePath)
-                RecordList.add(Record(f.name,file.absolutePath+File.separator,
+                records.add(Record(f.name,file.absolutePath+File.separator,
                     dataMedia?.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt() ?: 0))
             }
 
-        rc?.adapter=RecordAdapter(RecordList)
+        rc?.adapter=RecordAdapter(records)
         buStop?.visibility=Button.INVISIBLE
         progB?.visibility=SeekBar.INVISIBLE
         txtName?.visibility=TextView.INVISIBLE
@@ -75,12 +75,12 @@ class MainActivity : AppCompatActivity() {
             txtName=viewDialog.findViewById(R.id.input)
             dialog.setTitle(getString(R.string.Dialogtitle))
             dialog.setPositiveButton(getString(R.string.labelOk)
-            ) { DialogInterface, i ->
+            ) { _, _ ->
                 if(txtName?.text.toString().isNotEmpty())
                 {
                     if(txtName?.text.toString().contains(".aac"))
                         txtName?.text=txtName?.text.toString().replace(".aac","")
-                    for(i in RecordList)
+                    for(i in records)
                         if(txtName?.text.toString()+".aac"==i.getTitle())
                         {
                             val error=MaterialAlertDialogBuilder(this)
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
         buStop?.setOnClickListener{
             val r=stopRecord()
-            (rc?.adapter as RecordAdapter).addRecord(r)
+            (rc?.adapter as RecordAdapter).addRecord(r!!)
             buStop?.visibility=Button.INVISIBLE
             timer.cancel()
             buAdd?.show()
@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                 requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_CODE)
 
         //update duration of the records if one is modified in the detailActivity
-        for (i in RecordList) {
+        for (i in records) {
             dataMedia = MediaMetadataRetriever()
             dataMedia?.setDataSource(i.getPath()+i.getTitle())
             i.updateDuration(

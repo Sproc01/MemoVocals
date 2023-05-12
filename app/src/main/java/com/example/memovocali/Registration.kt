@@ -34,14 +34,19 @@ fun startRecord(p:String, name:String):Int{
 /**
  * Function for stop the record
  */
-fun stopRecord():Record{
+fun stopRecord():Record?{
     Recorder?.stop()
     Recorder?.release()
-    val data=MediaMetadataRetriever()
-    data.setDataSource(path+title)
-    val r=Record(title!!,path!!,
-        data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt() ?: 0)
+    val data= MediaMetadataRetriever()
+    var r:Record?=null
+    if(path!=null || title!=null)
+    {
+        data.setDataSource(path+title)
+        r=Record(title!!,path!!,data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toInt())
+    }
     Recorder=null
+    path=null
+    title=null
     return r
 }
 

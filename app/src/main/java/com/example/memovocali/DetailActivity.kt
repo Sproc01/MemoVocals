@@ -105,7 +105,7 @@ class DetailActivity : AppCompatActivity() {
             val r=stopRecord()
             time?.cancel()
             time=null
-            duration=r.getDuration()
+            duration=r?.getDuration()?:0
             txtDuration?.text=String.format("00:%02d", duration/1000)
             buStopSubstitute?.visibility= View.INVISIBLE
             buSubstitute?.visibility= View.VISIBLE
