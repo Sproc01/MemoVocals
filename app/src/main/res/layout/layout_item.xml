@@ -16,14 +16,16 @@
         android:id="@+id/txtTitle"
         android:layout_width="203dp"
         style="@style/MaterialAlertDialog.Material3.Title.Text"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:inputType="text"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        android:autofillHints="name"
+        android:hint="@string/labelInput"/>
 
     <Button
         android:id="@+id/buttonDelete"

@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         buAdd?.setOnClickListener {
             if (startRecord(
                     applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator,
-                    Calendar.getInstance().time.toString().replace(":","") + ".aac"
+                    Calendar.getInstance().time.toString().replace(":","").replace("GMT+","") + ".aac"
                 ) == 0
             ) {
                 //start a timer to limit 30 second for the record
