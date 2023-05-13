@@ -5,15 +5,12 @@ import android.media.MediaMetadataRetriever
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.File
 import java.util.*
 
@@ -23,18 +20,19 @@ class MainActivity : AppCompatActivity() {
     private var buAdd:Button?=null
     private var buStop:Button?=null
     private val records:MutableList<Record> = mutableListOf()
-    private var txtName:TextView?=null
     private var progB: SeekBar?=null
     private var dataMedia:MediaMetadataRetriever?=null
     private var rc:RecyclerView?=null
-    private var timer: CountDownTimer =object: CountDownTimer(30000, 1000) {
+    private var txtRecordGoing:TextView?=null
+    private var timer: CountDownTimer =object: CountDownTimer(30000, 100) {
 
         override fun onTick(millisUntilFinished: Long) {
-            progB?.progress=(30000-millisUntilFinished).toInt()
+            progB?.progress=progB?.progress?.plus(100)!!
+            val s="00:"+String.format("%02d",((progB?.progress?.div(1000)?:0) ))
+            txtRecordGoing?.text=getString(R.string.Recording,s)
         }
 
         override fun onFinish() {
-            progB?.progress=30
             //call method to restore visibility
             buStop?.callOnClick()
         }
@@ -49,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         buStop=findViewById(R.id.action_button_Stop)
         progB=findViewById(R.id.progressBar)
         rc=findViewById(R.id.recyclerView)
+        txtRecordGoing=findViewById(R.id.textViewRecording)
 
         //read files in the directory if present otherwise it create a new directory
         val file= File(applicationContext.filesDir,"Memo")
@@ -65,14 +64,14 @@ class MainActivity : AppCompatActivity() {
         rc?.adapter=RecordAdapter(records)
         buStop?.visibility=Button.INVISIBLE
         progB?.visibility=SeekBar.INVISIBLE
-        txtName?.visibility=TextView.INVISIBLE
+        txtRecordGoing?.visibility=TextView.INVISIBLE
         progB?.isEnabled=false
         progB?.max=30000
 
         buAdd?.setOnClickListener {
             if (startRecord(
                     applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator,
-                    Calendar.getInstance().time.toString() + ".aac"
+                    Calendar.getInstance().time.toString().replace(":","") + ".aac"
                 ) == 0
             ) {
                 //start a timer to limit 30 second for the record
@@ -80,6 +79,7 @@ class MainActivity : AppCompatActivity() {
                 buStop?.visibility = Button.VISIBLE
                 buAdd?.visibility=Button.INVISIBLE
                 progB?.visibility = SeekBar.VISIBLE
+                txtRecordGoing?.visibility=TextView.VISIBLE
             }
         }
 
@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
             timer.cancel()
             buAdd?.visibility=Button.VISIBLE
             progB?.visibility=SeekBar.INVISIBLE
-            txtName?.hint=getString(R.string.labelInput)
+            txtRecordGoing?.visibility=TextView.INVISIBLE
         }
     }
 

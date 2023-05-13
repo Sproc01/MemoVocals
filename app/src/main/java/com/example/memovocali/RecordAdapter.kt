@@ -83,6 +83,8 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                         if(txtName.text.toString()=="")
                             return@setOnEditorActionListener false
                         val n=rA.Records[getPos()].getTitle()
+                        if(txtName.text.toString()==n)
+                            return@setOnEditorActionListener false
                         val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+n)
                         val newFile:File = if(txtName.text.toString().contains(".aac"))
                             File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+v.text.toString())
@@ -161,10 +163,10 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
             pos=position
         }
 
-        class Time(x:Int, private val vA: ViewHolderRecord):CountDownTimer(x.toLong(),500)
+        class Time(x:Int, private val vA: ViewHolderRecord):CountDownTimer(x.toLong(),100)
         {
             override fun onTick(millisUntilFinished: Long) {
-                vA.seekb.progress = vA.seekb.progress.plus(500)
+                vA.seekb.progress = vA.seekb.progress.plus(100)
             }
 
             override fun onFinish(){

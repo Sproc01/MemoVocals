@@ -1,9 +1,13 @@
 package com.example.memovocali
 
+import android.app.Application
+import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.os.Build
 import android.os.CountDownTimer
+import androidx.annotation.RequiresApi
 import java.io.File
 
 private var Recorder:MediaRecorder?=null
@@ -61,9 +65,6 @@ fun startPlay(path:String):Int{
     player?.prepare()
     player?.start()
     return 0
-    /*player?.setOnCompletionListener {
-        stopPlay()
-    }*/
 }
 
 /**

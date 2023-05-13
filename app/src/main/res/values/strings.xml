@@ -10,7 +10,7 @@
     <string name="record">Record</string>
     <string name="close">Close</string>
     <string name="TitleDetail">%1$s</string>
-    <string name="Recording">Recording</string>
+    <string name="Recording">Recording: %1$s</string>
     <string name="errorInsert">Insert a name</string>
     <string name="errorAlreadyPresent">File already present</string>
     <string name="Substitute">Substitute</string>

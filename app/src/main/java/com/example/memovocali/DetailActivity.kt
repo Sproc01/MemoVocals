@@ -20,11 +20,14 @@ class DetailActivity : AppCompatActivity() {
     private var buStopSubstitute:Button? =null
     private var buStopPlay:Button? =null
     private var progB: SeekBar? =null
+    private var txtRecordGoing:TextView? =null
 
-    class Timer(private val x:Long, private val flag:Boolean,private val activity:DetailActivity):CountDownTimer(x,500)
+    class Timer(private val x:Long, private val flag:Boolean,private val activity:DetailActivity):CountDownTimer(x,100)
     {
         override fun onTick(millisUntilFinished: Long) {
-            activity.progB?.progress=activity.progB?.progress?.plus(500)!!
+            activity.progB?.progress=activity.progB?.progress?.plus(100)!!
+            if(flag)
+                activity.txtRecordGoing?.text=activity.getString(R.string.Recording,String.format("00:%02d",((activity.progB?.progress?.div(1000)?:0))))
         }
 
         override fun onFinish() {
@@ -49,12 +52,14 @@ class DetailActivity : AppCompatActivity() {
         buStopPlay=findViewById(R.id.buttonStopDetail)
         buPlay=findViewById(R.id.buttonPlayDetail)
         progB =findViewById(R.id.progressBarDetail)
+        txtRecordGoing=findViewById(R.id.textViewRecordingDetail)
         var time:Timer?=null
 
         //components invisible
         progB?.visibility= View.INVISIBLE
         buStopPlay?.visibility= View.INVISIBLE
         buStopSubstitute?.visibility= View.INVISIBLE
+        txtRecordGoing?.visibility= View.INVISIBLE
 
         //read data from intent
         val name=(intent.getStringExtra("recordName") ?: "")
@@ -97,6 +102,7 @@ class DetailActivity : AppCompatActivity() {
                 buPlay?.visibility= View.INVISIBLE
                 buStopPlay?.visibility= View.INVISIBLE
                 buClose?.visibility= View.INVISIBLE
+                txtRecordGoing?.visibility= View.VISIBLE
                 progB?.isEnabled=false
             }
         }
@@ -113,6 +119,7 @@ class DetailActivity : AppCompatActivity() {
             buStopPlay?.visibility= View.INVISIBLE
             buClose?.visibility= View.VISIBLE
             progB?.visibility= View.INVISIBLE
+            txtRecordGoing?.visibility= View.INVISIBLE
             progB?.isEnabled=true
         }
 
