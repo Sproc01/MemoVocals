@@ -25,10 +25,12 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         return ViewHolderRecord(view, this, parent)
     }
 
-    fun removeRecord(position: Int, file:File){
-        file.delete()
-        Records.removeAt(position)
+    fun removeRecord(record: Record){
+        val file= File(record.getPath())
+        val position=Records.indexOf(record)
+        Records.remove(record)
         notifyItemRemoved(position)
+        file.delete()
     }
 
     fun addRecord(record:Record){
@@ -51,6 +53,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         private val seekb:SeekBar =itemView.findViewById(R.id.seekBar)
         private val buOpen:Button=itemView.findViewById(R.id.buttonOpen)
         var timer:Time?=null
+        private lateinit var record:Record
 
         init{
             seekb.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
@@ -63,7 +66,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     seekPlay(seekBar.progress)
                     timer?.cancel()
-                    timer=Time(rA.Records[getPos()].getDuration()-(seekb.progress), this@ViewHolderRecord)
+                    timer=Time(record.getDuration()-(seekb.progress), this@ViewHolderRecord)
                     timer?.start()
 
                 }
@@ -71,9 +74,9 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
 
             buOpen.setOnClickListener{
                 val intent= Intent(parent.context,DetailActivity::class.java)
-                intent.putExtra("recordName", rA.Records[getPos()].getTitle())
-                intent.putExtra("recordPath", rA.Records[getPos()].getPath())
-                intent.putExtra("recordDuration", rA.Records[getPos()].getDuration())
+                intent.putExtra("recordName", record.getTitle())
+                intent.putExtra("recordPath", record.getPath())
+                intent.putExtra("recordDuration", record.getDuration())
                 parent.context.startActivity(intent)
             }
 
@@ -82,7 +85,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                     EditorInfo.IME_ACTION_DONE -> {
                         if(txtName.text.toString()=="")
                             return@setOnEditorActionListener false
-                        val n=rA.Records[getPos()].getTitle()
+                        val n=record.getTitle()
                         if(txtName.text.toString()==n)
                             return@setOnEditorActionListener false
                         val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+n)
@@ -107,9 +110,9 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                                 txtName.text=txtName.text.toString().replace(".aac","")
                             v.clearFocus()
                             if(txtName.text.toString().contains(".aac"))
-                                rA.Records[getPos()].setTitle(v.text.toString())
+                                record.setTitle(v.text.toString())
                             else
-                                rA.Records[getPos()].setTitle(v.text.toString()+".aac")
+                                record.setTitle(v.text.toString()+".aac")
                             val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             imm.hideSoftInputFromWindow(v.windowToken, 0)
                             true
@@ -120,16 +123,16 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
             }
 
             buDelete.setOnClickListener {
-                rA.removeRecord(getPos(),File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+rA.Records[getPos()].getTitle()))
+                rA.removeRecord(record)
             }
 
             buPlay.setOnClickListener{
-                val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+rA.Records[getPos()].getTitle())
+                val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+record.getTitle())
                 if(startPlay(file.absolutePath)==0)
                 {
                     seekb.progress=0
-                    seekb.max=rA.Records[getPos()].getDuration()
-                    timer=Time(rA.Records[getPos()].getDuration(), this@ViewHolderRecord)
+                    seekb.max=record.getDuration()
+                    timer=Time(record.getDuration(), this@ViewHolderRecord)
                     timer?.start()
                     seekb.visibility=SeekBar.VISIBLE
                     buStopPlay.visibility=Button.VISIBLE
@@ -153,14 +156,11 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
             buStopPlay.visibility=View.INVISIBLE
         }
 
-        fun getPos():Int{
-            return pos
-        }
-
-        fun bind(record:Record,position:Int)
+        fun bind(r:Record,position:Int)
         {
-            txtTitle.text=record.getTitle().subSequence(0,record.getTitle().length-4)
+            txtTitle.text=r.getTitle().subSequence(0,r.getTitle().length-4)
             pos=position
+            record=r
         }
 
         class Time(x:Int, private val vA: ViewHolderRecord):CountDownTimer(x.toLong(),100)

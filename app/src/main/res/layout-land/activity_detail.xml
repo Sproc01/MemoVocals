@@ -6,14 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".DetailActivity">
 
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="76dp"
+        android:layout_height="104dp"
+        android:background="@color/cardview_shadow_end_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_audiotrack_24" />
+
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/buttonClose"
         style="@style/ShapeAppearanceOverlay.Material3.Button"
-        app:layout_constraintTop_toBottomOf="@id/buttonStopSubstitute"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/close"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/close"
+        app:layout_constraintBottom_toTopOf="@+id/progressBarDetail"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/buttonSubstitute"
@@ -21,10 +30,9 @@
         android:layout_height="wrap_content"
         style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:text="@string/Substitute"
+        app:layout_constraintBottom_toTopOf="@id/buttonClose"
         app:icon="@drawable/baseline_circle_24"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
     <Button
@@ -34,8 +42,8 @@
         style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:text="@string/stop"
         app:icon="@drawable/baseline_stop_24"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/buttonClose"/>
 
     <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/progressBarDetail"
@@ -45,77 +53,82 @@
         android:max="30"
         android:progress="0"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.218"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/RecordPath"
-        />
+        app:layout_constraintTop_toBottomOf="@id/RecordPath" />
 
     <TextView
         android:layout_width="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_height="wrap_content"
         android:id="@+id/RecordDuration"
         app:layout_constraintTop_toBottomOf="@id/labelDuration"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintBottom_toTopOf="@id/labelPath"
         android:text="Duration"
         tools:ignore="HardcodedText" />
 
     <TextView
         android:layout_width="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_height="wrap_content"
         android:id="@+id/RecordPath"
         android:text="Path"
         app:layout_constraintTop_toBottomOf="@id/labelPath"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image"
         android:autofillHints=""
         tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/NameRecordDetail"
+        android:layout_marginStart="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/TitleDetail"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintTop_toBottomOf="@id/labelName" />
 
     <TextView
         android:id="@+id/labelName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:fontFamily="sans-serif-black"
         android:text="@string/labelName"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/NameRecordDetail"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/labelPath"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:fontFamily="sans-serif-black"
         android:text="@string/labelPath"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/RecordPath"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintTop_toBottomOf="@id/labelDuration" />
 
     <TextView
         android:id="@+id/labelDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:fontFamily="sans-serif-black"
         android:text="@string/labelDuration"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/RecordDuration"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintTop_toBottomOf="@id/NameRecordDetail" />
 
     <Button
         android:id="@+id/buttonPlayDetail"
         style="@style/Widget.Material3.Button.TextButton.Icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="@string/play"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
         app:icon="@drawable/baseline_play_arrow_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -123,8 +136,8 @@
 
     <Button
         android:id="@+id/buttonStopDetail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
         android:text="@string/stop"
         style="@style/Widget.Material3.Button.TextButton.Icon"
         app:icon="@drawable/baseline_pause_24"

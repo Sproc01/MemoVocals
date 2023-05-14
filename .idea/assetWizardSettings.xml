@@ -317,7 +317,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$PROJECT_DIR$/../../../../../Android/sdk/icons/material/materialicons/open_in_full/baseline_open_in_full_24.xml" />
+                                      <entry key="url" value="file:$PROJECT_DIR$/../../../../../Android/sdk/icons/material/materialicons/audiotrack/baseline_audiotrack_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -327,7 +327,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="baseline_open_in_full_24" />
+                            <entry key="outputName" value="baseline_audiotrack_24" />
                           </map>
                         </option>
                       </PersistentState>

@@ -27,4 +27,11 @@ class Record(private var title:String, private val filename:String, private var 
 
     fun updateDuration(newDuration:Int) { duration=newDuration }
 
+    override fun equals(other: Any?): Boolean {
+        if(other is Record) {
+            return title == other.title && filename == other.filename && duration == other.duration
+        }
+        return false
+    }
+
 }
