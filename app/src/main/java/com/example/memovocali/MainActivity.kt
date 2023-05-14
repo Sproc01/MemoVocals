@@ -24,7 +24,19 @@ class MainActivity : AppCompatActivity() {
     private var dataMedia:MediaMetadataRetriever?=null
     private var rc:RecyclerView?=null
     private var txtRecordGoing:TextView?=null
-    private var timer: CountDownTimer?=null
+    private var timer: CountDownTimer=object: CountDownTimer(30000, 100) {
+
+        override fun onTick(millisUntilFinished: Long) {
+            progB?.progress=progB?.progress?.plus(100)!!
+            val s="00:"+String.format("%02d",((progB?.progress?.div(1000)?:0) ))
+            txtRecordGoing?.text=getString(R.string.Recording,s)
+        }
+
+        override fun onFinish() {
+            //call method to restore visibility
+            buStop?.callOnClick()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,26 +69,14 @@ class MainActivity : AppCompatActivity() {
         progB?.max=30000
 
         buAdd?.setOnClickListener {
+            progB?.progress=0
             if (startRecord(
                     applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator,
                     Calendar.getInstance().time.toString().replace(":","").replace("GMT+","") + ".aac"
                 ) == 0
             ) {
                 //start a timer to limit 30 second for the record
-                timer=object: CountDownTimer(30000, 100) {
-
-                    override fun onTick(millisUntilFinished: Long) {
-                        progB?.progress=progB?.progress?.plus(100)!!
-                        val s="00:"+String.format("%02d",((progB?.progress?.div(1000)?:0) ))
-                        txtRecordGoing?.text=getString(R.string.Recording,s)
-                    }
-
-                    override fun onFinish() {
-                        //call method to restore visibility
-                        buStop?.callOnClick()
-                    }
-                }
-                timer?.start()
+                timer.start()
                 buStop?.visibility = Button.VISIBLE
                 buAdd?.visibility=Button.INVISIBLE
                 progB?.visibility = SeekBar.VISIBLE
@@ -88,8 +88,7 @@ class MainActivity : AppCompatActivity() {
             val r=stopRecord()
             (rc?.adapter as RecordAdapter).addRecord(r!!)
             buStop?.visibility=Button.INVISIBLE
-            timer?.cancel()
-            timer=null
+            timer.cancel()
             buAdd?.visibility=Button.VISIBLE
             progB?.visibility=SeekBar.INVISIBLE
             txtRecordGoing?.visibility=TextView.INVISIBLE
