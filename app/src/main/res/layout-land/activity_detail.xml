@@ -17,9 +17,9 @@
 
     <Button
         android:id="@+id/buttonClose"
-        style="@style/ShapeAppearanceOverlay.Material3.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/ShapeAppearanceOverlay.Material3.Button"
         android:text="@string/close"
         app:layout_constraintBottom_toTopOf="@+id/progressBarDetail"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -28,7 +28,7 @@
         android:id="@+id/buttonSubstitute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        style="@style/Widget.Material3.Button.TonalButton.Icon"
         android:text="@string/Substitute"
         app:layout_constraintBottom_toTopOf="@id/buttonClose"
         app:icon="@drawable/baseline_circle_24"
@@ -39,7 +39,7 @@
         android:id="@+id/buttonStopSubstitute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        style="@style/Widget.Material3.Button.TonalButton.Icon"
         android:text="@string/stop"
         app:icon="@drawable/baseline_stop_24"
         app:layout_constraintEnd_toEndOf="parent"
@@ -125,10 +125,10 @@
 
     <Button
         android:id="@+id/buttonPlayDetail"
-        style="@style/Widget.Material3.Button.TextButton.Icon"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:text="@string/play"
-        android:layout_width="120dp"
-        android:layout_height="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:icon="@drawable/baseline_play_arrow_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -136,10 +136,10 @@
 
     <Button
         android:id="@+id/buttonStopDetail"
-        android:layout_width="120dp"
-        android:layout_height="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/stop"
-        style="@style/Widget.Material3.Button.TextButton.Icon"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         app:icon="@drawable/baseline_pause_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
