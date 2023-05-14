@@ -25,6 +25,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText"
         android:autofillHints="name"
+        android:imeOptions="actionDone"
         android:hint="@string/labelInput"/>
 
     <Button

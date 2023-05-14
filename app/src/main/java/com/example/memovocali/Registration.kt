@@ -6,9 +6,7 @@ import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Build
-import android.os.CountDownTimer
-import androidx.annotation.RequiresApi
-import java.io.File
+
 
 private var Recorder:MediaRecorder?=null
 private var path:String?=null
@@ -18,10 +16,14 @@ private var player:MediaPlayer?=null
 /**
  * Function for start the record
  */
-fun startRecord(p:String, name:String):Int{
+fun startRecord(p:String, name:String, context: Context):Int{
     if(Recorder!=null || player!=null)
         return -1
-    Recorder = MediaRecorder()
+    Recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        MediaRecorder(context)
+    }
+    else
+        MediaRecorder()
     Recorder?.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
     Recorder?.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
     Recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)

@@ -89,7 +89,7 @@ class DetailActivity : AppCompatActivity() {
         })
 
         buSubstitute?.setOnClickListener{
-            if(startRecord(path, name)==0)
+            if(startRecord(path, name, applicationContext)==0)
             {
                 progB?.max=30000
                 time=Timer(30000, true,this)
