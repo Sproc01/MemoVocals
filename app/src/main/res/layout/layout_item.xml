@@ -15,7 +15,7 @@
     <EditText
         android:id="@+id/txtTitle"
         android:layout_width="203dp"
-        style="@style/MaterialAlertDialog.Material3.Title.Text"
+        style="@style/TextAppearance.AppCompat.Body1"
         android:layout_height="48dp"
         android:inputType="text"
         android:textSize="18sp"
