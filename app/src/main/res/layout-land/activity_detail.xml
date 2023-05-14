@@ -34,7 +34,7 @@
         style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:text="@string/stop"
         app:icon="@drawable/baseline_stop_24"
-        app:layout_constraintTop_toBottomOf="@id/buttonSubstitute"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.appcompat.widget.AppCompatSeekBar
@@ -46,7 +46,7 @@
         android:progress="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonPlayDetail"
+        app:layout_constraintTop_toBottomOf="@id/RecordPath"
         />
 
     <TextView
@@ -117,9 +117,9 @@
         android:layout_height="wrap_content"
         android:text="@string/play"
         app:icon="@drawable/baseline_play_arrow_24"
-        app:layout_constraintEnd_toStartOf="@+id/buttonStopDetail"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/RecordPath" />
+        app:layout_constraintTop_toBottomOf="@id/textViewRecordingDetail" />
 
     <Button
         android:id="@+id/buttonStopDetail"
@@ -128,9 +128,9 @@
         android:text="@string/stop"
         style="@style/Widget.Material3.Button.TextButton.Icon"
         app:icon="@drawable/baseline_pause_24"
-        app:layout_constraintStart_toEndOf="@id/buttonPlayDetail"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/RecordPath" />
+        app:layout_constraintTop_toBottomOf="@id/textViewRecordingDetail" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"

@@ -1,6 +1,5 @@
 package com.example.memovocali
 
-import android.app.Application
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
