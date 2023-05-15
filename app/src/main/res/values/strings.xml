@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vocals Memo</string>
+    <string name="app_name">Records</string>
     <string name="delete">Delete</string>
     <string name="newRecord">Record</string>
     <string name="labelInput">Insert title</string>

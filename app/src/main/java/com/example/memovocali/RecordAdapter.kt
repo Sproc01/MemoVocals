@@ -83,16 +83,18 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
             txtName.setOnEditorActionListener { v, actionId, _ ->
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
-                        if(txtName.text.toString()=="")
+                        var txt=txtName.text.toString()
+                        if(txt=="")
                             return@setOnEditorActionListener false
                         val n=record.getTitle()
-                        if(txtName.text.toString()==n)
+                        if(txtName.text.toString().contains(".aac"))
+                            txtName.text=txtName.text.toString().replace(".aac","")
+                        if(!(txt.contains(".aac")))
+                            txt=txt.replace(".aac","")
+                        if(txt==n)
                             return@setOnEditorActionListener false
                         val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+n)
-                        val newFile:File = if(txtName.text.toString().contains(".aac"))
-                            File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+v.text.toString())
-                        else
-                            File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+v.text.toString()+".aac")
+                        val newFile:File = File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+txt)
                         if(newFile.exists())
                         {
                             v.text=n.subSequence(0,n.length-4)
@@ -106,13 +108,8 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                         else
                         {
                             file.renameTo(newFile)
-                            if(txtName.text.toString().contains(".aac"))
-                                txtName.text=txtName.text.toString().replace(".aac","")
                             v.clearFocus()
-                            if(txtName.text.toString().contains(".aac"))
-                                record.setTitle(v.text.toString())
-                            else
-                                record.setTitle(v.text.toString()+".aac")
+                            record.setTitle(txt)
                             val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             imm.hideSoftInputFromWindow(v.windowToken, 0)
                             true
