@@ -5,6 +5,7 @@ import android.media.MediaMetadataRetriever
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.SeekBar
@@ -120,12 +121,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
+        //Log.d(TAG, "onResume")
         super.onResume()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             != PermissionChecker.PERMISSION_GRANTED)
                 requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_CODE)
-
-        //update duration of the records if one is modified in the detailActivity
         for (i in records) {
             dataMedia = MediaMetadataRetriever()
             dataMedia?.setDataSource(i.getPath()+i.getTitle())
@@ -138,18 +138,31 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        //TODO save state
+        //Log.d(TAG,"onSaveInstanceState")
+        //TODO maybe save state if necessary
     }
 
     override fun onPause() {
+        //Log.d(TAG,"onPause")
         super.onPause()
         if(buStop?.visibility==Button.VISIBLE)
             buStop?.callOnClick()
     }
+/*
+    override fun onStop() {
+        Log.d(TAG,"onStop")
+        super.onStop()
+    }
 
-    //TODO manage others life state activity
+    override fun onDestroy() {
+        Log.d(TAG,"onDestroy")
+        super.onDestroy()
+    }
+*/
+    //TODO maybe manage others life state activity
     companion object{
         private const val REQUEST_CODE = 12345
+        private val TAG=MainActivity::class.java.simpleName
     }
 
 
