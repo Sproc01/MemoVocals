@@ -26,7 +26,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
     }
 
     fun removeRecord(record: Record){
-        val file= File(record.getPath())
+        val file= File(record.getPath()+record.getTitle())
         val position=Records.indexOf(record)
         Records.remove(record)
         notifyItemRemoved(position)
@@ -90,7 +90,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                         if(txtName.text.toString().contains(".aac"))
                             txtName.text=txtName.text.toString().replace(".aac","")
                         if(!(txt.contains(".aac")))
-                            txt=txt.replace(".aac","")
+                            txt+=".aac"
                         if(txt==n)
                             return@setOnEditorActionListener false
                         val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+n)
@@ -124,8 +124,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
             }
 
             buPlay.setOnClickListener{
-                val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+record.getTitle())
-                if(startPlay(file.absolutePath)==0)
+                if(startPlay(record.getPath()+record.getTitle())==0)
                 {
                     seekb.progress=0
                     seekb.max=record.getDuration()

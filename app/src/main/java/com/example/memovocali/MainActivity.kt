@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -24,11 +25,13 @@ class MainActivity : AppCompatActivity() {
     private var dataMedia:MediaMetadataRetriever?=null
     private var rc:RecyclerView?=null
     private var txtRecordGoing:TextView?=null
-    private var timer: CountDownTimer=object: CountDownTimer(30000, 100) {
+    private var noiseIndicator: ProgressBar?=null
+    private var timer: CountDownTimer=object: CountDownTimer(31000, 100) {
 
         override fun onTick(millisUntilFinished: Long) {
-            progB?.progress=progB?.progress?.plus(100)!!
-            val s="00:"+String.format("%02d",((progB?.progress?.div(1000)?:0) ))
+            noiseIndicator?.progress=amplitude()
+            progB?.progress=(30000-millisUntilFinished).toInt()
+            val s="00:"+String.format("%02d",(30000-millisUntilFinished)/1000)
             txtRecordGoing?.text=getString(R.string.Recording,s)
         }
 
@@ -48,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         progB=findViewById(R.id.progressBar)
         rc=findViewById(R.id.recyclerView)
         txtRecordGoing=findViewById(R.id.textViewRecording)
+        noiseIndicator=findViewById(R.id.NoiseLevelIndicator)
 
         //check permission
         /*if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
@@ -77,32 +81,40 @@ class MainActivity : AppCompatActivity() {
         buStop?.visibility=Button.INVISIBLE
         progB?.visibility=SeekBar.INVISIBLE
         txtRecordGoing?.visibility=TextView.INVISIBLE
+        noiseIndicator?.visibility=ProgressBar.INVISIBLE
         progB?.isEnabled=false
         progB?.max=30000
 
         buAdd?.setOnClickListener {
-            progB?.progress=0
             if (startRecord(
                     applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator,
                     Calendar.getInstance().time.toString().replace(":","").replace("GMT+","") + ".aac"
                 , applicationContext) == 0
             ) {
+                //reset seek and progress bar
+                progB?.progress=0
+                noiseIndicator?.progress=0
                 //start a timer to limit 30 second for the record
                 timer.start()
+                //setting visibility
                 buStop?.visibility = Button.VISIBLE
                 buAdd?.visibility=Button.INVISIBLE
                 progB?.visibility = SeekBar.VISIBLE
                 txtRecordGoing?.visibility=TextView.VISIBLE
+                noiseIndicator?.visibility=ProgressBar.VISIBLE
             }
         }
 
         buStop?.setOnClickListener{
             val r=stopRecord()
             (rc?.adapter as RecordAdapter).addRecord(r!!)
-            buStop?.visibility=Button.INVISIBLE
+            //stop timer
             timer.cancel()
+            //setting visibility
+            buStop?.visibility=Button.INVISIBLE
             buAdd?.visibility=Button.VISIBLE
             progB?.visibility=SeekBar.INVISIBLE
+            noiseIndicator?.visibility=ProgressBar.INVISIBLE
             txtRecordGoing?.visibility=TextView.INVISIBLE
         }
     }

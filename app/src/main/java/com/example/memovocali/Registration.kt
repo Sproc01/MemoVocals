@@ -56,6 +56,12 @@ fun stopRecord():Record?{
 }
 
 /**
+ * Function to get the amplitude of the registration
+ */
+fun amplitude():Int{
+    return Recorder?.maxAmplitude?:0
+}
+/**
  * Function for start the play
  */
 fun startPlay(path:String):Int{

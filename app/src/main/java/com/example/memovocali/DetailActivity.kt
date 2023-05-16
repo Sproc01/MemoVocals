@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
@@ -21,10 +22,13 @@ class DetailActivity : AppCompatActivity() {
     private var buStopPlay:Button? =null
     private var progB: SeekBar? =null
     private var txtRecordGoing:TextView? =null
+    private var time:Timer?=null
+    private var noiseIndicator:ProgressBar? =null
 
     class Timer(private val x:Long, private val flag:Boolean,private val activity:DetailActivity):CountDownTimer(x,100)
     {
         override fun onTick(millisUntilFinished: Long) {
+            activity.noiseIndicator?.progress=amplitude()
             activity.progB?.progress=activity.progB?.progress?.plus(100)!!
             if(flag)
                 activity.txtRecordGoing?.text=activity.getString(R.string.Recording,String.format("00:%02d",((activity.progB?.progress?.div(1000)?:0))))
@@ -53,13 +57,14 @@ class DetailActivity : AppCompatActivity() {
         buPlay=findViewById(R.id.buttonPlayDetail)
         progB =findViewById(R.id.progressBarDetail)
         txtRecordGoing=findViewById(R.id.textViewRecordingDetail)
-        var time:Timer?=null
+        noiseIndicator=findViewById(R.id.NoiseLevelIndicatorDetail)
 
         //components invisible
         progB?.visibility= View.INVISIBLE
         buStopPlay?.visibility= View.INVISIBLE
         buStopSubstitute?.visibility= View.INVISIBLE
         txtRecordGoing?.visibility= View.INVISIBLE
+        noiseIndicator?.visibility= View.INVISIBLE
 
         //read data from intent
         val name=(intent.getStringExtra("recordName") ?: "")
@@ -92,7 +97,7 @@ class DetailActivity : AppCompatActivity() {
             if(startRecord(path, name, applicationContext)==0)
             {
                 progB?.max=30000
-                time=Timer(30000, true,this)
+                time=Timer(31000, true,this)
                 progB?.progress=0
                 time?.start()
                 txtDuration?.text="--:--"
@@ -103,6 +108,7 @@ class DetailActivity : AppCompatActivity() {
                 buStopPlay?.visibility= View.INVISIBLE
                 buClose?.visibility= View.INVISIBLE
                 txtRecordGoing?.visibility= View.VISIBLE
+                noiseIndicator?.visibility= View.VISIBLE
                 progB?.isEnabled=false
             }
         }
@@ -120,6 +126,7 @@ class DetailActivity : AppCompatActivity() {
             buClose?.visibility= View.VISIBLE
             progB?.visibility= View.INVISIBLE
             txtRecordGoing?.visibility= View.INVISIBLE
+            noiseIndicator?.visibility= View.INVISIBLE
             progB?.isEnabled=true
         }
 
