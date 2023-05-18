@@ -85,6 +85,12 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
                         var txt=txtName.text.toString()
+                        for(i in txt)
+                            if(!(i in 'A'..'Z' || i in 'a'..'z' || i in '0'..'9' || i==' '))
+                            {
+                                txtName.error=parent.context.getString(R.string.errorInvalidName)
+                                return@setOnEditorActionListener false
+                            }
                         if(txt=="")
                             return@setOnEditorActionListener false
                         val n=record.getTitle()

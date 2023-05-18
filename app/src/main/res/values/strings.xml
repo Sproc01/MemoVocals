@@ -13,6 +13,7 @@
     <string name="TitleDetail">%1$s</string>
     <string name="Recording">Recording: %1$s</string>
     <string name="errorInsert">Insert a name</string>
+    <string name="errorInvalidName">Characters not supported are present</string>
     <string name="errorAlreadyPresent">File already present</string>
     <string name="Substitute">Substitute</string>
     <string name="labelName">Name:</string>

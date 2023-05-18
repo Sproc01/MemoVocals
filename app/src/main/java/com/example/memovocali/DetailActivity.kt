@@ -154,4 +154,10 @@ class DetailActivity : AppCompatActivity() {
             buSubstitute?.visibility= View.VISIBLE
         }
     }
+
+    override fun onPause()
+    {
+        super.onPause()
+        buStopSubstitute?.callOnClick()
+    }
 }
