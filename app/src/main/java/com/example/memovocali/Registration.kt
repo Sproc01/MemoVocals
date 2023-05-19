@@ -10,13 +10,13 @@ import android.os.Build
 private var Recorder:MediaRecorder?=null
 private var path:String?=null
 private var title:String?=null
-private var player:MediaPlayer?=null
+private var isPlaying = false
 
 /**
  * Function for start the record
  */
 fun startRecord(p:String, name:String, context: Context):Int{
-    if(Recorder!=null || player!=null)
+    if(Recorder!=null && !isPlaying)
         return -1
     Recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         MediaRecorder(context)
@@ -29,13 +29,15 @@ fun startRecord(p:String, name:String, context: Context):Int{
     Recorder?.setMaxDuration(30000)
     title=name
     path=p
-    //val file= File(path,name)
     Recorder?.setOutputFile(path+ title)
     Recorder?.prepare()
     Recorder?.start()
     return 0
 }
 
+fun setIsPlaying(b:Boolean){
+    isPlaying=b
+}
 /**
  * Function for stop the record
  */
@@ -60,38 +62,5 @@ fun stopRecord():Record?{
  */
 fun amplitude():Int{
     return Recorder?.maxAmplitude?:0
-}
-/**
- * Function for start the play
- */
-fun startPlay(path:String):Int{
-    if(player!=null || Recorder!=null)
-        return -1
-    player= MediaPlayer()
-    player?.setDataSource(path)
-    player?.prepare()
-    player?.start()
-    return 0
-}
-
-/**
- * Function for stop the play
- */
-fun stopPlay(){
-    player?.stop()
-    player?.release()
-    player=null
-}
-
-fun pausePlay(){
-    player?.pause()
-}
-
-fun seekPlay(sec:Int){
-    player?.pause()
-    player?.seekTo(sec)
-    player?.setOnSeekCompleteListener {
-        player?.start()
-    }
 }
 

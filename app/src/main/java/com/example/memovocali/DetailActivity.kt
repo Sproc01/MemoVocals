@@ -1,5 +1,7 @@
 package com.example.memovocali
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
@@ -24,6 +26,7 @@ class DetailActivity : AppCompatActivity() {
     private var txtRecordGoing:TextView? =null
     private var time:Timer?=null
     private var noiseIndicator:ProgressBar? =null
+    private var intentService: Intent?=null
 
     class Timer(private val x:Long, private val flag:Boolean,private val activity:DetailActivity):CountDownTimer(x,100)
     {
@@ -81,13 +84,12 @@ class DetailActivity : AppCompatActivity() {
 
         progB?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                pausePlay()
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                seekPlay(seekBar.progress)
+                intentService?.putExtra("seek", seekBar.progress)
                 time?.cancel()
+                applicationContext.startService(intentService)
                 time=Timer(duration.toLong()-seekBar.progress, false,this@DetailActivity)
                 time?.start()
             }
@@ -131,7 +133,13 @@ class DetailActivity : AppCompatActivity() {
         }
 
         buPlay?.setOnClickListener{
-            if(startPlay(path + name)==0) {
+            if(intentService==null){
+                intentService= Intent(applicationContext, PlayerService::class.java)
+                intentService?.putExtra("recordPath", path)
+                intentService?.putExtra("recordTitle",name)
+                intentService?.putExtra("recordDuration", duration)
+                applicationContext.startService(intentService!!)
+                setIsPlaying(true)
                 progB?.max=duration
                 time=Timer(duration.toLong(), false,this)
                 progB?.progress=0
@@ -144,7 +152,9 @@ class DetailActivity : AppCompatActivity() {
             }
         }
         buStopPlay?.setOnClickListener{
-            stopPlay()
+            applicationContext.stopService(intentService)
+            intentService=null
+            setIsPlaying(false)
             progB?.visibility= View.INVISIBLE
             time?.cancel()
             time=null
