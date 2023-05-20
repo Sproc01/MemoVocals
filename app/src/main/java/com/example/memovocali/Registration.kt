@@ -2,9 +2,9 @@ package com.example.memovocali
 
 import android.content.Context
 import android.media.MediaMetadataRetriever
-import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Build
+import android.os.StatFs
 
 
 private var Recorder:MediaRecorder?=null
@@ -16,8 +16,15 @@ private var isPlaying = false
  * Function for start the record
  */
 fun startRecord(p:String, name:String, context: Context):Int{
+    // Check if there is a record or a playback in progress
     if(Recorder!=null && !isPlaying)
         return -1
+    // Check if there is enough space
+    val stat = StatFs(p)
+    val megAvailable = stat.availableBytes/1048576
+    if(megAvailable<10)
+        return -1
+    //construct and start of the record
     Recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         MediaRecorder(context)
     }
@@ -34,10 +41,13 @@ fun startRecord(p:String, name:String, context: Context):Int{
     Recorder?.start()
     return 0
 }
-
+/**
+ * Function for set the isPlaying variable
+ */
 fun setIsPlaying(b:Boolean){
     isPlaying=b
 }
+
 /**
  * Function for stop the record
  */

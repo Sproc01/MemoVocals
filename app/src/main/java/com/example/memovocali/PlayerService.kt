@@ -15,9 +15,8 @@ class PlayerService: Service() {
     private lateinit var path:String
     private lateinit var title:String
     private var duration: Int=0
-    private lateinit var view:RemoteViews
-    private var time:CountDownTimer?=null
     private var seek:Int=0
+    private var timer: CountDownTimer?=null
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -36,6 +35,13 @@ class PlayerService: Service() {
             myPlayer?.pause()
             myPlayer?.seekTo(seek)
             myPlayer?.start()
+            timer?.cancel()
+            timer=object: CountDownTimer(duration.toLong()-seek, 1000) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                    stop()
+                }
+            }
         }
         return START_STICKY
     }
@@ -76,6 +82,15 @@ class PlayerService: Service() {
         // or stopped
         myPlayer!!.setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
         myPlayer?.start()
+        timer=object: CountDownTimer(duration.toLong(), 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                if(myPlayer!=null)
+                    seek=myPlayer!!.currentPosition
+            }
+            override fun onFinish() {
+                stop()
+            }
+        }
         val notificationID = 5786423// An ID for this notification unique within the app
         // Build a notification with basic info about the song
         val notificationBuilder: Notification.Builder =
@@ -97,7 +112,8 @@ class PlayerService: Service() {
     private fun stop()
     {
         if (isPlaying) {
-            time?.cancel()
+            timer?.cancel()
+            setIsPlaying(false)
             isPlaying = false
             myPlayer?.release()
             myPlayer = null
