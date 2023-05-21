@@ -17,7 +17,7 @@ private var isPlaying = false
  */
 fun startRecord(p:String, name:String, context: Context):Int{
     // Check if there is a record or a playback in progress
-    if(Recorder!=null && !isPlaying)
+    if(Recorder!=null || isPlaying)
         return -1
     // Check if there is enough space
     val stat = StatFs(p)
@@ -48,6 +48,12 @@ fun setIsPlaying(b:Boolean){
     isPlaying=b
 }
 
+/**
+ * Function for get the isPlaying variable
+ */
+fun getIsPlaying():Boolean{
+    return isPlaying
+}
 /**
  * Function for stop the record
  */

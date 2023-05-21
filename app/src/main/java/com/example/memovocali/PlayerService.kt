@@ -1,13 +1,17 @@
 package com.example.memovocali
 
+import android.Manifest
 import android.app.*
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.CountDownTimer
 import android.os.IBinder
 import android.os.PowerManager
 import android.widget.RemoteViews
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 
 class PlayerService: Service() {
     private var myPlayer: MediaPlayer? = null
@@ -17,6 +21,7 @@ class PlayerService: Service() {
     private var duration: Int=0
     private var seek:Int=0
     private var timer: CountDownTimer?=null
+    private var notification: Notification? = null
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -37,7 +42,28 @@ class PlayerService: Service() {
             myPlayer?.start()
             timer?.cancel()
             timer=object: CountDownTimer(duration.toLong()-seek, 1000) {
-                override fun onTick(millisUntilFinished: Long) {}
+                override fun onTick(millisUntilFinished: Long) {
+                   /* if (ActivityCompat.checkSelfPermission(
+                            applicationContext,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        return
+                    }
+                    val notificationBuilder: Notification.Builder =
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                            Notification.Builder(applicationContext, CHANNEL_ID)
+                        else  // Deprecation warning left on purpose for educational reasons
+                            Notification.Builder(applicationContext)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
+                    }
+                    notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
+                    notificationBuilder.setContentTitle(title)
+                    notificationBuilder.setProgress(duration,(duration-millisUntilFinished).toInt(),false)
+                    notification = notificationBuilder.build()
+                    NotificationManagerCompat.from(applicationContext).notify(5786423, notification!!)*/
+                }
                 override fun onFinish() {
                     stop()
                 }
@@ -104,8 +130,7 @@ class PlayerService: Service() {
         notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
         notificationBuilder.setContentTitle(title)
         notificationBuilder.setProgress(duration,0,true)
-
-        val notification = notificationBuilder.build() // Requires API level 16
+        notification = notificationBuilder.build() // Requires API level 16
         startForeground(notificationID, notification)
     }
 

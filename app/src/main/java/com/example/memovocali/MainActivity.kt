@@ -2,6 +2,7 @@ package com.example.memovocali
 
 import android.Manifest
 import android.media.MediaMetadataRetriever
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -126,6 +127,16 @@ class MainActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             != PermissionChecker.PERMISSION_GRANTED)
                 requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_CODE)
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
+            PermissionChecker.PERMISSION_GRANTED)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE)
+                }
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)!=
+            PermissionChecker.PERMISSION_GRANTED)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    requestPermissions(arrayOf(Manifest.permission.FOREGROUND_SERVICE), REQUEST_CODE)
+                }
         for (i in records) {
             dataMedia = MediaMetadataRetriever()
             dataMedia?.setDataSource(i.getPath()+i.getTitle())

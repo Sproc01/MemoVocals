@@ -133,7 +133,7 @@ class DetailActivity : AppCompatActivity() {
         }
 
         buPlay?.setOnClickListener{
-            if(intentService==null){
+            if(!getIsPlaying()){
                 intentService= Intent(applicationContext, PlayerService::class.java)
                 intentService?.putExtra("recordPath", path)
                 intentService?.putExtra("recordTitle",name)
@@ -151,6 +151,7 @@ class DetailActivity : AppCompatActivity() {
                 buSubstitute?.visibility = View.INVISIBLE
             }
         }
+
         buStopPlay?.setOnClickListener{
             applicationContext.stopService(intentService)
             intentService=null

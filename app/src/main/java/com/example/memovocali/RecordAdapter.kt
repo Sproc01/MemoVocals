@@ -58,6 +58,10 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         private var intentService:Intent?=null
 
         init{
+            //visibility
+            seekb.visibility=View.INVISIBLE
+            buStopPlay.visibility=View.INVISIBLE
+            //handled event
             seekb.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {}
 
@@ -131,7 +135,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
             }
 
             buPlay.setOnClickListener{
-                if(intentService==null)
+                if(!getIsPlaying())
                 {
                     intentService= Intent(parent.context, PlayerService::class.java)
                     intentService?.putExtra("recordPath", record.getPath())
@@ -161,11 +165,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 buPlay.visibility=Button.VISIBLE
                 buDelete.visibility=Button.VISIBLE
                 buOpen.visibility=Button.VISIBLE
-
             }
-
-            seekb.visibility=View.INVISIBLE
-            buStopPlay.visibility=View.INVISIBLE
         }
 
         fun bind(r:Record,position:Int)
