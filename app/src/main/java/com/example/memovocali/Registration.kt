@@ -10,14 +10,13 @@ import android.os.StatFs
 private var Recorder:MediaRecorder?=null
 private var path:String?=null
 private var title:String?=null
-private var isPlaying = false
 
 /**
  * Function for start the record
  */
 fun startRecord(p:String, name:String, context: Context):Int{
     // Check if there is a record or a playback in progress
-    if(Recorder!=null || isPlaying)
+    if(Recorder!=null)
         return -1
     // Check if there is enough space
     val stat = StatFs(p)
@@ -41,19 +40,7 @@ fun startRecord(p:String, name:String, context: Context):Int{
     Recorder?.start()
     return 0
 }
-/**
- * Function for set the isPlaying variable
- */
-fun setIsPlaying(b:Boolean){
-    isPlaying=b
-}
 
-/**
- * Function for get the isPlaying variable
- */
-fun getIsPlaying():Boolean{
-    return isPlaying
-}
 /**
  * Function for stop the record
  */
@@ -79,4 +66,3 @@ fun stopRecord():Record?{
 fun amplitude():Int{
     return Recorder?.maxAmplitude?:0
 }
-

@@ -25,13 +25,26 @@ class Record(private var title:String, private val filename:String, private var 
      */
     fun getDuration():Int { return duration }
 
+    /**
+     * set a new duration of the record
+     */
     fun updateDuration(newDuration:Int) { duration=newDuration }
 
+    /**
+     * @return true if two record are equals, false otherwise
+     */
     override fun equals(other: Any?): Boolean {
         if(other is Record) {
             return title == other.title && filename == other.filename && duration == other.duration
         }
         return false
+    }
+
+    /**
+     * @return the hashcode of the record
+     */
+    override fun hashCode(): Int {
+        return title.hashCode()+filename.hashCode()+duration
     }
 
 }

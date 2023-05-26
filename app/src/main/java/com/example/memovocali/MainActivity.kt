@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private var buAdd:Button?=null
     private var buStop:Button?=null
     private val records:MutableList<Record> = mutableListOf()
-    private var progB: SeekBar?=null
+    private var seekMainB: SeekBar?=null
     private var dataMedia:MediaMetadataRetriever?=null
     private var rc:RecyclerView?=null
     private var txtRecordGoing:TextView?=null
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onTick(millisUntilFinished: Long) {
             noiseIndicator?.progress=amplitude()
-            progB?.progress=(30000-millisUntilFinished).toInt()
+            seekMainB?.progress=(30000-millisUntilFinished).toInt()
             val s="00:"+String.format("%02d",(30000-millisUntilFinished)/1000)
             txtRecordGoing?.text=getString(R.string.Recording,s)
         }
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         //initialize variables referring to the layout
         buAdd=findViewById(R.id.action_button_Add)
         buStop=findViewById(R.id.action_button_Stop)
-        progB=findViewById(R.id.progressBar)
+        seekMainB=findViewById(R.id.progressBar)
         rc=findViewById(R.id.recyclerView)
         txtRecordGoing=findViewById(R.id.textViewRecording)
         noiseIndicator=findViewById(R.id.NoiseLevelIndicator)
@@ -81,11 +81,11 @@ class MainActivity : AppCompatActivity() {
 
         rc?.adapter=RecordAdapter(records)
         buStop?.visibility=Button.INVISIBLE
-        progB?.visibility=SeekBar.INVISIBLE
+        seekMainB?.visibility=SeekBar.INVISIBLE
         txtRecordGoing?.visibility=TextView.INVISIBLE
         noiseIndicator?.visibility=ProgressBar.INVISIBLE
-        progB?.isEnabled=false
-        progB?.max=30000
+        seekMainB?.isEnabled=false
+        seekMainB?.max=30000
 
         buAdd?.setOnClickListener {
             if (startRecord(
@@ -94,14 +94,14 @@ class MainActivity : AppCompatActivity() {
                 , applicationContext) == 0
             ) {
                 //reset seek and progress bar
-                progB?.progress=0
+                seekMainB?.progress=0
                 noiseIndicator?.progress=0
                 //start a timer to limit 30 second for the record
                 timer.start()
                 //setting visibility
                 buStop?.visibility = Button.VISIBLE
                 buAdd?.visibility=Button.INVISIBLE
-                progB?.visibility = SeekBar.VISIBLE
+                seekMainB?.visibility = SeekBar.VISIBLE
                 txtRecordGoing?.visibility=TextView.VISIBLE
                 noiseIndicator?.visibility=ProgressBar.VISIBLE
             }
@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity() {
             //setting visibility
             buStop?.visibility=Button.INVISIBLE
             buAdd?.visibility=Button.VISIBLE
-            progB?.visibility=SeekBar.INVISIBLE
+            seekMainB?.visibility=SeekBar.INVISIBLE
             noiseIndicator?.visibility=ProgressBar.INVISIBLE
             txtRecordGoing?.visibility=TextView.INVISIBLE
         }
@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     requestPermissions(arrayOf(Manifest.permission.FOREGROUND_SERVICE), REQUEST_CODE)
                 }
+        //TODO sistema updating the duration of the records
         for (i in records) {
             dataMedia = MediaMetadataRetriever()
             dataMedia?.setDataSource(i.getPath()+i.getTitle())

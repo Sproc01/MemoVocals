@@ -25,5 +25,5 @@
     <string name="labelCancel">Cancel</string>
     <string name="Permission">Close the app and give the permission to record</string>
     <string name="channel_name">Player service</string>
-    <string name="channel_description">Info about songs</string>
+    <string name="channel_description">Listen %1s</string>
 </resources>

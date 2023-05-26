@@ -1,8 +1,11 @@
 package com.example.memovocali
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.CountDownTimer
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +17,41 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
+
+/*
+<Button
+        android:id="@+id/buttonPlay"
+        style="@style/Widget.Material3.Button.TonalButton.Icon"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/baseline_play_arrow_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/buttonDelete"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonStopPlay"
+        style="@style/Widget.Material3.Button.Icon"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/baseline_pause_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/buttonDelete" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@id/txtTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:max="30"
+        android:progress="0" />
+ */
 
 class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): RecyclerView.Adapter<RecordAdapter.ViewHolderRecord>()
 {
@@ -48,34 +86,49 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         private val txtTitle:TextView=itemView.findViewById(R.id.txtTitle)
         private var pos:Int=0
         private val buDelete:Button=itemView.findViewById(R.id.buttonDelete)
-        private val buPlay:Button=itemView.findViewById(R.id.buttonPlay)
-        private val buStopPlay:Button=itemView.findViewById(R.id.buttonStopPlay)
+        //private val buPlay:Button=itemView.findViewById(R.id.buttonPlay)
+        //private val buStopPlay:Button=itemView.findViewById(R.id.buttonStopPlay)
         private val txtName:TextView=itemView.findViewById(R.id.txtTitle)
-        private val seekb:SeekBar =itemView.findViewById(R.id.seekBar)
+        //private val seekb:SeekBar =itemView.findViewById(R.id.seekBar)
         private val buOpen:Button=itemView.findViewById(R.id.buttonOpen)
-        private var timer:Time?=null
+        //private var timer:Time?=null
         private lateinit var record:Record
-        private var intentService:Intent?=null
+        private lateinit var mService: PlayerService
+
+       /* private val mConnection = object : ServiceConnection {
+            override fun onServiceConnected(className: ComponentName, service: IBinder) {
+                val binder = service as PlayerService.LocalBinder
+                mService = binder.service
+                //setIsPlaying(mService.isPlaying())
+            }
+            override fun onServiceDisconnected(name: ComponentName) { //setIsPlaying(mService.isPlaying())
+             }
+        }*/
 
         init{
             //visibility
-            seekb.visibility=View.INVISIBLE
-            buStopPlay.visibility=View.INVISIBLE
+            //seekb.visibility=View.INVISIBLE
+            //buStopPlay.visibility=View.INVISIBLE
             //handled event
-            seekb.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+            /*seekb.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {}
 
                 override fun onStartTrackingTouch(seekBar: SeekBar) {}
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    intentService?.putExtra("seek", seekBar.progress)
-                    parent.context.startService(intentService)
+                    //intentService?.putExtra("seek", seekBar.progress)
+                    //parent.context.startService(intentService)
                     timer?.cancel()
+                    mService.seekTo(seekBar.progress)
                     timer=Time(record.getDuration()-(seekb.progress), this@ViewHolderRecord)
                     timer?.start()
 
                 }
-            })
+            })*/
+
+            itemView.setOnClickListener{
+                buOpen.callOnClick()
+            }
 
             buOpen.setOnClickListener{
                 val intent= Intent(parent.context,DetailActivity::class.java)
@@ -134,15 +187,16 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 rA.removeRecord(record)
             }
 
-            buPlay.setOnClickListener{
+            /*buPlay.setOnClickListener{
                 if(!getIsPlaying())
                 {
-                    intentService= Intent(parent.context, PlayerService::class.java)
-                    intentService?.putExtra("recordPath", record.getPath())
-                    intentService?.putExtra("recordTitle", record.getTitle())
-                    intentService?.putExtra("recordDuration", record.getDuration())
-                    parent.context.startService(intentService!!)
-                    setIsPlaying(true)
+                    val intentService= Intent(parent.context, PlayerService::class.java)
+                    intentService.putExtra("recordPath", record.getPath())
+                    intentService.putExtra("recordTitle", record.getTitle())
+                    intentService.putExtra("recordDuration", record.getDuration())
+                    //parent.context.startService(intentService!!)
+                    //setIsPlaying(true)
+                    parent.context.bindService(intentService, mConnection, Context.BIND_AUTO_CREATE)
                     seekb.progress=0
                     seekb.max=record.getDuration()
                     timer=Time(record.getDuration(), this@ViewHolderRecord)
@@ -156,8 +210,8 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
             }
 
             buStopPlay.setOnClickListener{
-                parent.context.stopService(intentService)
-                intentService=null
+                //parent.context.stopService(intentService)
+                parent.context.unbindService(mConnection)
                 timer?.cancel()
                 setIsPlaying(false)
                 seekb.visibility=SeekBar.INVISIBLE
@@ -165,7 +219,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 buPlay.visibility=Button.VISIBLE
                 buDelete.visibility=Button.VISIBLE
                 buOpen.visibility=Button.VISIBLE
-            }
+            }*/
         }
 
         fun bind(r:Record,position:Int)
@@ -175,15 +229,15 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
             record=r
         }
 
-        class Time(x:Int, private val vA: ViewHolderRecord):CountDownTimer(x.toLong(),100)
+       /* class Time(x:Int, private val vA: ViewHolderRecord):CountDownTimer(x.toLong(),100)
         {
             override fun onTick(millisUntilFinished: Long) {
                 vA.seekb.progress = vA.seekb.progress.plus(100)
             }
 
             override fun onFinish(){
-                vA.buStopPlay.callOnClick()
+                //vA.buStopPlay.callOnClick()
             }
-        }
+        }*/
     }
 }
