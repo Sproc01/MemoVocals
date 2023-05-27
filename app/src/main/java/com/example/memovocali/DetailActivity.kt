@@ -35,6 +35,15 @@ class DetailActivity : AppCompatActivity() {
     private var mBinder: PlayerService.LocalBinder?=null
     private lateinit var path:String
     private lateinit var recordtitle:String
+    private var thS:ServiceThread?=null
+
+    inner class ServiceThread:Thread(){
+        override fun run() {
+            val i=Intent(applicationContext, PlayerService::class.java)
+            startService(i)
+            applicationContext.bindService(i, mConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
 
     private var mConnection= object: ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -99,12 +108,14 @@ class DetailActivity : AppCompatActivity() {
         if (savedInstanceState != null && recordtitle==savedInstanceState.getString("title")) {
             mBinder = savedInstanceState.getBinder("mBinder") as PlayerService.LocalBinder?
             mService = mBinder?.service
-            bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
+            applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
             seekDetailB?.max = duration
             seekDetailB?.progress = mService?.getProgress() ?: 0
             seekDetailB?.visibility = SeekBar.VISIBLE
             buStopPlay?.visibility = Button.VISIBLE
-
+            buSubstitute?.visibility = Button.INVISIBLE
+            time=Timer((duration - seekDetailB?.progress!!).toLong(), false, this)
+            time?.start()
         } else {
             //there isn't an instance state
             seekDetailB?.visibility = View.INVISIBLE
@@ -169,9 +180,8 @@ class DetailActivity : AppCompatActivity() {
         }
 
         buPlay?.setOnClickListener {
-            val i=Intent(this, PlayerService::class.java)
-            startService(i)
-            bindService(i, mConnection, Context.BIND_AUTO_CREATE)
+            thS=ServiceThread()
+            thS?.start()
             seekDetailB?.max = duration
             time = Timer(duration.toLong(), false, this)
             seekDetailB?.progress = 0
@@ -185,7 +195,9 @@ class DetailActivity : AppCompatActivity() {
 
         buStopPlay?.setOnClickListener {
             mService?.stopPlay()
-            unbindService(mConnection)
+            applicationContext.unbindService(mConnection)
+            thS?.interrupt()
+            thS=null
             mBound = false
             time?.cancel()
             seekDetailB?.visibility = View.INVISIBLE
