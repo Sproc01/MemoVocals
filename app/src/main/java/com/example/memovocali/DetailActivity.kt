@@ -14,6 +14,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import kotlin.math.log10
 
 class DetailActivity : AppCompatActivity() {
 
@@ -61,7 +62,7 @@ class DetailActivity : AppCompatActivity() {
 
     private class Timer(x: Long, private val flagRecording: Boolean, private val activity: DetailActivity) : CountDownTimer(x, 100) {
         override fun onTick(millisUntilFinished: Long) {
-            activity.noiseIndicator?.progress = amplitude()
+            activity.noiseIndicator?.progress = 20*log10(amplitude().toDouble()).toInt()
             activity.seekDetailB?.progress = activity.seekDetailB?.progress?.plus(100)!!
             if (flagRecording)
                 activity.txtRecordGoing?.text = activity.getString(

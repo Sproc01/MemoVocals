@@ -16,6 +16,7 @@ import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
 import java.util.*
+import kotlin.math.log10
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private var timer: CountDownTimer=object: CountDownTimer(31000, 100) {
 
         override fun onTick(millisUntilFinished: Long) {
-            noiseIndicator?.progress=amplitude()
+            noiseIndicator?.progress=20* log10(amplitude().toDouble()).toInt()
             seekMainB?.progress=(30000-millisUntilFinished).toInt()
             val s="00:"+String.format("%02d",(30000-millisUntilFinished)/1000)
             txtRecordGoing?.text=getString(R.string.Recording,s)
