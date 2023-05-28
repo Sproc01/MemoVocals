@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.IBinder
@@ -37,6 +38,7 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var path:String
     private lateinit var recordtitle:String
     private var thS:ServiceThread?=null
+    private var recording=false
 
     inner class ServiceThread:Thread(){
         override fun run() {
@@ -164,10 +166,12 @@ class DetailActivity : AppCompatActivity() {
         buStopSubstitute?.setOnClickListener {
             if(mBound)
                 return@setOnClickListener
-            val r = stopRecord()
+            val r= stopRecord() ?: return@setOnClickListener
             time?.cancel()
             time = null
-            duration = r?.getDuration() ?: 0
+            val dataMedia= MediaMetadataRetriever()
+            dataMedia.setDataSource(r?.getPath()+r?.getTitle())
+            duration = dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()?:0
             txtDuration?.text = String.format("00:%02d", duration / 1000)
             buStopSubstitute?.visibility = View.INVISIBLE
             buSubstitute?.visibility = View.VISIBLE

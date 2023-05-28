@@ -6,7 +6,6 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.SeekBar
@@ -25,7 +24,6 @@ class MainActivity : AppCompatActivity() {
     private var buStop:Button?=null
     private val records:MutableList<Record> = mutableListOf()
     private var seekMainB: SeekBar?=null
-    private var dataMedia:MediaMetadataRetriever?=null
     private var rc:RecyclerView?=null
     private var txtRecordGoing:TextView?=null
     private var noiseIndicator: ProgressBar?=null
@@ -74,10 +72,7 @@ class MainActivity : AppCompatActivity() {
             file.mkdir()
         else
             for (f in file.listFiles()!!){
-                dataMedia=MediaMetadataRetriever()
-                dataMedia?.setDataSource(f.absolutePath)
-                records.add(Record(f.name,file.absolutePath+File.separator,
-                    dataMedia?.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt() ?: 0))
+                records.add(Record(f.name,file.absolutePath+File.separator))
             }
 
         rc?.adapter=RecordAdapter(records)
@@ -138,15 +133,6 @@ class MainActivity : AppCompatActivity() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     requestPermissions(arrayOf(Manifest.permission.FOREGROUND_SERVICE), REQUEST_CODE)
                 }
-        //TODO sistema updating the duration of the records
-        for (i in records) {
-            dataMedia = MediaMetadataRetriever()
-            dataMedia?.setDataSource(i.getPath()+i.getTitle())
-            i.updateDuration(
-                dataMedia?.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                    ?.toInt() ?: 0
-            )
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -52,7 +52,7 @@ fun stopRecord():Record?{
     if(path!=null || title!=null)
     {
         data.setDataSource(path+title)
-        r=Record(title!!,path!!,data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toInt())
+        r=Record(title!!,path!!)
     }
     Recorder=null
     path=null

@@ -127,7 +127,7 @@ class PlayerService: Service() {
 
     companion object
     {
-        private const val CHANNEL_ID = "Player"
+        private const val CHANNEL_ID = "MediaPlayer"
         private const val notificationID=5786423
     }
 }

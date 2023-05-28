@@ -3,7 +3,7 @@ package com.example.memovocali
 /**
  * Class for manage a single record with all the data necessary for the application
  */
-class Record(private var title:String, private val filename:String, private var duration:Int) {
+class Record(private var title:String, private val filename:String) {
 
     /**
      * @return the title of the record
@@ -21,21 +21,11 @@ class Record(private var title:String, private val filename:String, private var 
     fun getPath():String { return filename }
 
     /**
-     * @return the duration of the record
-     */
-    fun getDuration():Int { return duration }
-
-    /**
-     * set a new duration of the record
-     */
-    fun updateDuration(newDuration:Int) { duration=newDuration }
-
-    /**
      * @return true if two record are equals, false otherwise
      */
     override fun equals(other: Any?): Boolean {
         if(other is Record) {
-            return title == other.title && filename == other.filename && duration == other.duration
+            return title == other.title && filename == other.filename
         }
         return false
     }
@@ -44,7 +34,7 @@ class Record(private var title:String, private val filename:String, private var 
      * @return the hashcode of the record
      */
     override fun hashCode(): Int {
-        return title.hashCode()+filename.hashCode()+duration
+        return title.hashCode()+filename.hashCode()
     }
 
 }
