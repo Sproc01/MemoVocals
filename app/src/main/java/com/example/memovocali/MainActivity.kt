@@ -1,7 +1,6 @@
 package com.example.memovocali
 
 import android.Manifest
-import android.media.MediaMetadataRetriever
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -47,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //initialize variables referring to the layout
-        buAdd=findViewById(R.id.action_button_Add)
+        buAdd=findViewById(R.id.action_button_new)
         buStop=findViewById(R.id.action_button_Stop)
         seekMainB=findViewById(R.id.progressBar)
         rc=findViewById(R.id.recyclerView)

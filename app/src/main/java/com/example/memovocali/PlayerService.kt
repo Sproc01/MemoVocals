@@ -1,17 +1,9 @@
 package com.example.memovocali
 
-import android.Manifest
 import android.app.*
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
-import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.os.*
-import android.widget.RemoteViews
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationManagerCompat
 
 class PlayerService: Service() {
     private var myPlayer: MediaPlayer? = null
@@ -21,19 +13,40 @@ class PlayerService: Service() {
     private var duration: Int=0
     private val mBinder: IBinder = LocalBinder()
 
+    /**
+     * inner class to represent the interface that must be used to control the service when a client is bind to it
+     */
     inner class LocalBinder : Binder() {
+        /**
+         * function to get the service
+         * @return the service
+         */
         val service: PlayerService
             get() = this@PlayerService
     }
 
+    /**
+     * function call when a client bind to the service
+     * @param intent intent of the client
+     * @return the binder of the service
+     */
     override fun onBind(intent: Intent?): IBinder {
         return mBinder
     }
 
+    /**
+     * function call when the service is started
+     * @param intent intent of the service
+     * @param flags flags of the service
+     * @param startId startId of the service
+     */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_NOT_STICKY
     }
 
+    /**
+     * function call when the service is created
+     */
     override fun onCreate()
     {
         super.onCreate()
@@ -48,6 +61,12 @@ class PlayerService: Service() {
         }
     }
 
+    /**
+     * public function to start the player and create the notification
+     * @param t title of the audio
+     * @param p path of the audio
+     * @param d duration of the audio
+     */
     fun startPlay(t:String, p:String, d:Int)
     {
         if(isPlaying)
@@ -58,11 +77,17 @@ class PlayerService: Service() {
         play()
     }
 
+    /**
+     * public function to stop the player and remove the notification
+     */
     fun stopPlay()
     {
         stop()
     }
 
+    /**
+     * function to play the audio and create the notification, entering in foreground
+     */
     private fun play()
     {
         isPlaying = true
@@ -89,6 +114,9 @@ class PlayerService: Service() {
         startForeground(notificationID, notification)
     }
 
+    /**
+     * function to stop the player
+     */
     private fun stop()
     {
         if (isPlaying) {
@@ -100,10 +128,16 @@ class PlayerService: Service() {
         }
     }
 
+    /**
+     * function call when all the client unbind from the service
+     */
     override fun onUnbind(intent: Intent?): Boolean {
         return true
     }
 
+    /**
+     * function to seek the player from outside the service
+     */
     fun seekTo(seek:Int)
     {
         myPlayer?.pause()
@@ -115,6 +149,10 @@ class PlayerService: Service() {
         return isPlaying
     }
 
+    /**
+     * function to get the progress of the player
+     * @return the progress of the player
+     */
     fun getProgress():Int
     {
         return myPlayer?.currentPosition ?: 0

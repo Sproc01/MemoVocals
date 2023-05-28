@@ -38,7 +38,6 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var path:String
     private lateinit var recordtitle:String
     private var thS:ServiceThread?=null
-    private var recording=false
 
     inner class ServiceThread:Thread(){
         override fun run() {
