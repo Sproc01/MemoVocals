@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.SeekBar
@@ -19,7 +20,7 @@ import kotlin.math.log10
 
 class MainActivity : AppCompatActivity() {
 
-    private var buAdd:Button?=null
+    private var buNewRecord:Button?=null
     private var buStop:Button?=null
     private val records:MutableList<Record> = mutableListOf()
     private var seekMainB: SeekBar?=null
@@ -46,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //initialize variables referring to the layout
-        buAdd=findViewById(R.id.action_button_new)
+        buNewRecord=findViewById(R.id.action_button_new)
         buStop=findViewById(R.id.action_button_Stop)
         seekMainB=findViewById(R.id.progressBar)
         rc=findViewById(R.id.recyclerView)
@@ -57,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         /*if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             != PermissionChecker.PERMISSION_GRANTED)
         {
-            buAdd?.visibility=Button.INVISIBLE
+            buNewRecord?.visibility=Button.INVISIBLE
             buStop?.visibility=Button.INVISIBLE
             progB?.visibility=SeekBar.INVISIBLE
             txtRecordGoing?.visibility=TextView.VISIBLE
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         seekMainB?.isEnabled=false
         seekMainB?.max=30000
 
-        buAdd?.setOnClickListener {
+        buNewRecord?.setOnClickListener {
             if (startRecord(
                     applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator,
                     Calendar.getInstance().time.toString().replace(":","").replace("GMT+","") + ".aac"
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                 timer.start()
                 //setting visibility
                 buStop?.visibility = Button.VISIBLE
-                buAdd?.visibility=Button.INVISIBLE
+                buNewRecord?.visibility=Button.INVISIBLE
                 seekMainB?.visibility = SeekBar.VISIBLE
                 txtRecordGoing?.visibility=TextView.VISIBLE
                 noiseIndicator?.visibility=ProgressBar.VISIBLE
@@ -109,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             timer.cancel()
             //setting visibility
             buStop?.visibility=Button.INVISIBLE
-            buAdd?.visibility=Button.VISIBLE
+            buNewRecord?.visibility=Button.VISIBLE
             seekMainB?.visibility=SeekBar.INVISIBLE
             noiseIndicator?.visibility=ProgressBar.INVISIBLE
             txtRecordGoing?.visibility=TextView.INVISIBLE
@@ -136,17 +137,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        //Log.d(TAG,"onSaveInstanceState")
+        Log.d(TAG,"onSaveInstanceState")
         //TODO maybe save state if necessary
     }
 
     override fun onPause() {
-        //Log.d(TAG,"onPause")
+        Log.d(TAG,"onPause")
         super.onPause()
         if(buStop?.visibility==Button.VISIBLE)
             buStop?.callOnClick()
     }
-/*
+
     override fun onStop() {
         Log.d(TAG,"onStop")
         super.onStop()
@@ -156,7 +157,6 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG,"onDestroy")
         super.onDestroy()
     }
-*/
     //TODO maybe manage others life state activity
     companion object{
         private const val REQUEST_CODE = 12345

@@ -19,7 +19,6 @@ import kotlin.math.log10
 
 class DetailActivity : AppCompatActivity() {
 
-    private var buClose: Button? = null
     private var title: TextView? = null
     private var txtpath: TextView? = null
     private var txtDuration: TextView? = null
@@ -86,7 +85,6 @@ class DetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail)
 
         //initialize variables referring to the layout
-        buClose = findViewById(R.id.buttonClose)
         title = findViewById(R.id.NameRecordDetail)
         txtpath = findViewById(R.id.RecordPath)
         txtDuration = findViewById(R.id.RecordDuration)
@@ -127,11 +125,6 @@ class DetailActivity : AppCompatActivity() {
         noiseIndicator?.visibility = View.INVISIBLE
         buStopSubstitute?.visibility = View.INVISIBLE
 
-        buClose?.setOnClickListener {
-            stopRecord()
-            finish()
-        }
-
         seekDetailB?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -155,7 +148,6 @@ class DetailActivity : AppCompatActivity() {
                 buSubstitute?.visibility = View.INVISIBLE
                 buPlay?.visibility = View.INVISIBLE
                 buStopPlay?.visibility = View.INVISIBLE
-                buClose?.visibility = View.INVISIBLE
                 txtRecordGoing?.visibility = View.VISIBLE
                 noiseIndicator?.visibility = View.VISIBLE
                 seekDetailB?.isEnabled = false
@@ -176,7 +168,6 @@ class DetailActivity : AppCompatActivity() {
             buSubstitute?.visibility = View.VISIBLE
             buPlay?.visibility = View.VISIBLE
             buStopPlay?.visibility = View.INVISIBLE
-            buClose?.visibility = View.VISIBLE
             seekDetailB?.visibility = View.INVISIBLE
             txtRecordGoing?.visibility = View.INVISIBLE
             noiseIndicator?.visibility = View.INVISIBLE

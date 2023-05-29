@@ -20,26 +20,16 @@
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/NoiseLevelIndicatorDetail"
-        android:layout_width="match_parent"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:scaleY="5"
+        android:layout_margin="70dp"
+        android:rotation="270"
+        android:scaleY="3"
         android:max="150"
         android:progress="0"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonStopDetail"
-        app:layout_constraintBottom_toTopOf="@id/buttonSubstitute"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonClose"
-        style="@style/ShapeAppearanceOverlay.Material3.Button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/close"/>
+        app:layout_constraintStart_toEndOf="@id/buttonStopSubstitute"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/progressBarDetail"
@@ -62,7 +52,7 @@
         android:text="@string/Substitute"
         app:icon="@drawable/baseline_circle_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/buttonClose"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
 
@@ -70,11 +60,10 @@
     <Button
         android:id="@+id/buttonStopSubstitute"
         style="@style/Widget.Material3.Button.TonalButton.Icon"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:text="@string/stop"
         app:icon="@drawable/baseline_stop_24"
-        app:layout_constraintBottom_toTopOf="@id/buttonClose"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -148,9 +137,8 @@
     <Button
         android:id="@+id/buttonPlayDetail"
         style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:text="@string/play"
         app:icon="@drawable/baseline_play_arrow_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -159,9 +147,8 @@
     <Button
         android:id="@+id/buttonStopDetail"
         style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:text="@string/stop"
         app:icon="@drawable/baseline_pause_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
