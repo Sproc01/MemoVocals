@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
@@ -20,8 +21,8 @@ import kotlin.math.log10
 
 class MainActivity : AppCompatActivity() {
 
-    private var buNewRecord:Button?=null
-    private var buStop:Button?=null
+    private var buNewRecord:ImageButton?=null
+    private var buStop:ImageButton?=null
     private val records:MutableList<Record> = mutableListOf()
     private var seekMainB: SeekBar?=null
     private var rc:RecyclerView?=null
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private var timer: CountDownTimer=object: CountDownTimer(31000, 100) {
 
         override fun onTick(millisUntilFinished: Long) {
-            noiseIndicator?.progress=20* log10(amplitude().toDouble()).toInt()
+            noiseIndicator?.progress=20*log10(amplitude().toDouble()).toInt()
             seekMainB?.progress=(30000-millisUntilFinished).toInt()
             val s="00:"+String.format("%02d",(30000-millisUntilFinished)/1000)
             txtRecordGoing?.text=getString(R.string.Recording,s)

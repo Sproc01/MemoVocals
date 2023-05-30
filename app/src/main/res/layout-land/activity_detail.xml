@@ -34,7 +34,7 @@
         android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Widget.Material3.Button.TonalButton.Icon"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:text="@string/Substitute"
         app:layout_constraintBottom_toBottomOf="parent"
         app:icon="@drawable/baseline_circle_24"
@@ -46,7 +46,7 @@
         android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Widget.Material3.Button.TonalButton.Icon"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:text="@string/stop"
         app:icon="@drawable/baseline_stop_24"
         app:layout_constraintEnd_toEndOf="parent"
@@ -132,9 +132,8 @@
 
     <Button
         android:id="@+id/buttonPlayDetail"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-        android:text="@string/play"
-        android:layout_width="wrap_content"
+        style="@style/Widget.Material3.Button.TonalButton.Icon"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         app:icon="@drawable/baseline_play_arrow_24"
         app:layout_constraintEnd_toEndOf="parent"
@@ -143,10 +142,9 @@
 
     <Button
         android:id="@+id/buttonStopDetail"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:text="@string/stop"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        style="@style/Widget.Material3.Button.TonalButton.Icon"
         app:icon="@drawable/baseline_pause_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

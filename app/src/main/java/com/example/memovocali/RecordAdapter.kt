@@ -75,7 +75,11 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
 
         init{
 
-            itemView.setOnClickListener{
+            itemView.setOnLongClickListener{
+                buOpen.callOnClick()
+            }
+
+            txtName.setOnLongClickListener(){
                 buOpen.callOnClick()
             }
 

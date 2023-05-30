@@ -46,7 +46,7 @@
 
     <Button
         android:id="@+id/buttonSubstitute"
-        style="@style/Widget.Material3.Button.TonalButton.Icon"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Substitute"
@@ -59,7 +59,7 @@
 
     <Button
         android:id="@+id/buttonStopSubstitute"
-        style="@style/Widget.Material3.Button.TonalButton.Icon"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         app:icon="@drawable/baseline_stop_24"
@@ -136,7 +136,7 @@
 
     <Button
         android:id="@+id/buttonPlayDetail"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        style="@style/Widget.Material3.Button.TonalButton.Icon"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         app:icon="@drawable/baseline_play_arrow_24"
@@ -146,7 +146,7 @@
 
     <Button
         android:id="@+id/buttonStopDetail"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        style="@style/Widget.Material3.Button.TonalButton.Icon"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         app:icon="@drawable/baseline_pause_24"

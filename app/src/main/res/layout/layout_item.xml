@@ -3,23 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:elevation="@dimen/cardview_default_elevation">
 
     <EditText
         android:id="@+id/txtTitle"
-        android:layout_width="200dp"
         style="@style/ThemeOverlay.Material3.TextInputEditText"
+        android:layout_width="200dp"
         android:layout_height="48dp"
+        android:layout_margin="10dp"
+        android:autofillHints="name"
+        android:hint="@string/labelInput"
+        android:imeOptions="actionDone"
         android:inputType="text"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="HardcodedText"
-        android:autofillHints="name"
-        android:imeOptions="actionDone"
-        android:hint="@string/labelInput"/>
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/buttonDelete"
@@ -34,15 +35,15 @@
 
 
     <Button
+        android:id="@+id/buttonOpen"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:layout_width="48dp"
         android:layout_height="wrap_content"
-        android:id="@+id/buttonOpen"
-        app:icon="@drawable/baseline_open_in_full_24"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:layout_marginEnd="10dp"
+        app:icon="@drawable/baseline_open_in_full_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/buttonDelete" />
+        app:layout_constraintEnd_toStartOf="@id/buttonDelete"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/divider"
@@ -50,7 +51,7 @@
         android:layout_height="1dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

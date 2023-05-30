@@ -60,22 +60,22 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private class Timer(x: Long, private val flagRecording: Boolean, private val activity: DetailActivity) : CountDownTimer(x, 100) {
+    inner class Timer(x: Long, private val flagRecording: Boolean) : CountDownTimer(x, 100) {
         override fun onTick(millisUntilFinished: Long) {
-            activity.noiseIndicator?.progress = 20*log10(amplitude().toDouble()).toInt()
-            activity.seekDetailB?.progress = activity.seekDetailB?.progress?.plus(100)!!
+            noiseIndicator?.progress = 20*log10(amplitude().toDouble()).toInt()
+            seekDetailB?.progress = seekDetailB?.progress?.plus(100)!!
             if (flagRecording)
-                activity.txtRecordGoing?.text = activity.getString(
+                txtRecordGoing?.text = getString(
                     R.string.Recording,
-                    String.format("00:%02d", ((activity.seekDetailB?.progress?.div(1000) ?: 0)))
+                    String.format("00:%02d", ((seekDetailB?.progress?.div(1000) ?: 0)))
                 )
         }
 
         override fun onFinish() {
             if (flagRecording)
-                activity.buStopSubstitute?.callOnClick()
+                buStopSubstitute?.callOnClick()
             else
-                activity.buStopPlay?.callOnClick()
+                buStopPlay?.callOnClick()
         }
 
     }
@@ -114,7 +114,7 @@ class DetailActivity : AppCompatActivity() {
             seekDetailB?.visibility = SeekBar.VISIBLE
             buStopPlay?.visibility = Button.VISIBLE
             buSubstitute?.visibility = Button.INVISIBLE
-            time=Timer((duration - seekDetailB?.progress!!).toLong(), false, this)
+            time=Timer((duration - seekDetailB?.progress!!).toLong(), false)
             time?.start()
         } else {
             //there isn't an instance state
@@ -131,7 +131,7 @@ class DetailActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 mService?.seekTo(seekBar.progress)
                 time?.cancel()
-                time = Timer((duration - seekBar.progress).toLong(), false, this@DetailActivity)
+                time = Timer((duration - seekBar.progress).toLong(), false)
                 time?.start()
             }
         })
@@ -139,7 +139,7 @@ class DetailActivity : AppCompatActivity() {
         buSubstitute?.setOnClickListener {
             if (startRecord(path, recordtitle, applicationContext) == 0 && !mBound){
                 seekDetailB?.max = 30000
-                time = Timer(31000, true, this)
+                time = Timer(31000, true)
                 seekDetailB?.progress = 0
                 time?.start()
                 txtDuration?.text = "--:--"
@@ -161,7 +161,7 @@ class DetailActivity : AppCompatActivity() {
             time?.cancel()
             time = null
             val dataMedia= MediaMetadataRetriever()
-            dataMedia.setDataSource(r?.getPath()+r?.getTitle())
+            dataMedia.setDataSource(r.getPath()+r.getTitle())
             duration = dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()?:0
             txtDuration?.text = String.format("00:%02d", duration / 1000)
             buStopSubstitute?.visibility = View.INVISIBLE
@@ -178,7 +178,7 @@ class DetailActivity : AppCompatActivity() {
             thS=ServiceThread()
             thS?.start()
             seekDetailB?.max = duration
-            time = Timer(duration.toLong(), false, this)
+            time = Timer(duration.toLong(), false)
             seekDetailB?.progress = 0
             time?.start()
             buStopPlay?.visibility = View.VISIBLE
