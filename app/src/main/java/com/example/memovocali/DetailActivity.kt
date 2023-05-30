@@ -49,8 +49,8 @@ class DetailActivity : AppCompatActivity() {
     private var mConnection= object: ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             mBinder=service as PlayerService.LocalBinder
-            mService=mBinder?.service
             mBound=true
+            mService=mBinder?.service
             if(mService?.isPlaying()!! && mService?.getTitle()==recordtitle){
                 seekDetailB?.max = duration
                 seekDetailB?.progress = mService?.getProgress() ?: 0
@@ -76,7 +76,7 @@ class DetailActivity : AppCompatActivity() {
         }
 
         override fun onFinish() {
-                buStopPlay?.callOnClick()
+            buStopPlay?.callOnClick()
         }
 
     }
@@ -125,7 +125,7 @@ class DetailActivity : AppCompatActivity() {
         })
 
         buSubstitute?.setOnClickListener {
-            if(!mBound)
+            if(thS==null)
             {
                 val stat = StatFs(path)
                 val megAvailable = stat.availableBytes/1000000
@@ -146,7 +146,7 @@ class DetailActivity : AppCompatActivity() {
         }
 
         buPlay?.setOnClickListener {
-            if(thS==null)
+            if(thS==null && mBound)
                 applicationContext.unbindService(mConnection)
             thS=ServiceThread()
             thS?.start()
@@ -182,6 +182,10 @@ class DetailActivity : AppCompatActivity() {
         txtDuration?.text = String.format("00:%02d", duration / 1000)
     }
 
+    override fun onPause() {
+        super.onPause()
+        time?.cancel()
+    }
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
