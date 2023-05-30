@@ -19,7 +19,7 @@
         android:background="@drawable/image_round"
         android:shape="oval"
         android:layout_height="50dp"
-        android:layout_marginBottom="10dp"
+        android:layout_margin="10dp"
         android:contentDescription="@string/stop"
         android:src="@drawable/baseline_stop_24"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -52,8 +52,8 @@
         android:id="@+id/NoiseLevelIndicator"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:scaleY="75"
+        android:layout_margin="100dp"
+        android:scaleY="50"
         android:scaleX="2"
         android:rotation="270"
         android:max="150"
@@ -66,8 +66,9 @@
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/NoiseLevelIndicator"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="15dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
