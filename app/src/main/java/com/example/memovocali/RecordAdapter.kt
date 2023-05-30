@@ -87,64 +87,68 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 val intent= Intent(parent.context,DetailActivity::class.java)
                 intent.putExtra("recordName", record.getTitle())
                 intent.putExtra("recordPath", record.getPath())
-                val dataMedia=MediaMetadataRetriever()
-                dataMedia.setDataSource(record.getPath()+record.getTitle())
-                intent.putExtra("recordDuration", dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt())
                 parent.context.startActivity(intent)
             }
 
-            txtName.setOnEditorActionListener { v, actionId, _ ->
-                return@setOnEditorActionListener when (actionId) {
-                    EditorInfo.IME_ACTION_DONE -> {
-                        var txt=txtName.text.toString()
-                        for(i in txt)
-                            if(!(i in 'A'..'Z' || i in 'a'..'z' || i in '0'..'9' || i==' '))
-                            {
-                                txtName.error=parent.context.getString(R.string.errorInvalidName)
-                                return@setOnEditorActionListener false
-                            }
-                        if(txt=="")
-                            return@setOnEditorActionListener false
-                        val n=record.getTitle()
-                        if(txtName.text.toString().contains(".aac"))
-                            txtName.text=txtName.text.toString().replace(".aac","")
-                        if(!(txt.contains(".aac")))
-                            txt+=".aac"
-                        if(txt==n)
-                            return@setOnEditorActionListener false
-                        val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+n)
-                        val newFile:File = File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+txt)
-                        if(newFile.exists())
-                        {
-                            v.text=n.subSequence(0,n.length-4)
-                            val error= MaterialAlertDialogBuilder(parent.context)
-                            error.setTitle(parent.context.getString(R.string.DialogErrorTitle))
-                            error.setMessage(parent.context.getString(R.string.errorAlreadyPresent))
-                            error.setPositiveButton(parent.context.getString(R.string.labelOk),null)
-                            error.show()
-                            false
-                        }
-                        else
-                        {
-                            file.renameTo(newFile)
-                            v.clearFocus()
-                            record.setTitle(txt)
-                            val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                            imm.hideSoftInputFromWindow(v.windowToken, 0)
-                            true
-                        }
-                    }
-                    else -> false
-                }
+            txtName.setOnFocusChangeListener { v, hasFocus ->
+                if(!hasFocus)
+                    changeName()
             }
 
+            txtName.setOnEditorActionListener { _, actionId, _ ->
+                return@setOnEditorActionListener when (actionId) {
+                    EditorInfo.IME_ACTION_DONE -> {
+                        txtName.clearFocus()
+                        val imm = txtName.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(txtName.windowToken, 0)
+                        true
+                    }
+                    else -> false
+                    }
+
+                }
             buDelete.setOnClickListener {
                 rA.removeRecord(record)
             }
 
 
         }
-
+        private fun changeName():Boolean{
+            var txt=txtName.text.toString()
+            for(i in txt)
+                if(!(i in 'A'..'Z' || i in 'a'..'z' || i in '0'..'9' || i==' '))
+                {
+                    txtName.error=parent.context.getString(R.string.errorInvalidName)
+                    return false
+                }
+            if(txt=="")
+                return false
+            val n=record.getTitle()
+            if(txtName.text.toString().contains(".aac"))
+                txtName.text=txtName.text.toString().replace(".aac","")
+            if(!(txt.contains(".aac")))
+                txt+=".aac"
+            if(txt==n)
+                return false
+            val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+n)
+            val newFile:File = File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+txt)
+            if(newFile.exists())
+            {
+                txtName.text=n.subSequence(0,n.length-4)
+                val error= MaterialAlertDialogBuilder(parent.context)
+                error.setTitle(parent.context.getString(R.string.DialogErrorTitle))
+                error.setMessage(parent.context.getString(R.string.errorAlreadyPresent))
+                error.setPositiveButton(parent.context.getString(R.string.labelOk),null)
+                error.show()
+                return false
+            }
+            else
+            {
+                file.renameTo(newFile)
+                record.setTitle(txt)
+                return true
+            }
+        }
         fun bind(r:Record,position:Int)
         {
             txtTitle.text=r.getTitle().subSequence(0,r.getTitle().length-4)

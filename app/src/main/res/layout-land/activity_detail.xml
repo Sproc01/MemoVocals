@@ -16,18 +16,6 @@
         android:background="@color/seed"
         android:contentDescription="@string/ImageDescription" />
 
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/NoiseLevelIndicatorDetail"
-        android:layout_width="90dp"
-        android:rotation="270"
-        android:layout_height="wrap_content"
-        android:layout_margin="50dp"
-        android:scaleY="3"
-        android:max="150"
-        android:progress="0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
     <Button
         android:id="@+id/buttonSubstitute"
@@ -39,18 +27,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:icon="@drawable/baseline_circle_24"
         app:layout_constraintEnd_toEndOf="parent" />
-
-
-    <Button
-        android:id="@+id/buttonStopSubstitute"
-        android:layout_margin="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-        android:text="@string/stop"
-        app:icon="@drawable/baseline_stop_24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/progressBarDetail"
@@ -138,7 +114,7 @@
         app:icon="@drawable/baseline_play_arrow_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewRecordingDetail" />
+        app:layout_constraintTop_toBottomOf="@id/progressBarDetail" />
 
     <Button
         android:id="@+id/buttonStopDetail"
@@ -148,15 +124,7 @@
         app:icon="@drawable/baseline_pause_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewRecordingDetail" />
+        app:layout_constraintTop_toBottomOf="@id/progressBarDetail" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textViewRecordingDetail"
-        android:text="@string/Recording"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/progressBarDetail"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

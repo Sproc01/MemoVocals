@@ -26,12 +26,9 @@ class DetailActivity : AppCompatActivity() {
     private var duration = 0
     private var buSubstitute: Button? = null
     private var buPlay: Button? = null
-    private var buStopSubstitute: Button? = null
     private var buStopPlay: Button? = null
     private var seekDetailB: SeekBar? = null
-    private var txtRecordGoing: TextView? = null
     private var time: Timer? = null
-    private var noiseIndicator: ProgressBar? = null
     private var mService:PlayerService?=null
     private var mBound=false
     private var mBinder: PlayerService.LocalBinder?=null
@@ -61,21 +58,12 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    inner class Timer(x: Long, private val flagRecording: Boolean) : CountDownTimer(x, 100) {
+    inner class Timer(x: Long) : CountDownTimer(x, 100) {
         override fun onTick(millisUntilFinished: Long) {
-            noiseIndicator?.progress = 20*log10(amplitude().toDouble()).toInt()
             seekDetailB?.progress = seekDetailB?.progress?.plus(100)!!
-            if (flagRecording)
-                txtRecordGoing?.text = getString(
-                    R.string.Recording,
-                    String.format("00:%02d", ((seekDetailB?.progress?.div(1000) ?: 0)))
-                )
         }
 
         override fun onFinish() {
-            if (flagRecording)
-                buStopSubstitute?.callOnClick()
-            else
                 buStopPlay?.callOnClick()
         }
 
@@ -93,19 +81,14 @@ class DetailActivity : AppCompatActivity() {
         txtpath = findViewById(R.id.RecordPath)
         txtDuration = findViewById(R.id.RecordDuration)
         buSubstitute = findViewById(R.id.buttonSubstitute)
-        buStopSubstitute = findViewById(R.id.buttonStopSubstitute)
         buStopPlay = findViewById(R.id.buttonStopDetail)
         buPlay = findViewById(R.id.buttonPlayDetail)
         seekDetailB = findViewById(R.id.progressBarDetail)
-        txtRecordGoing = findViewById(R.id.textViewRecordingDetail)
-        noiseIndicator = findViewById(R.id.NoiseLevelIndicatorDetail)
 
         //read data from intent
         recordtitle = (intent.getStringExtra("recordName") ?: "")
         path = (intent.getStringExtra("recordPath") ?: "")
-        duration = (intent.getIntExtra("recordDuration", 0))
         txtpath?.text = path
-        txtDuration?.text = String.format("00:%02d", duration / 1000)
         title?.text = getString(R.string.TitleDetail, recordtitle)
 
         //restore instance state
@@ -118,16 +101,13 @@ class DetailActivity : AppCompatActivity() {
             seekDetailB?.visibility = SeekBar.VISIBLE
             buStopPlay?.visibility = Button.VISIBLE
             buSubstitute?.visibility = Button.INVISIBLE
-            time=Timer((duration - seekDetailB?.progress!!).toLong(), false)
+            time=Timer((duration - seekDetailB?.progress!!).toLong())
             time?.start()
         } else {
             //there isn't an instance state
             seekDetailB?.visibility = View.INVISIBLE
             buStopPlay?.visibility = View.INVISIBLE
         }
-        txtRecordGoing?.visibility = View.INVISIBLE
-        noiseIndicator?.visibility = View.INVISIBLE
-        buStopSubstitute?.visibility = View.INVISIBLE
 
         seekDetailB?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
@@ -135,60 +115,32 @@ class DetailActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 mService?.seekTo(seekBar.progress)
                 time?.cancel()
-                time = Timer((duration - seekBar.progress).toLong(), false)
+                time = Timer((duration - seekBar.progress).toLong())
                 time?.start()
             }
         })
 
         buSubstitute?.setOnClickListener {
-            if (startRecord(path, recordtitle, applicationContext) == 0 && !mBound){
-                seekDetailB?.max = 30000
-                time = Timer(31000, true)
-                seekDetailB?.progress = 0
-                time?.start()
-                txtDuration?.text = "--:--"
-                seekDetailB?.visibility = View.VISIBLE
-                buStopSubstitute?.visibility = View.VISIBLE
-                buSubstitute?.visibility = View.INVISIBLE
-                buPlay?.visibility = View.INVISIBLE
-                buStopPlay?.visibility = View.INVISIBLE
-                txtRecordGoing?.visibility = View.VISIBLE
-                noiseIndicator?.visibility = View.VISIBLE
-                seekDetailB?.isEnabled = false
+            if(!mBound)
+            {
+                val intent=Intent(this, RecordingActivity::class.java)
+                intent.putExtra("title", recordtitle)
+                intent.putExtra("path", path)
+                startActivity(intent)
             }
-        }
 
-        buStopSubstitute?.setOnClickListener {
-            if(mBound)
-                return@setOnClickListener
-            val r= stopRecord() ?: return@setOnClickListener
-            time?.cancel()
-            time = null
-            val dataMedia= MediaMetadataRetriever()
-            dataMedia.setDataSource(r.getPath()+r.getTitle())
-            duration = dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()?:0
-            txtDuration?.text = String.format("00:%02d", duration / 1000)
-            buStopSubstitute?.visibility = View.INVISIBLE
-            buSubstitute?.visibility = View.VISIBLE
-            buPlay?.visibility = View.VISIBLE
-            buStopPlay?.visibility = View.INVISIBLE
-            seekDetailB?.visibility = View.INVISIBLE
-            txtRecordGoing?.visibility = View.INVISIBLE
-            noiseIndicator?.visibility = View.INVISIBLE
-            seekDetailB?.isEnabled = true
         }
 
         buPlay?.setOnClickListener {
             thS=ServiceThread()
             thS?.start()
             seekDetailB?.max = duration
-            time = Timer(duration.toLong(), false)
+            time = Timer(duration.toLong())
             seekDetailB?.progress = 0
             time?.start()
             buStopPlay?.visibility = View.VISIBLE
             seekDetailB?.visibility = View.VISIBLE
             buPlay?.visibility = View.INVISIBLE
-            buStopSubstitute?.visibility = View.INVISIBLE
             buSubstitute?.visibility = View.INVISIBLE
         }
 
@@ -202,22 +154,23 @@ class DetailActivity : AppCompatActivity() {
             seekDetailB?.visibility = View.INVISIBLE
             buStopPlay?.visibility = View.INVISIBLE
             buPlay?.visibility = View.VISIBLE
-            buStopSubstitute?.visibility = View.INVISIBLE
             buSubstitute?.visibility = View.VISIBLE
-
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        buStopSubstitute?.callOnClick()
+    override fun onResume() {
+        super.onResume()
+        val dataMedia=MediaMetadataRetriever()
+        dataMedia.setDataSource(path+recordtitle)
+        duration=dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()?:0
+        txtDuration?.text = String.format("00:%02d", duration / 1000)
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        buStopSubstitute?.callOnClick()
         finish()
         return true
     }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if(mBound)
