@@ -8,6 +8,7 @@ import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.IBinder
+import android.os.StatFs
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
@@ -16,6 +17,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlin.math.log10
 
 class DetailActivity : AppCompatActivity() {
@@ -123,10 +125,22 @@ class DetailActivity : AppCompatActivity() {
         buSubstitute?.setOnClickListener {
             if(!mBound)
             {
-                val intent=Intent(this, RecordingActivity::class.java)
-                intent.putExtra("title", recordtitle)
-                intent.putExtra("path", path)
-                startActivity(intent)
+                val stat = StatFs(path)
+                val megAvailable = stat.availableBytes/1000000
+                if(megAvailable>15) {
+                    val intent=Intent(this, RecordingActivity::class.java)
+                    intent.putExtra("title", recordtitle)
+                    intent.putExtra("path", path)
+                    startActivity(intent)
+                }
+                else {
+                    val error= MaterialAlertDialogBuilder(applicationContext)
+                    error.setTitle(getString(R.string.DialogSpace))
+                    error.setMessage(getString(R.string.errorEnoughSpace))
+                    error.setPositiveButton(getString(R.string.labelOk),null)
+                    error.show()
+                }
+
             }
 
         }

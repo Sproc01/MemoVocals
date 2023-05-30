@@ -1,7 +1,12 @@
 package com.example.memovocali
 
+import android.content.Context
+import android.media.MediaMetadataRetriever
+import android.media.MediaRecorder
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.StatFs
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.SeekBar
@@ -19,6 +24,44 @@ class RecordingActivity : AppCompatActivity() {
     private var seekMainB: SeekBar?=null
     private var noiseIndicator: ProgressBar?=null
     private var txtTitle:TextView?=null
+    private var recorder: MediaRecorder?=null
+
+    /**
+     * Function for start the record
+     */
+    private fun startRecord(){
+        //construct and start of the record
+        recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            MediaRecorder(applicationContext)
+        }
+        else
+            MediaRecorder()
+        recorder?.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
+        recorder?.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
+        recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        recorder?.setMaxDuration(30000)
+        recorder?.setOutputFile(path+ title)
+        recorder?.prepare()
+        recorder?.start()
+    }
+
+    /**
+     * Function for stop the record
+     */
+    private fun stopRecord(){
+        recorder?.stop()
+        recorder?.release()
+        recorder=null
+    }
+
+    /**
+     * Function to get the amplitude of the registration
+     */
+    private fun amplitude():Int{
+        return recorder?.maxAmplitude?:0
+    }
+
+
     private var timer: CountDownTimer =object: CountDownTimer(31000, 100) {
 
         override fun onTick(millisUntilFinished: Long) {
@@ -54,7 +97,7 @@ class RecordingActivity : AppCompatActivity() {
         title=intent.getStringExtra("title")?:""
         path=intent.getStringExtra("path")?:""
         txtTitle?.text=title.replace(".aac","")
-        startRecord(path,title, applicationContext)
+        startRecord()
         timer.start()
 
         buStop?.setOnClickListener {

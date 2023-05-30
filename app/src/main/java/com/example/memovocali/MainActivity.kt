@@ -5,11 +5,13 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.StatFs
 import android.util.Log
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import java.util.*
 
@@ -56,10 +58,24 @@ class MainActivity : AppCompatActivity() {
             val intent= Intent(this,RecordingActivity::class.java)
             val title=Calendar.getInstance().time.toString().replace(":","").replace("GMT+","") + ".aac"
             val path=applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator
-            intent.putExtra("title",title)
-            intent.putExtra("path",path)
-            startActivity(intent)
-            (rc?.adapter as RecordAdapter).addRecord(Record(title,path))
+            val stat = StatFs(path)
+            val megAvailable = stat.availableBytes/1000000
+            if(megAvailable>15)
+            {
+                intent.putExtra("title",title)
+                intent.putExtra("path",path)
+                startActivity(intent)
+                (rc?.adapter as RecordAdapter).addRecord(Record(title,path))
+            }
+            else
+            {
+                val error= MaterialAlertDialogBuilder(applicationContext)
+                error.setTitle(getString(R.string.DialogSpace))
+                error.setMessage(getString(R.string.errorEnoughSpace))
+                error.setPositiveButton(getString(R.string.labelOk),null)
+                error.show()
+            }
+
         }
     }
 
