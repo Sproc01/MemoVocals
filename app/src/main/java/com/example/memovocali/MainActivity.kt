@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private var buNewRecord:ImageButton?=null
     private val records:MutableList<Record> = mutableListOf()
     private var rc:RecyclerView?=null
+    var serviceTitle:String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

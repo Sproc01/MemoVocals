@@ -156,13 +156,14 @@ class PlayerService: Service() {
         }
     }
 
-    fun pause()
+    fun isPlaying():Boolean
     {
-        if (isPlaying) {
-            isPlaying = false
-            myPlayer?.pause()
-            stopForeground(STOP_FOREGROUND_REMOVE)
-        }
+        return isPlaying
+    }
+
+    fun getTitle():String
+    {
+        return title
     }
 
     /**

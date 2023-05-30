@@ -1,12 +1,11 @@
 package com.example.memovocali
 
-import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.StatFs
+import android.os.PersistableBundle
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.SeekBar
@@ -80,43 +79,47 @@ class RecordingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
 
-        val actionBar: ActionBar? = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
-
-
-        buStop=findViewById(R.id.button_Stop)
-        txtRecordGoing=findViewById(R.id.textViewRecording)
-        seekMainB=findViewById(R.id.seekBar)
-        noiseIndicator=findViewById(R.id.NoiseLevelIndicator)
-        txtTitle=findViewById(R.id.textViewTitle)
-
-        seekMainB?.isEnabled=false
-        seekMainB?.max=30000
-
-
-        title=intent.getStringExtra("title")?:""
-        path=intent.getStringExtra("path")?:""
-        txtTitle?.text=title.replace(".aac","")
-        startRecord()
-        timer.start()
-
-        buStop?.setOnClickListener {
-            timer.cancel()
-            stopRecord()
+        if(savedInstanceState!=null){
             finish()
         }
+        else
+        {
+            val actionBar: ActionBar? = supportActionBar
+            actionBar?.setDisplayHomeAsUpEnabled(true)
 
+            buStop=findViewById(R.id.button_Stop)
+            txtRecordGoing=findViewById(R.id.textViewRecording)
+            seekMainB=findViewById(R.id.seekBar)
+            noiseIndicator=findViewById(R.id.NoiseLevelIndicator)
+            txtTitle=findViewById(R.id.textViewTitle)
 
+            seekMainB?.isEnabled=false
+            seekMainB?.max=30000
+
+            title=intent.getStringExtra("title")?:""
+            path=intent.getStringExtra("path")?:""
+            txtTitle?.text=title.replace(".aac","")
+            startRecord()
+            timer.start()
+        }
+
+        buStop?.setOnClickListener {
+            finish()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        buStop?.callOnClick()
+        timer.cancel()
+        stopRecord()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("isRecording",true)
+    }
     override fun onSupportNavigateUp(): Boolean {
         buStop?.callOnClick()
-        finish()
         return true
     }
 }

@@ -51,7 +51,17 @@ class DetailActivity : AppCompatActivity() {
             mBinder=service as PlayerService.LocalBinder
             mService=mBinder?.service
             mBound=true
-            mService?.startPlay(recordtitle, path, duration)
+            if(mService?.isPlaying()!! && mService?.getTitle()==recordtitle){
+                seekDetailB?.max = duration
+                seekDetailB?.progress = mService?.getProgress() ?: 0
+                seekDetailB?.visibility = SeekBar.VISIBLE
+                buStopPlay?.visibility = Button.VISIBLE
+                buSubstitute?.visibility = Button.INVISIBLE
+                time=Timer((duration - seekDetailB?.progress!!).toLong())
+                time?.start()
+            }
+            else if(thS!=null)
+                mService?.startPlay(recordtitle, path, duration)
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -95,18 +105,10 @@ class DetailActivity : AppCompatActivity() {
 
         //restore instance state
         if (savedInstanceState != null && recordtitle==savedInstanceState.getString("title")) {
-            mBinder = savedInstanceState.getBinder("mBinder") as PlayerService.LocalBinder?
-            mService = mBinder?.service
             applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
-            seekDetailB?.max = duration
-            seekDetailB?.progress = mService?.getProgress() ?: 0
-            seekDetailB?.visibility = SeekBar.VISIBLE
-            buStopPlay?.visibility = Button.VISIBLE
-            buSubstitute?.visibility = Button.INVISIBLE
-            time=Timer((duration - seekDetailB?.progress!!).toLong())
-            time?.start()
         } else {
             //there isn't an instance state
+            applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
             seekDetailB?.visibility = View.INVISIBLE
             buStopPlay?.visibility = View.INVISIBLE
         }
@@ -140,12 +142,12 @@ class DetailActivity : AppCompatActivity() {
                     error.setPositiveButton(getString(R.string.labelOk),null)
                     error.show()
                 }
-
             }
-
         }
 
         buPlay?.setOnClickListener {
+            if(thS==null)
+                applicationContext.unbindService(mConnection)
             thS=ServiceThread()
             thS?.start()
             seekDetailB?.max = duration
@@ -189,7 +191,6 @@ class DetailActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         if(mBound)
         {
-            outState.putBinder("service", mBinder)
             outState.putString("title", recordtitle)
         }
     }
