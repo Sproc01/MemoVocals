@@ -1,9 +1,19 @@
 package com.example.memovocali
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
 import android.content.Intent
+import android.media.AudioFocusRequest
+import android.media.AudioManager
+import android.media.AudioManager.OnAudioFocusChangeListener
 import android.media.MediaPlayer
-import android.os.*
+import android.os.Binder
+import android.os.Build
+import android.os.IBinder
+import android.os.PowerManager
+
 
 class PlayerService: Service() {
     private var myPlayer: MediaPlayer? = null
@@ -11,8 +21,9 @@ class PlayerService: Service() {
     private var path:String=""
     private var title:String=""
     private var duration: Int=0
+    private var audioManager: AudioManager? = null
+    private var audioRequest: AudioFocusRequest? = null
     private val mBinder: IBinder = LocalBinder()
-
     /**
      * inner class to represent the interface that must be used to control the service when a client is bind to it
      */
@@ -70,7 +81,7 @@ class PlayerService: Service() {
     fun startPlay(t:String, p:String, d:Int)
     {
         if(isPlaying)
-            return
+            stop()
         title=t
         path=p
         duration=d
@@ -98,20 +109,60 @@ class PlayerService: Service() {
             stop()
         }
         myPlayer!!.setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
-        myPlayer?.start()
-        val notificationBuilder: Notification.Builder =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                Notification.Builder(applicationContext, CHANNEL_ID)
-            else
-                Notification.Builder(applicationContext)
+        audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        val focusChangeListener = OnAudioFocusChangeListener { focusChange ->
+                when (focusChange) {
+                    AudioManager.AUDIOFOCUS_GAIN -> {
+                    }
+                    AudioManager.AUDIOFOCUS_LOSS -> {
+                        stop() //loss audio focus for an unbounded amount of time
+                    }
+                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                        stop() //loss audio focus for a short time
+                    }
+                }
+            }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
+            audioRequest=AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(
+                    android.media.AudioAttributes.Builder()
+                        .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
+                        .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                )
+                .setAcceptsDelayedFocusGain(false)
+                .setOnAudioFocusChangeListener(focusChangeListener)
+                .build()
+            val result = audioManager?.requestAudioFocus(audioRequest!!)
+            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                // have audio focus now.
+                myPlayer?.start()
+                val notificationBuilder: Notification.Builder =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        Notification.Builder(applicationContext, CHANNEL_ID)
+                    else
+                        Notification.Builder(applicationContext)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
+                }
+                notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
+                notificationBuilder.setContentTitle(title)
+                notificationBuilder.setProgress(duration,0,true)
+                val notification = notificationBuilder.build()
+                startForeground(notificationID, notification)
+            } else {
+                // haven't audio focus.
+            }
         }
-        notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
-        notificationBuilder.setContentTitle(title)
-        notificationBuilder.setProgress(duration,0,true)
-        val notification = notificationBuilder.build()
-        startForeground(notificationID, notification)
+    }
+
+    fun pause()
+    {
+        if (isPlaying) {
+            isPlaying = false
+            myPlayer?.pause()
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        }
     }
 
     /**
@@ -121,6 +172,9 @@ class PlayerService: Service() {
     {
         if (isPlaying) {
             isPlaying = false
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                audioManager?.abandonAudioFocusRequest(audioRequest!!)
+            }
             myPlayer?.stop()
             myPlayer?.release()
             myPlayer = null
@@ -145,10 +199,6 @@ class PlayerService: Service() {
         myPlayer?.start()
     }
 
-    fun isPlaying(): Boolean {
-        return isPlaying
-    }
-
     /**
      * function to get the progress of the player
      * @return the progress of the player
@@ -156,11 +206,6 @@ class PlayerService: Service() {
     fun getProgress():Int
     {
         return myPlayer?.currentPosition ?: 0
-    }
-
-    fun getTitle():String
-    {
-        return title
     }
 
     companion object
