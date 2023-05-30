@@ -31,20 +31,7 @@
         app:layout_constraintBottom_toTopOf="@id/buttonStopDetail"
         />
 
-    <Button
-        android:id="@+id/buttonSubstitute"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Substitute"
-        android:layout_margin="10dp"
-        app:icon="@drawable/baseline_circle_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
-
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/RecordDuration"
@@ -55,7 +42,7 @@
         android:text="Duration"
         tools:ignore="HardcodedText" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/RecordPath"
@@ -66,7 +53,7 @@
         android:autofillHints=""
         tools:ignore="HardcodedText" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/NameRecordDetail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -75,7 +62,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/labelName" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/labelName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -87,7 +74,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/image" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/labelPath"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -99,7 +86,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/labelDuration" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/labelDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -120,6 +107,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/progressBarDetail" />
+
+    <Button
+        android:id="@+id/buttonSubstitute"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Substitute"
+        android:layout_margin="10dp"
+        app:icon="@drawable/baseline_circle_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
     <Button
         android:id="@+id/buttonStopDetail"

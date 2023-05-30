@@ -13,7 +13,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.80"/>
 
-    <ImageButton
+    <androidx.constraintlayout.utils.widget.ImageFilterButton
         android:id="@+id/button_Stop"
         android:layout_width="50dp"
         android:background="@drawable/image_round"
