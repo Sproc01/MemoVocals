@@ -14,6 +14,7 @@ import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.math.log10
 
@@ -83,6 +84,9 @@ class DetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
+
+        val actionBar: ActionBar? = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
 
         //initialize variables referring to the layout
         title = findViewById(R.id.NameRecordDetail)
@@ -209,6 +213,11 @@ class DetailActivity : AppCompatActivity() {
         buStopSubstitute?.callOnClick()
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        buStopSubstitute?.callOnClick()
+        finish()
+        return true
+    }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if(mBound)

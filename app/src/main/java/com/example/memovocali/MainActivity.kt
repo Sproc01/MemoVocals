@@ -1,47 +1,24 @@
 package com.example.memovocali
 
 import android.Manifest
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
-import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ProgressBar
-import android.widget.SeekBar
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
 import java.util.*
-import kotlin.math.log10
 
 
 class MainActivity : AppCompatActivity() {
 
     private var buNewRecord:ImageButton?=null
-    private var buStop:ImageButton?=null
     private val records:MutableList<Record> = mutableListOf()
-    private var seekMainB: SeekBar?=null
     private var rc:RecyclerView?=null
-    private var txtRecordGoing:TextView?=null
-    private var noiseIndicator: ProgressBar?=null
-    private var timer: CountDownTimer=object: CountDownTimer(31000, 100) {
-
-        override fun onTick(millisUntilFinished: Long) {
-            noiseIndicator?.progress=20*log10(amplitude().toDouble()).toInt()
-            seekMainB?.progress=(30000-millisUntilFinished).toInt()
-            val s="00:"+String.format("%02d",(30000-millisUntilFinished)/1000)
-            txtRecordGoing?.text=getString(R.string.Recording,s)
-        }
-
-        override fun onFinish() {
-            //call method to restore visibility
-            buStop?.callOnClick()
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         //initialize variables referring to the layout
         buNewRecord=findViewById(R.id.action_button_new)
-        buStop=findViewById(R.id.action_button_Stop)
-        seekMainB=findViewById(R.id.progressBar)
         rc=findViewById(R.id.recyclerView)
-        txtRecordGoing=findViewById(R.id.textViewRecording)
-        noiseIndicator=findViewById(R.id.NoiseLevelIndicator)
 
         //check permission
         /*if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
@@ -77,44 +50,16 @@ class MainActivity : AppCompatActivity() {
             }
 
         rc?.adapter=RecordAdapter(records)
-        buStop?.visibility=Button.INVISIBLE
-        seekMainB?.visibility=SeekBar.INVISIBLE
-        txtRecordGoing?.visibility=TextView.INVISIBLE
-        noiseIndicator?.visibility=ProgressBar.INVISIBLE
-        seekMainB?.isEnabled=false
-        seekMainB?.max=30000
+
 
         buNewRecord?.setOnClickListener {
-            if (startRecord(
-                    applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator,
-                    Calendar.getInstance().time.toString().replace(":","").replace("GMT+","") + ".aac"
-                , applicationContext) == 0
-            ) {
-                //reset seek and progress bar
-                seekMainB?.progress=0
-                noiseIndicator?.progress=0
-                //start a timer to limit 30 second for the record
-                timer.start()
-                //setting visibility
-                buStop?.visibility = Button.VISIBLE
-                buNewRecord?.visibility=Button.INVISIBLE
-                seekMainB?.visibility = SeekBar.VISIBLE
-                txtRecordGoing?.visibility=TextView.VISIBLE
-                noiseIndicator?.visibility=ProgressBar.VISIBLE
-            }
-        }
-
-        buStop?.setOnClickListener{
-            val r=stopRecord()
-            (rc?.adapter as RecordAdapter).addRecord(r!!)
-            //stop timer
-            timer.cancel()
-            //setting visibility
-            buStop?.visibility=Button.INVISIBLE
-            buNewRecord?.visibility=Button.VISIBLE
-            seekMainB?.visibility=SeekBar.INVISIBLE
-            noiseIndicator?.visibility=ProgressBar.INVISIBLE
-            txtRecordGoing?.visibility=TextView.INVISIBLE
+            val intent= Intent(this,RecordingActivity::class.java)
+            val title=Calendar.getInstance().time.toString().replace(":","").replace("GMT+","") + ".aac"
+            val path=applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator
+            intent.putExtra("title",title)
+            intent.putExtra("path",path)
+            startActivity(intent)
+            (rc?.adapter as RecordAdapter).addRecord(Record(title,path))
         }
     }
 
@@ -145,8 +90,6 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         Log.d(TAG,"onPause")
         super.onPause()
-        if(buStop?.visibility==Button.VISIBLE)
-            buStop?.callOnClick()
     }
 
     override fun onStop() {
