@@ -15,6 +15,9 @@ import android.os.IBinder
 import android.os.PowerManager
 
 
+interface ServiceListener{
+    fun onAudioFocusLose()
+}
 class PlayerService: Service() {
     private var myPlayer: MediaPlayer? = null
     private var isPlaying = false
@@ -23,6 +26,7 @@ class PlayerService: Service() {
     private var duration: Int=0
     private var audioManager: AudioManager? = null
     private var audioRequest: AudioFocusRequest? = null
+    private var serviceCallbacks: ServiceListener? = null
     private val mBinder: IBinder = LocalBinder()
     /**
      * inner class to represent the interface that must be used to control the service when a client is bind to it
@@ -36,6 +40,10 @@ class PlayerService: Service() {
             get() = this@PlayerService
     }
 
+
+    fun setCallbacks(callbacks: ServiceListener?) {
+        serviceCallbacks = callbacks
+    }
     /**
      * function call when a client bind to the service
      * @param intent intent of the client
@@ -116,9 +124,11 @@ class PlayerService: Service() {
                     }
                     AudioManager.AUDIOFOCUS_LOSS -> {
                         stop() //loss audio focus for an unbounded amount of time
+                        serviceCallbacks?.onAudioFocusLose()
                     }
                     AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                         stop() //loss audio focus for a short time
+                        serviceCallbacks?.onAudioFocusLose()
                     }
                 }
             }
@@ -148,6 +158,7 @@ class PlayerService: Service() {
                 notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
                 notificationBuilder.setContentTitle(title)
                 notificationBuilder.setProgress(duration,0,true)
+
                 val notification = notificationBuilder.build()
                 startForeground(notificationID, notification)
             } else {
@@ -180,6 +191,7 @@ class PlayerService: Service() {
             myPlayer?.release()
             myPlayer = null
             stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
         }
     }
 

@@ -11,16 +11,14 @@ import android.os.IBinder
 import android.os.StatFs
 import android.view.View
 import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlin.math.log10
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(),ServiceListener {
 
     private var title: TextView? = null
     private var txtpath: TextView? = null
@@ -62,6 +60,7 @@ class DetailActivity : AppCompatActivity() {
             }
             else if(thS!=null)
                 mService?.startPlay(recordtitle, path, duration)
+            mService?.setCallbacks(this@DetailActivity)
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -193,9 +192,13 @@ class DetailActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if(mBound)
+        if(mBound && thS!=null)
         {
             outState.putString("title", recordtitle)
         }
+    }
+
+    override fun onAudioFocusLose() {
+        buStopPlay?.callOnClick()
     }
 }

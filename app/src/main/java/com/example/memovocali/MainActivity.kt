@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             for (f in file.listFiles()!!){
                 records.add(Record(f.name,file.absolutePath+File.separator))
             }
-
+        records.sortBy{ it.getTitle() }
         rc?.adapter=RecordAdapter(records)
 
 
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        //Log.d(TAG, "onResume")
+        Log.d(TAG, "onResume")
         super.onResume()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             != PermissionChecker.PERMISSION_GRANTED)
