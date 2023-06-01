@@ -55,6 +55,9 @@ class MainActivity : AppCompatActivity() {
 
 
         buNewRecord?.setOnClickListener {
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PermissionChecker.PERMISSION_GRANTED)
+                return@setOnClickListener
             val intent= Intent(this,RecordingActivity::class.java)
             val title=Calendar.getInstance().time.toString().replace(":","").replace("GMT+","") + ".aac"
             val path=applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator
@@ -94,20 +97,8 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)!=
                 PermissionChecker.PERMISSION_GRANTED)
-            requestPermissions(arrayOf(Manifest.permission.FOREGROUND_SERVICE), REQUEST_CODE)
+                requestPermissions(arrayOf(Manifest.permission.FOREGROUND_SERVICE), REQUEST_CODE)
         }
-    }
-
-    override fun onStart() {
-        Log.d(TAG,"onStart")
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-            != PermissionChecker.PERMISSION_GRANTED || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
-            PermissionChecker.PERMISSION_GRANTED) || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)!=
-                    PermissionChecker.PERMISSION_GRANTED))
-        {
-            buNewRecord?.visibility=ImageButton.INVISIBLE
-        }
-        super.onStart()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

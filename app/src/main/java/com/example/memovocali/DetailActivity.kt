@@ -1,5 +1,6 @@
 package com.example.memovocali
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -16,6 +17,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class DetailActivity : AppCompatActivity(),ServiceListener {
@@ -145,6 +148,10 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         }
 
         buPlay?.setOnClickListener {
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)!=
+                PermissionChecker.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
+                PermissionChecker.PERMISSION_GRANTED)
+                return@setOnClickListener
             if(thS==null && mBound)
                 applicationContext.unbindService(mConnection)
             thS=ServiceThread()
