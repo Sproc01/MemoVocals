@@ -47,20 +47,69 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline"/>
 
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/NoiseLevelIndicator"
-        android:layout_width="100dp"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:scaleY="75"
-        android:scaleX="3"
+        android:orientation="vertical"
         android:rotation="270"
-        android:max="150"
-        android:progress="0"
-        app:layout_constraintStart_toStartOf="parent"
+        android:scaleY="5"
+        app:layout_constraintBottom_toTopOf="@id/seekBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
-        app:layout_constraintBottom_toTopOf="@id/guideline"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle">
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/NoiseLevelIndicator1"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:max="150"
+            android:progress="0"
+            android:layout_marginStart="5dp"/>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/NoiseLevelIndicator2"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:max="150"
+            android:scaleY="1"
+            android:progress="0"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="1dp"
+            />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/NoiseLevelIndicator3"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:max="150"
+            android:progress="0"
+            android:scaleY="3"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+            />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/NoiseLevelIndicator4"
+            android:layout_width="200dp"
+            android:scaleY="1"
+            android:layout_height="wrap_content"
+            android:max="150"
+            android:progress="0"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="1dp"
+            />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/NoiseLevelIndicator5"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:max="150"
+            android:progress="0"
+            android:layout_marginStart="5dp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewTitle"

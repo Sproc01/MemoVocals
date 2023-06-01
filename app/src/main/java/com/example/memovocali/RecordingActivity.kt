@@ -21,7 +21,11 @@ class RecordingActivity : AppCompatActivity() {
     private var buStop:ImageButton?=null
     private var txtRecordGoing: TextView?=null
     private var seekMainB: SeekBar?=null
-    private var noiseIndicator: ProgressBar?=null
+    private var noiseIndicator1: ProgressBar?=null
+    private var noiseIndicator2: ProgressBar?=null
+    private var noiseIndicator3: ProgressBar?=null
+    private var noiseIndicator4: ProgressBar?=null
+    private var noiseIndicator5: ProgressBar?=null
     private var txtTitle:TextView?=null
     private var recorder: MediaRecorder?=null
 
@@ -64,7 +68,11 @@ class RecordingActivity : AppCompatActivity() {
     private var timer: CountDownTimer =object: CountDownTimer(31000, 100) {
 
         override fun onTick(millisUntilFinished: Long) {
-            noiseIndicator?.progress=20* log10(amplitude().toDouble()).toInt()
+            noiseIndicator3?.progress=20* log10(amplitude().toDouble()).toInt()
+            noiseIndicator2?.progress=noiseIndicator3?.progress?.div(2)?:0
+            noiseIndicator1?.progress=noiseIndicator2?.progress?.div(2)?:0
+            noiseIndicator4?.progress=noiseIndicator3?.progress?.div(2)?:0
+            noiseIndicator5?.progress=noiseIndicator4?.progress?.div(2)?:0
             seekMainB?.progress=(30000-millisUntilFinished).toInt()
             val s="00:"+String.format("%02d",(30000-millisUntilFinished)/1000)
             txtRecordGoing?.text=getString(R.string.Recording,s)
@@ -90,7 +98,11 @@ class RecordingActivity : AppCompatActivity() {
             buStop=findViewById(R.id.button_Stop)
             txtRecordGoing=findViewById(R.id.textViewRecording)
             seekMainB=findViewById(R.id.seekBar)
-            noiseIndicator=findViewById(R.id.NoiseLevelIndicator)
+            noiseIndicator1=findViewById(R.id.NoiseLevelIndicator1)
+            noiseIndicator2=findViewById(R.id.NoiseLevelIndicator2)
+            noiseIndicator3=findViewById(R.id.NoiseLevelIndicator3)
+            noiseIndicator4=findViewById(R.id.NoiseLevelIndicator4)
+            noiseIndicator5=findViewById(R.id.NoiseLevelIndicator5)
             txtTitle=findViewById(R.id.textViewTitle)
 
             seekMainB?.isEnabled=false
