@@ -90,6 +90,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         val actionBar: ActionBar? = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
+
         //initialize variables referring to the layout
         title = findViewById(R.id.NameRecordDetail)
         txtpath = findViewById(R.id.RecordPath)

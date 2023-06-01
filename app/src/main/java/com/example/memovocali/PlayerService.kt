@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.graphics.drawable.Icon
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.AudioManager.OnAudioFocusChangeListener
@@ -158,16 +159,14 @@ class PlayerService: Service() {
                 }
                 notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
                 notificationBuilder.setContentTitle(title)
-                notificationBuilder.setProgress(duration,0,true)
-                val intent= Intent(this,DetailActivity::class.java)
+                notificationBuilder.setLargeIcon(Icon.createWithResource(applicationContext, R.drawable.baseline_audiotrack_24))
+                notificationBuilder.setContentText("Playing")
+                notificationBuilder.style = Notification.MediaStyle()
+                val intent= Intent(applicationContext,DetailActivity::class.java)
                 intent.putExtra("recordName", title)
                 intent.putExtra("recordPath", path)
-                val pendingIntent= PendingIntent.getActivity(
-                    this,
-                    0,
-                    intent,
-                    PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE
-                )
+                val pendingIntent= PendingIntent.getActivity(applicationContext, 0, intent,
+                    PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE)
                 notificationBuilder.setContentIntent(pendingIntent)
                 val notification = notificationBuilder.build()
                 startForeground(notificationID, notification)
