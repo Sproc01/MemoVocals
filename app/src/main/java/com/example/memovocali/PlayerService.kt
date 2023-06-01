@@ -3,6 +3,7 @@ package com.example.memovocali
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.media.AudioFocusRequest
@@ -158,7 +159,16 @@ class PlayerService: Service() {
                 notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
                 notificationBuilder.setContentTitle(title)
                 notificationBuilder.setProgress(duration,0,true)
-
+                val intent= Intent(this,DetailActivity::class.java)
+                intent.putExtra("recordName", title)
+                intent.putExtra("recordPath", path)
+                val pendingIntent= PendingIntent.getActivity(
+                    this,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE
+                )
+                notificationBuilder.setContentIntent(pendingIntent)
                 val notification = notificationBuilder.build()
                 startForeground(notificationID, notification)
             } else {
@@ -187,6 +197,8 @@ class PlayerService: Service() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 audioManager?.abandonAudioFocusRequest(audioRequest!!)
             }
+            title=""
+            path=""
             myPlayer?.stop()
             myPlayer?.release()
             myPlayer = null

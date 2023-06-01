@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
     private var buNewRecord:ImageButton?=null
     private val records:MutableList<Record> = mutableListOf()
     private var rc:RecyclerView?=null
-    var serviceTitle:String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,19 +82,32 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         Log.d(TAG, "onResume")
         super.onResume()
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             != PermissionChecker.PERMISSION_GRANTED)
                 requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_CODE)
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
-            PermissionChecker.PERMISSION_GRANTED)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE)
-                }
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)!=
-            PermissionChecker.PERMISSION_GRANTED)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    requestPermissions(arrayOf(Manifest.permission.FOREGROUND_SERVICE), REQUEST_CODE)
-                }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
+                PermissionChecker.PERMISSION_GRANTED)
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)!=
+                PermissionChecker.PERMISSION_GRANTED)
+            requestPermissions(arrayOf(Manifest.permission.FOREGROUND_SERVICE), REQUEST_CODE)
+        }
+    }
+
+    override fun onStart() {
+        Log.d(TAG,"onStart")
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            != PermissionChecker.PERMISSION_GRANTED || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
+            PermissionChecker.PERMISSION_GRANTED) || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)!=
+                    PermissionChecker.PERMISSION_GRANTED))
+        {
+            buNewRecord?.visibility=ImageButton.INVISIBLE
+        }
+        super.onStart()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

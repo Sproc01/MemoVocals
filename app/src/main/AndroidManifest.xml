@@ -21,7 +21,9 @@
             android:exported="false" />
 
         <activity android:name=".DetailActivity"
-            android:exported="false"/>
+            android:exported="false"
+            android:taskAffinity=""
+            android:excludeFromRecents="true" />
 
         <activity
             android:name=".MainActivity"

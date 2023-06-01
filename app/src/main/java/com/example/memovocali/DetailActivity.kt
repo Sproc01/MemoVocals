@@ -183,7 +183,10 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
     override fun onPause() {
         super.onPause()
-        time?.cancel()
+    }
+
+    override fun onStop() {
+        super.onStop()
     }
     override fun onSupportNavigateUp(): Boolean {
         finish()
@@ -198,6 +201,10 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        time?.cancel()
+    }
     override fun onAudioFocusLose() {
         buStopPlay?.callOnClick()
     }
