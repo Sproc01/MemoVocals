@@ -6,7 +6,6 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StatFs
-import android.util.Log
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
@@ -30,18 +29,6 @@ class MainActivity : AppCompatActivity() {
         buNewRecord=findViewById(R.id.action_button_new)
         rc=findViewById(R.id.recyclerView)
 
-        //check permission
-        /*if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-            != PermissionChecker.PERMISSION_GRANTED)
-        {
-            buNewRecord?.visibility=Button.INVISIBLE
-            buStop?.visibility=Button.INVISIBLE
-            progB?.visibility=SeekBar.INVISIBLE
-            txtRecordGoing?.visibility=TextView.VISIBLE
-            rc?.visibility=RecyclerView.INVISIBLE
-            txtRecordGoing?.text=getString(R.string.Permission)
-        }*/
-
         //read files in the directory if present otherwise it create a new directory
         val file= File(applicationContext.filesDir,"Memo")
         if(!file.exists())
@@ -50,17 +37,23 @@ class MainActivity : AppCompatActivity() {
             for (f in file.listFiles()!!){
                 records.add(Record(f.name,file.absolutePath+File.separator))
             }
+
+        //sort the list
         records.sortBy{ it.getTitle() }
         rc?.adapter=RecordAdapter(records)
 
 
         buNewRecord?.setOnClickListener {
+            //check permission
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                 != PermissionChecker.PERMISSION_GRANTED)
                 return@setOnClickListener
+
+            //start the recording activity
             val intent= Intent(this,RecordingActivity::class.java)
             val title=Calendar.getInstance().time.toString().replace(":","").replace("GMT+","") + ".aac"
             val path=applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator
+            //check if there is enough space
             val stat = StatFs(path)
             val megAvailable = stat.availableBytes/1000000
             if(megAvailable>15)
@@ -68,6 +61,7 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("title",title)
                 intent.putExtra("path",path)
                 startActivity(intent)
+                //update the recycler view and the list
                 (rc?.adapter as RecordAdapter).addRecord(Record(title,path))
             }
             else
@@ -83,8 +77,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        Log.d(TAG, "onResume")
         super.onResume()
+        //ask permission if the app haven't them
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             != PermissionChecker.PERMISSION_GRANTED)
                 requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_CODE)
@@ -101,30 +95,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        Log.d(TAG,"onSaveInstanceState")
-        //TODO maybe save state if necessary
-    }
-
-    override fun onPause() {
-        Log.d(TAG,"onPause")
-        super.onPause()
-    }
-
-    override fun onStop() {
-        Log.d(TAG,"onStop")
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        Log.d(TAG,"onDestroy")
-        super.onDestroy()
-    }
-    //TODO maybe manage others life state activity
     companion object{
+        /**
+         * Request code for permission
+         */
         private const val REQUEST_CODE = 12345
-        private val TAG=MainActivity::class.java.simpleName
     }
 
 

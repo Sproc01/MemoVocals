@@ -16,16 +16,19 @@ import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 
-
+/**
+ * class that represent the interface that must be implemented in order to manage callback of the service
+ */
 interface ServiceListener{
+    /**
+     * function to call when the service lose the audiofocus
+     */
     fun onAudioFocusLose()
 }
 class PlayerService: Service() {
     private var myPlayer: MediaPlayer? = null
-    private var isPlaying = false
     private var path:String=""
     private var title:String=""
-    private var duration: Int=0
     private var audioManager: AudioManager? = null
     private var audioRequest: AudioFocusRequest? = null
     private var serviceCallbacks: ServiceListener? = null
@@ -43,9 +46,14 @@ class PlayerService: Service() {
     }
 
 
+    /**
+     * function to set the callback of the service
+     * @param callbacks class that implements the interface for callback of the service
+     */
     fun setCallbacks(callbacks: ServiceListener?) {
         serviceCallbacks = callbacks
     }
+
     /**
      * function call when a client bind to the service
      * @param intent intent of the client
@@ -86,15 +94,13 @@ class PlayerService: Service() {
      * public function to start the player and create the notification
      * @param t title of the audio
      * @param p path of the audio
-     * @param d duration of the audio
      */
-    fun startPlay(t:String, p:String, d:Int)
+    fun startPlay(t:String, p:String)
     {
-        if(isPlaying)
+        if(myPlayer?.isPlaying==true)
             stop()
         title=t
         path=p
-        duration=d
         play()
     }
 
@@ -111,7 +117,6 @@ class PlayerService: Service() {
      */
     private fun play()
     {
-        isPlaying = true
         myPlayer= MediaPlayer()
         myPlayer?.setDataSource(path+title)
         myPlayer?.prepare()
@@ -176,23 +181,29 @@ class PlayerService: Service() {
         }
     }
 
+    /**
+     * function to check if the player is playing
+     * @return true if the player is playing, false otherwise
+     */
     fun isPlaying():Boolean
     {
-        return isPlaying
+        return myPlayer?.isPlaying==true
     }
 
+    /**
+     * function to get the title of the audio that is playing
+     */
     fun getTitle():String
     {
         return title
     }
 
     /**
-     * function to stop the player
+     * private function to stop the player
      */
     private fun stop()
     {
-        if (isPlaying) {
-            isPlaying = false
+        if (myPlayer?.isPlaying==true) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 audioManager?.abandonAudioFocusRequest(audioRequest!!)
             }
@@ -214,7 +225,8 @@ class PlayerService: Service() {
     }
 
     /**
-     * function to seek the player from outside the service
+     * public function to seek the player
+     * @param seek the position to seek
      */
     fun seekTo(seek:Int)
     {
@@ -234,7 +246,13 @@ class PlayerService: Service() {
 
     companion object
     {
+        /**
+         * constant for the channel id
+         */
         private const val CHANNEL_ID = "MediaPlayer"
+        /**
+         * constant for the notification id
+         */
         private const val notificationID=5786423
     }
 }

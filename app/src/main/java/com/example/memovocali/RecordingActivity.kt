@@ -1,11 +1,9 @@
 package com.example.memovocali
 
 import android.media.MediaRecorder
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.PersistableBundle
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.SeekBar
@@ -64,9 +62,13 @@ class RecordingActivity : AppCompatActivity() {
         return recorder?.maxAmplitude?:0
     }
 
-
+    /**
+     * Timer for the recording
+     */
     private var timer: CountDownTimer =object: CountDownTimer(31000, 100) {
-
+        /**
+         * Function call every tick of the timer
+         */
         override fun onTick(millisUntilFinished: Long) {
             noiseIndicator3?.progress=20* log10(amplitude().toDouble()).toInt()
             noiseIndicator2?.progress=noiseIndicator3?.progress?.div(2)?:0
@@ -78,23 +80,33 @@ class RecordingActivity : AppCompatActivity() {
             txtRecordGoing?.text=getString(R.string.Recording,s)
         }
 
+        /**
+         * Function call when the timer is finished
+         */
         override fun onFinish() {
-            //call method to restore visibility
+            //call method to close the activty
             buStop?.callOnClick()
         }
     }
+
+    /**
+     * Function call when the activity is created
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
 
+        //if the activity is recreated, close it, the recording function only if the activity stay in the foreground
         if(savedInstanceState!=null){
             finish()
         }
         else
         {
+            //set the back button
             val actionBar: ActionBar? = supportActionBar
             actionBar?.setDisplayHomeAsUpEnabled(true)
 
+            //initialize variables referring to the layout
             buStop=findViewById(R.id.button_Stop)
             txtRecordGoing=findViewById(R.id.textViewRecording)
             seekMainB=findViewById(R.id.seekBar)
@@ -105,9 +117,11 @@ class RecordingActivity : AppCompatActivity() {
             noiseIndicator5=findViewById(R.id.NoiseLevelIndicator5)
             txtTitle=findViewById(R.id.textViewTitle)
 
+            //set the seekbar
             seekMainB?.isEnabled=false
             seekMainB?.max=30000
 
+            //read data from intent
             title=intent.getStringExtra("title")?:""
             path=intent.getStringExtra("path")?:""
             txtTitle?.text=title.replace(".aac","")
@@ -115,22 +129,31 @@ class RecordingActivity : AppCompatActivity() {
             timer.start()
         }
 
+        /**
+         * Function call when the stop button is pressed
+         */
         buStop?.setOnClickListener {
             finish()
         }
     }
 
+    /**
+     * Function call when the activity is paused
+     */
     override fun onPause() {
         super.onPause()
+        //recording is possible only if the activity stay in foreground
         timer.cancel()
         stopRecord()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        //flag to know if the activity is recreating or not
         outState.putBoolean("isRecording",true)
     }
     override fun onSupportNavigateUp(): Boolean {
+        //if the back button is pressed, call the stop button
         buStop?.callOnClick()
         return true
     }

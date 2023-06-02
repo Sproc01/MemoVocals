@@ -13,17 +13,33 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 
+/**
+ * class that represent the adapter for the recyclerview
+ * @param Records list of records
+ */
 class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): RecyclerView.Adapter<RecordAdapter.ViewHolderRecord>()
 {
+    /**
+     * function that returns the number of records
+     * @return the number of records
+     */
     override fun getItemCount():Int {
         return Records.size
     }
 
+    /**
+     * function that creates a new empty viewholder
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderRecord {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_item, parent, false)
         return ViewHolderRecord(view, this, parent)
     }
 
+    /**
+     * function that removes a record from the list, from the directory and from the recyclerview
+     * @param record record to remove
+     * @see Record
+     */
     fun removeRecord(record: Record){
         val file= File(record.getPath()+record.getTitle())
         val position=Records.indexOf(record)
@@ -32,15 +48,28 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         file.delete()
     }
 
+    /**
+     * function that adds a record to the list and to the recyclerview
+     * @param record record to add
+     * @see Record
+     */
     fun addRecord(record:Record){
         Records.add(record)
         notifyItemInserted(Records.size-1)
     }
 
+    /**
+     * function that fill a new viewholder with the data of a record in the specified position
+     * @param holder viewholder to fill
+     * @param position position of the record in the list
+     */
     override fun onBindViewHolder(holder: ViewHolderRecord, position: Int) {
         holder.bind(Records[position],position)
     }
 
+    /**
+     * class that represent the viewholder for the recyclerview
+     */
     class ViewHolderRecord(itemView: View, private val rA:RecordAdapter, private val parent:ViewGroup): RecyclerView.ViewHolder(itemView) {
 
         private val txtTitle:TextView=itemView.findViewById(R.id.txtTitle)
@@ -51,15 +80,23 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         private lateinit var record:Record
 
         init{
-
+            /**
+             * function called when the user long press the item
+             */
             itemView.setOnLongClickListener{
                 buOpen.callOnClick()
             }
 
+            /**
+             * function called when the user long press the title of the item
+             */
             txtName.setOnLongClickListener(){
                 buOpen.callOnClick()
             }
 
+            /**
+             * function called when the user click on the open button
+             */
             buOpen.setOnClickListener{
                 val intent= Intent(parent.context,DetailActivity::class.java)
                 intent.putExtra("recordName", record.getTitle())
@@ -67,11 +104,17 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 parent.context.startActivity(intent)
             }
 
-            txtName.setOnFocusChangeListener { v, hasFocus ->
+            /**
+             * function called when the focus change on the title of the item
+             */
+            txtName.setOnFocusChangeListener { _, hasFocus ->
                 if(!hasFocus)
                     changeName()
             }
 
+            /**
+             * function called when the user press the done button on the keyboard
+             */
             txtName.setOnEditorActionListener { _, actionId, _ ->
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
@@ -81,35 +124,42 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                         true
                     }
                     else -> false
-                    }
-
                 }
+            }
+
+            /**
+             * function called when the user click on the delete button
+             */
             buDelete.setOnClickListener {
                 rA.removeRecord(record)
             }
 
 
         }
-        private fun changeName():Boolean{
+
+        /**
+         * function that change the name of the record
+         */
+        private fun changeName(){
             var txt=txtName.text.toString()
-            for(i in txt)
+            for(i in txt)//only certain characters are allowed
                 if(!(i in 'A'..'Z' || i in 'a'..'z' || i in '0'..'9' || i==' '))
                 {
                     txtName.error=parent.context.getString(R.string.errorInvalidName)
-                    return false
+                    return
                 }
-            if(txt=="")
-                return false
+            if(txt=="")//the name can't be empty
+                return
             val n=record.getTitle()
             if(txtName.text.toString().contains(".aac"))
                 txtName.text=txtName.text.toString().replace(".aac","")
             if(!(txt.contains(".aac")))
                 txt+=".aac"
-            if(txt==n)
-                return false
+            if(txt==n)//if the name is the same of the old one, nothing change
+                return
             val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+n)
             val newFile:File = File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+txt)
-            if(newFile.exists())
+            if(newFile.exists())//if the name is already present in the directory, an error is shown
             {
                 txtName.text=n.subSequence(0,n.length-4)
                 val error= MaterialAlertDialogBuilder(parent.context)
@@ -117,15 +167,23 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 error.setMessage(parent.context.getString(R.string.errorAlreadyPresent))
                 error.setPositiveButton(parent.context.getString(R.string.labelOk),null)
                 error.show()
-                return false
+                return
             }
             else
             {
+                //rename the file
                 file.renameTo(newFile)
+                //update the record
                 record.setTitle(txt)
-                return true
+                return
             }
         }
+
+        /**
+         * function that fill the viewholder with the data of the record in the specified position
+         * @param r record to show
+         * @param position position of the record in the list
+         */
         fun bind(r:Record,position:Int)
         {
             txtTitle.text=r.getTitle().subSequence(0,r.getTitle().length-4)

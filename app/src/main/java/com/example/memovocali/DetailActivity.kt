@@ -39,7 +39,13 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     private lateinit var recordtitle:String
     private var thS:ServiceThread?=null
 
+    /**
+     * thread that launch a new service
+     */
     inner class ServiceThread:Thread(){
+        /**
+         * function that launch the service
+         */
         override fun run() {
             val i=Intent(applicationContext, PlayerService::class.java)
             startService(i)
@@ -47,7 +53,13 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         }
     }
 
+    /**
+     * object that manage the connection to the service
+     */
     private var mConnection= object: ServiceConnection {
+        /**
+         * function that is called when the service is connected
+         */
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             mBinder=service as PlayerService.LocalBinder
             mBound=true
@@ -62,21 +74,33 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 time?.start()
             }
             else if(thS!=null)
-                mService?.startPlay(recordtitle, path, duration)
+                mService?.startPlay(recordtitle, path)
             mService?.setCallbacks(this@DetailActivity)
         }
 
+        /**
+         * function that is called when the service is disconnected
+         */
         override fun onServiceDisconnected(name: ComponentName) {
             mBound=false
             buStopPlay?.callOnClick()
         }
     }
 
+    /**
+     * class that manage the timer when an audio is playing
+     */
     inner class Timer(x: Long) : CountDownTimer(x, 100) {
+        /**
+         * function that is called when the timer tick
+         */
         override fun onTick(millisUntilFinished: Long) {
             seekDetailB?.progress = seekDetailB?.progress?.plus(100)!!
         }
 
+        /**
+         * function that is called when the timer finish
+         */
         override fun onFinish() {
             buStopPlay?.callOnClick()
         }
@@ -87,6 +111,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
+        //set a new action bar that has the back button
         val actionBar: ActionBar? = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -106,19 +131,40 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         txtpath?.text = path
         title?.text = getString(R.string.TitleDetail, recordtitle)
 
+        //get the duration of the audio
+        val dataMedia=MediaMetadataRetriever()
+        dataMedia.setDataSource(path+recordtitle)
+        duration=dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()?:0
+        txtDuration?.text = String.format("00:%02d", duration / 1000)
+
         //restore instance state
         if (savedInstanceState != null && recordtitle==savedInstanceState.getString("title")) {
             applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
         } else {
             //there isn't an instance state
+            //bind the service to found if an audio is playing
             applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
             seekDetailB?.visibility = View.INVISIBLE
             buStopPlay?.visibility = View.INVISIBLE
         }
 
+        /**
+         * function that is called when the seekbar is clicked
+         */
         seekDetailB?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            /**
+             * function that is called when the seekbar progress change
+             */
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
+
+            /**
+             * function that is called when the seekbar start to be clicked
+             */
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            /**
+             * function that is called when the seekbar stop to be clicked
+             */
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 mService?.seekTo(seekBar.progress)
                 time?.cancel()
@@ -127,12 +173,21 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             }
         })
 
+        /**
+         * function that is called when the substitute button is clicked
+         */
         buSubstitute?.setOnClickListener {
-            if(thS==null)
+            if(thS==null)//if thS is null it means that this instance of detailActivty doesn't have a service playing
             {
+                //check if the app have the permission to record
+                if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                    != PermissionChecker.PERMISSION_GRANTED)
+                    return@setOnClickListener
+                //check if there is enough space to record(15 MB)
                 val stat = StatFs(path)
                 val megAvailable = stat.availableBytes/1000000
                 if(megAvailable>15) {
+
                     val intent=Intent(this, RecordingActivity::class.java)
                     intent.putExtra("title", recordtitle)
                     intent.putExtra("path", path)
@@ -148,19 +203,27 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             }
         }
 
+        /**
+         * function that is called when the play button is clicked
+         */
         buPlay?.setOnClickListener {
+            //check if the app has the permission to start a foreground service
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)!=
                 PermissionChecker.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
                 PermissionChecker.PERMISSION_GRANTED)
                 return@setOnClickListener
-            if(thS==null && mBound)
+            if(thS==null && mBound)//unbind from the existing service and start a new one in a separate thread
                 applicationContext.unbindService(mConnection)
             thS=ServiceThread()
             thS?.start()
-            seekDetailB?.max = duration
+
+            //start timer
             time = Timer(duration.toLong())
-            seekDetailB?.progress = 0
             time?.start()
+
+            //update the interface
+            seekDetailB?.max = duration
+            seekDetailB?.progress = 0
             buStopPlay?.visibility = View.VISIBLE
             seekDetailB?.visibility = View.VISIBLE
             buPlay?.visibility = View.INVISIBLE
@@ -168,12 +231,19 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         }
 
         buStopPlay?.setOnClickListener {
+            //stop the service and unbind
             mService?.stopPlay()
             applicationContext.unbindService(mConnection)
+            mBound = false
+
+            //stop the thread
             thS?.interrupt()
             thS=null
-            mBound = false
+
+            //stop the timer
             time?.cancel()
+
+            //update the interface
             seekDetailB?.visibility = View.INVISIBLE
             buStopPlay?.visibility = View.INVISIBLE
             buPlay?.visibility = View.VISIBLE
@@ -181,29 +251,15 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        val dataMedia=MediaMetadataRetriever()
-        dataMedia.setDataSource(path+recordtitle)
-        duration=dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()?:0
-        txtDuration?.text = String.format("00:%02d", duration / 1000)
-    }
-
-    override fun onPause() {
-        super.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
     override fun onSupportNavigateUp(): Boolean {
+        //back button pressed so the activity must be destroyed
         finish()
         return true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if(mBound && thS!=null)
+        if(mBound && thS!=null)//if service is playing save the title
         {
             outState.putString("title", recordtitle)
         }
@@ -211,9 +267,12 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        //stop the timer if it is running
         time?.cancel()
     }
+
     override fun onAudioFocusLose() {
+        //when service lose the audio focus update the interface and unbind
         buStopPlay?.callOnClick()
     }
 }
