@@ -40,20 +40,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     private var thS:ServiceThread?=null
 
     /**
-     * thread that launch a new service
-     */
-    inner class ServiceThread:Thread(){
-        /**
-         * function that launch the service
-         */
-        override fun run() {
-            val i=Intent(applicationContext, PlayerService::class.java)
-            startService(i)
-            applicationContext.bindService(i, mConnection, Context.BIND_AUTO_CREATE)
-        }
-    }
-
-    /**
      * object that manage the connection to the service
      */
     private var mConnection= object: ServiceConnection {
@@ -84,6 +70,20 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         override fun onServiceDisconnected(name: ComponentName) {
             mBound=false
             buStopPlay?.callOnClick()
+        }
+    }
+
+    /**
+     * thread that launch a new service
+     */
+    inner class ServiceThread:Thread(){
+        /**
+         * function that launch the service
+         */
+        override fun run() {
+            val i=Intent(applicationContext, PlayerService::class.java)
+            startService(i)
+            applicationContext.bindService(i, mConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
@@ -271,6 +271,9 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         time?.cancel()
     }
 
+    /**
+     * function that is called when the service lose audio focus
+     */
     override fun onAudioFocusLose() {
         //when service lose the audio focus update the interface and unbind
         buStopPlay?.callOnClick()

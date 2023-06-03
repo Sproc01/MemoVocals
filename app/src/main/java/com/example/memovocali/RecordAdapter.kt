@@ -142,8 +142,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         private fun changeName(){
             var txt=txtName.text.toString()
             for(i in txt)//only certain characters are allowed
-                if(!(i in 'A'..'Z' || i in 'a'..'z' || i in '0'..'9' || i==' '))
-                {
+                if(!(i in 'A'..'Z' || i in 'a'..'z' || i in '0'..'9' || i==' ')) {
                     txtName.error=parent.context.getString(R.string.errorInvalidName)
                     return
                 }
@@ -156,10 +155,12 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 txt+=".aac"
             if(txt==n)//if the name is the same of the old one, nothing change
                 return
+
             val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+n)
             val newFile = File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+txt)
-            if(newFile.exists())//if the name is already present in the directory, an error is shown
-            {
+
+            //if the name is already present in the directory, an error is shown
+            if(newFile.exists()) {
                 txtName.text=n.subSequence(0,n.length-4)
                 val error= MaterialAlertDialogBuilder(parent.context)
                 error.setTitle(parent.context.getString(R.string.DialogErrorTitle))
@@ -168,8 +169,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 error.show()
                 return
             }
-            else
-            {
+            else {
                 //rename the file
                 file.renameTo(newFile)
                 //update the record
@@ -182,8 +182,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
          * function that fill the viewholder with the data of the record in the specified position
          * @param r record to show
          */
-        fun bind(r:Record)
-        {
+        fun bind(r:Record) {
             txtTitle.text=r.getTitle().subSequence(0,r.getTitle().length-4)
             record=r
         }

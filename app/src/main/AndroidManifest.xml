@@ -20,6 +20,18 @@
             android:name=".RecordingActivity"
             android:exported="false" />
 
+        <!--noHistory attribute because when you click onto the notification you cannot return to the previous detailActivity if open
+            taskAffinity and excludeFromRecents beacuse the activity can start from the notification without opening the mainActivity:
+            From documentation
+            Because a "special activity" started from a notification doesn't need a back stack, you can create the PendingIntent by calling getActivity(), but you should also be sure you've defined the appropriate task options in the manifest.
+
+                android:taskAffinity=""
+            Combined with the FLAG_ACTIVITY_NEW_TASK flag that you'll use in code,
+            setting this attribute blank ensures that this activity doesn't go into the app's default task.
+            Any existing tasks that have the app's default affinity are not affected.
+
+                android:excludeFromRecents="true"
+            Excludes the new task from Recents, so that the user can't accidentally navigate back to it.-->
         <activity android:name=".DetailActivity"
             android:exported="false"
             android:taskAffinity=""

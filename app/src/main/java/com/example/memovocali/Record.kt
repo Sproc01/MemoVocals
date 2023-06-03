@@ -4,7 +4,6 @@ package com.example.memovocali
  * Class for manage a single record with all the data necessary for the application
  */
 class Record(private var title:String, private val filename:String) {
-
     /**
      * @return the title of the record
      */

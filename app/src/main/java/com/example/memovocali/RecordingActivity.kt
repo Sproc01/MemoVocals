@@ -100,8 +100,7 @@ class RecordingActivity : AppCompatActivity() {
         if(savedInstanceState!=null){
             finish()
         }
-        else
-        {
+        else {
             //set the back button
             val actionBar: ActionBar? = supportActionBar
             actionBar?.setDisplayHomeAsUpEnabled(true)
@@ -137,9 +136,6 @@ class RecordingActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Function call when the activity is paused
-     */
     override fun onPause() {
         super.onPause()
         //recording is possible only if the activity stay in foreground
@@ -152,6 +148,7 @@ class RecordingActivity : AppCompatActivity() {
         //flag to know if the activity is recreating or not
         outState.putBoolean("isRecording",true)
     }
+
     override fun onSupportNavigateUp(): Boolean {
         //if the back button is pressed, call the stop button
         buStop?.callOnClick()

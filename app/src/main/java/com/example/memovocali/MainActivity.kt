@@ -56,23 +56,20 @@ class MainActivity : AppCompatActivity() {
             //check if there is enough space
             val stat = StatFs(path)
             val megAvailable = stat.availableBytes/1000000
-            if(megAvailable>15)
-            {
+            if(megAvailable>15) {
                 intent.putExtra("title",title)
                 intent.putExtra("path",path)
                 startActivity(intent)
                 //update the recycler view and the list
                 (rc?.adapter as RecordAdapter).addRecord(Record(title,path))
             }
-            else
-            {
+            else {
                 val error= MaterialAlertDialogBuilder(applicationContext)
                 error.setTitle(getString(R.string.DialogSpace))
                 error.setMessage(getString(R.string.errorEnoughSpace))
                 error.setPositiveButton(getString(R.string.Ok),null)
                 error.show()
             }
-
         }
     }
 

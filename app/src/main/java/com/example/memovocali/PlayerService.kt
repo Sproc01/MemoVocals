@@ -33,6 +33,7 @@ class PlayerService: Service() {
     private var audioRequest: AudioFocusRequest? = null
     private var serviceCallbacks: ServiceListener? = null
     private val mBinder: IBinder = LocalBinder()
+
     /**
      * inner class to represent the interface that must be used to control the service when a client is bind to it
      */
@@ -76,8 +77,7 @@ class PlayerService: Service() {
     /**
      * function call when the service is created
      */
-    override fun onCreate()
-    {
+    override fun onCreate() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = getString(R.string.channel_name)
@@ -95,8 +95,7 @@ class PlayerService: Service() {
      * @param t title of the audio
      * @param p path of the audio
      */
-    fun startPlay(t:String, p:String)
-    {
+    fun startPlay(t:String, p:String) {
         if(myPlayer?.isPlaying==true)
             stop()
         title=t
@@ -107,16 +106,14 @@ class PlayerService: Service() {
     /**
      * public function to stop the player and remove the notification
      */
-    fun stopPlay()
-    {
+    fun stopPlay() {
         stop()
     }
 
     /**
      * function to play the audio and create the notification, entering in foreground
      */
-    private fun play()
-    {
+    private fun play() {
         myPlayer= MediaPlayer()
         myPlayer?.setDataSource(path+title)
         myPlayer?.prepare()
@@ -185,24 +182,21 @@ class PlayerService: Service() {
      * function to check if the player is playing
      * @return true if the player is playing, false otherwise
      */
-    fun isPlaying():Boolean
-    {
+    fun isPlaying():Boolean {
         return myPlayer?.isPlaying==true
     }
 
     /**
      * function to get the title of the audio that is playing
      */
-    fun getTitle():String
-    {
+    fun getTitle():String {
         return title
     }
 
     /**
      * private function to stop the player
      */
-    private fun stop()
-    {
+    private fun stop() {
         if (myPlayer?.isPlaying==true) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 audioManager?.abandonAudioFocusRequest(audioRequest!!)
@@ -228,8 +222,7 @@ class PlayerService: Service() {
      * public function to seek the player
      * @param seek the position to seek
      */
-    fun seekTo(seek:Int)
-    {
+    fun seekTo(seek:Int) {
         myPlayer?.pause()
         myPlayer?.seekTo(seek)
         myPlayer?.start()
@@ -239,13 +232,11 @@ class PlayerService: Service() {
      * function to get the progress of the player
      * @return the progress of the player
      */
-    fun getProgress():Int
-    {
+    fun getProgress():Int {
         return myPlayer?.currentPosition ?: 0
     }
 
-    companion object
-    {
+    companion object {
         /**
          * constant for the channel id
          */
