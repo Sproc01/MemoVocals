@@ -64,7 +64,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
      * @param position position of the record in the list
      */
     override fun onBindViewHolder(holder: ViewHolderRecord, position: Int) {
-        holder.bind(Records[position],position)
+        holder.bind(Records[position])
     }
 
     /**
@@ -73,7 +73,6 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
     class ViewHolderRecord(itemView: View, private val rA:RecordAdapter, private val parent:ViewGroup): RecyclerView.ViewHolder(itemView) {
 
         private val txtTitle:TextView=itemView.findViewById(R.id.txtTitle)
-        private var pos:Int=0
         private val buDelete:Button=itemView.findViewById(R.id.buttonDelete)
         private val txtName:TextView=itemView.findViewById(R.id.txtTitle)
         private val buOpen:Button=itemView.findViewById(R.id.buttonOpen)
@@ -90,7 +89,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
             /**
              * function called when the user long press the title of the item
              */
-            txtName.setOnLongClickListener(){
+            txtName.setOnLongClickListener{
                 buOpen.callOnClick()
             }
 
@@ -158,14 +157,14 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
             if(txt==n)//if the name is the same of the old one, nothing change
                 return
             val file= File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+n)
-            val newFile:File = File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+txt)
+            val newFile = File(parent.context.applicationContext.filesDir.toString()+File.separator+"Memo"+File.separator+txt)
             if(newFile.exists())//if the name is already present in the directory, an error is shown
             {
                 txtName.text=n.subSequence(0,n.length-4)
                 val error= MaterialAlertDialogBuilder(parent.context)
                 error.setTitle(parent.context.getString(R.string.DialogErrorTitle))
                 error.setMessage(parent.context.getString(R.string.errorAlreadyPresent))
-                error.setPositiveButton(parent.context.getString(R.string.labelOk),null)
+                error.setPositiveButton(parent.context.getString(R.string.Ok),null)
                 error.show()
                 return
             }
@@ -182,12 +181,10 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         /**
          * function that fill the viewholder with the data of the record in the specified position
          * @param r record to show
-         * @param position position of the record in the list
          */
-        fun bind(r:Record,position:Int)
+        fun bind(r:Record)
         {
             txtTitle.text=r.getTitle().subSequence(0,r.getTitle().length-4)
-            pos=position
             record=r
         }
     }

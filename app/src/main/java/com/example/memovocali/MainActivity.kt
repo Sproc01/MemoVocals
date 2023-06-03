@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                 val error= MaterialAlertDialogBuilder(applicationContext)
                 error.setTitle(getString(R.string.DialogSpace))
                 error.setMessage(getString(R.string.errorEnoughSpace))
-                error.setPositiveButton(getString(R.string.labelOk),null)
+                error.setPositiveButton(getString(R.string.Ok),null)
                 error.show()
             }
 
