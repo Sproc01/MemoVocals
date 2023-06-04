@@ -33,6 +33,8 @@ class PlayerService: Service() {
     private var audioRequest: AudioFocusRequest? = null
     private var serviceCallbacks: ServiceListener? = null
     private val mBinder: IBinder = LocalBinder()
+    private var isPaused: Boolean = false
+
 
     /**
      * inner class to represent the interface that must be used to control the service when a client is bind to it
@@ -97,47 +99,33 @@ class PlayerService: Service() {
      */
     fun startPlay(t:String, p:String) {
         if(myPlayer?.isPlaying==true)
-            stop()
+            stopPlay()
         title=t
         path=p
-        play()
-    }
-
-    /**
-     * public function to stop the player and remove the notification
-     */
-    fun stopPlay() {
-        stop()
-    }
-
-    /**
-     * function to play the audio and create the notification, entering in foreground
-     */
-    private fun play() {
         myPlayer= MediaPlayer()
         myPlayer?.setDataSource(path+title)
         myPlayer?.prepare()
         myPlayer?.setOnCompletionListener {
-            stop()
+            stopPlay()
         }
         myPlayer!!.setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
         audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         val focusChangeListener = OnAudioFocusChangeListener { focusChange ->
-                when (focusChange) {
-                    AudioManager.AUDIOFOCUS_GAIN -> {
-                    }
-                    AudioManager.AUDIOFOCUS_LOSS -> {
-                        stop() //loss audio focus for an unbounded amount of time
-                        serviceCallbacks?.onAudioFocusLose()
-                    }
-                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                        stop() //loss audio focus for a short time
-                        serviceCallbacks?.onAudioFocusLose()
-                    }
+            when (focusChange) {
+                AudioManager.AUDIOFOCUS_GAIN -> {
+                }
+                AudioManager.AUDIOFOCUS_LOSS -> {
+                    stopPlay() //loss audio focus for an unbounded amount of time
+                    serviceCallbacks?.onAudioFocusLose()
+                }
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                    stopPlay() //loss audio focus for a short time
+                    serviceCallbacks?.onAudioFocusLose()
                 }
             }
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            audioRequest=AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+            audioRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
                 .setAudioAttributes(
                     android.media.AudioAttributes.Builder()
                         .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
@@ -161,20 +149,63 @@ class PlayerService: Service() {
                 }
                 notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
                 notificationBuilder.setContentTitle(title)
-                notificationBuilder.setLargeIcon(Icon.createWithResource(applicationContext, R.drawable.baseline_audiotrack_24))
+                notificationBuilder.setLargeIcon(
+                    Icon.createWithResource(
+                        applicationContext,
+                        R.drawable.baseline_audiotrack_24
+                    )
+                )
                 notificationBuilder.setContentText("Playing")
                 notificationBuilder.style = Notification.MediaStyle()
-                val intent= Intent(applicationContext,DetailActivity::class.java)
+                val intent = Intent(applicationContext, DetailActivity::class.java)
                 intent.putExtra("recordName", title)
                 intent.putExtra("recordPath", path)
-                val pendingIntent= PendingIntent.getActivity(applicationContext, 0, intent,
-                    PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE)
+                val pendingIntent = PendingIntent.getActivity(
+                    applicationContext, 0, intent,
+                    PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE
+                )
                 notificationBuilder.setContentIntent(pendingIntent)
                 val notification = notificationBuilder.build()
                 startForeground(notificationID, notification)
             } else {
                 // haven't audio focus.
             }
+        }
+    }
+
+    /**
+     * public function to stop the player and remove the notification
+     */
+    fun stopPlay() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioManager?.abandonAudioFocusRequest(audioRequest!!)
+        }
+        title=""
+        path=""
+        myPlayer?.stop()
+        myPlayer?.release()
+        myPlayer = null
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
+    /**
+     * public function to pause the player
+     */
+    fun pausePlay() {
+        if (myPlayer?.isPlaying==true) {
+            myPlayer?.pause()
+            isPaused=true
+        }
+    }
+
+    /**
+     * public function to resume the player
+     */
+    fun resumePlay() {
+        if (myPlayer?.isPlaying==false) {
+            myPlayer?.start()
+            isPaused=false
         }
     }
 
@@ -191,24 +222,6 @@ class PlayerService: Service() {
      */
     fun getTitle():String {
         return title
-    }
-
-    /**
-     * private function to stop the player
-     */
-    private fun stop() {
-        if (myPlayer?.isPlaying==true) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                audioManager?.abandonAudioFocusRequest(audioRequest!!)
-            }
-            title=""
-            path=""
-            myPlayer?.stop()
-            myPlayer?.release()
-            myPlayer = null
-            stopForeground(STOP_FOREGROUND_REMOVE)
-            stopSelf()
-        }
     }
 
     /**
@@ -234,6 +247,14 @@ class PlayerService: Service() {
      */
     fun getProgress():Int {
         return myPlayer?.currentPosition ?: 0
+    }
+
+    /**
+     * function to get if the player is paused
+     * @return true if the player is paused, false otherwise
+     */
+    fun isPaused():Boolean {
+        return isPaused
     }
 
     companion object {

@@ -8,6 +8,7 @@ import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.math.log10
@@ -115,6 +116,10 @@ class RecordingActivity : AppCompatActivity() {
             noiseIndicator4=findViewById(R.id.NoiseLevelIndicator4)
             noiseIndicator5=findViewById(R.id.NoiseLevelIndicator5)
             txtTitle=findViewById(R.id.textViewTitle)
+
+            //set the toast and show it
+            Toast.makeText(applicationContext, "When you are recording the screen orientation cannot change, if the record stop and it is saved", Toast.LENGTH_SHORT).show()
+
 
             //set the seekbar
             seekMainB?.isEnabled=false
