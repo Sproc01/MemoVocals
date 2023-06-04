@@ -114,7 +114,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         val actionBar: ActionBar? = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
 
-
         //initialize variables referring to the layout
         title = findViewById(R.id.NameRecordDetail)
         txtpath = findViewById(R.id.RecordPath)
@@ -136,16 +135,10 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         duration=dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()?:0
         txtDuration?.text = String.format("00:%02d", duration / 1000)
 
-        //restore instance state
-        if (savedInstanceState != null && recordtitle==savedInstanceState.getString("title")) {
-            applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
-        } else {
-            //there isn't an instance state
-            //bind the service to found if an audio is playing
-            applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
-            seekDetailB?.visibility = View.INVISIBLE
-            buStopPlay?.visibility = View.INVISIBLE
-        }
+        //bind the service to found if an audio is playing
+        applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
+        seekDetailB?.visibility = View.INVISIBLE
+        buStopPlay?.visibility = View.INVISIBLE
 
         /**
          * function that is called when the seekbar is clicked
@@ -254,14 +247,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         //back button pressed so the activity must be destroyed
         finish()
         return true
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if(mBound && thS!=null)//if service is playing save the title
-        {
-            outState.putString("title", recordtitle)
-        }
     }
 
     override fun onDestroy() {
