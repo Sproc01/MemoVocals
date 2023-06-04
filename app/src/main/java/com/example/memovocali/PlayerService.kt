@@ -25,6 +25,11 @@ interface ServiceListener{
      */
     fun onAudioFocusLose()
 }
+
+/**
+ * class that represent the service that manage the player,
+ * it is a foreground service and it function only in bound mode
+ */
 class PlayerService: Service() {
     private var myPlayer: MediaPlayer? = null
     private var path:String=""
@@ -64,16 +69,6 @@ class PlayerService: Service() {
      */
     override fun onBind(intent: Intent?): IBinder {
         return mBinder
-    }
-
-    /**
-     * function call when the service is started
-     * @param intent intent of the service
-     * @param flags flags of the service
-     * @param startId startId of the service
-     */
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return START_NOT_STICKY
     }
 
     /**
@@ -186,7 +181,6 @@ class PlayerService: Service() {
         myPlayer?.release()
         myPlayer = null
         stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
     }
 
     /**

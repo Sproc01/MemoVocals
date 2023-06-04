@@ -52,6 +52,7 @@
             android:name=".PlayerService"
             android:enabled="true"
             android:exported="false" />
+
     </application>
 
 </manifest>

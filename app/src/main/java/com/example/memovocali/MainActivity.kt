@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             //check if there is enough space
             val stat = StatFs(path)
             val megAvailable = stat.availableBytes/1000000
-            if(megAvailable>15) {
+            if(megAvailable>size) {
                 intent.putExtra("title",title)
                 intent.putExtra("path",path)
                 startActivity(intent)
@@ -97,6 +97,7 @@ class MainActivity : AppCompatActivity() {
          * Request code for permission
          */
         private const val REQUEST_CODE = 12345
+        private const val size=15
     }
 
 

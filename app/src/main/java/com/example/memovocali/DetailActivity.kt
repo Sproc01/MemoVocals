@@ -82,7 +82,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
          */
         override fun run() {
             val i=Intent(applicationContext, PlayerService::class.java)
-            startService(i)
             applicationContext.bindService(i, mConnection, Context.BIND_AUTO_CREATE)
         }
     }
@@ -186,7 +185,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 //check if there is enough space to record(15 MB)
                 val stat = StatFs(path)
                 val megAvailable = stat.availableBytes/1000000
-                if(megAvailable>15) {
+                if(megAvailable>size) {
 
                     val intent=Intent(this, RecordingActivity::class.java)
                     intent.putExtra("title", recordtitle)
@@ -277,5 +276,9 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     override fun onAudioFocusLose() {
         //when service lose the audio focus update the interface and unbind
         buStopPlay?.callOnClick()
+    }
+
+    companion object{
+        private const val size=15
     }
 }
