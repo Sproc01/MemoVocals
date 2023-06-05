@@ -43,9 +43,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
      * object that manage the connection to the service
      */
     private var mConnection= object: ServiceConnection {
-        /**
-         * function that is called when the service is connected
-         */
+
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             mBinder=service as PlayerService.LocalBinder
             mBound=true
@@ -64,9 +62,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             mService?.setCallbacks(this@DetailActivity)
         }
 
-        /**
-         * function that is called when the service is disconnected
-         */
         override fun onServiceDisconnected(name: ComponentName) {
             mBound=false
             buStopPlay?.callOnClick()
@@ -77,11 +72,9 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
      * thread that launch a new service
      */
     inner class ServiceThread:Thread(){
-        /**
-         * function that launch the service
-         */
         override fun run() {
             val i=Intent(applicationContext, PlayerService::class.java)
+            startService(i)
             applicationContext.bindService(i, mConnection, Context.BIND_AUTO_CREATE)
         }
     }
@@ -90,16 +83,11 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
      * class that manage the timer when an audio is playing
      */
     inner class Timer(x: Long) : CountDownTimer(x, 100) {
-        /**
-         * function that is called when the timer tick
-         */
+
         override fun onTick(millisUntilFinished: Long) {
             seekDetailB?.progress = seekDetailB?.progress?.plus(100)!!
         }
 
-        /**
-         * function that is called when the timer finish
-         */
         override fun onFinish() {
             buStopPlay?.callOnClick()
         }
@@ -222,6 +210,9 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             buSubstitute?.visibility = View.INVISIBLE
         }
 
+        /**
+         * function that is called when the stop button is clicked
+         */
         buStopPlay?.setOnClickListener {
             //stop the service and unbind
             mService?.stopPlay()
@@ -243,6 +234,9 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         }
     }
 
+    /**
+     * function that is called when the back button is pressed
+     */
     override fun onSupportNavigateUp(): Boolean {
         //back button pressed so the activity must be destroyed
         finish()
@@ -253,6 +247,8 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         super.onDestroy()
         //stop the timer if it is running
         time?.cancel()
+        if(mBound)
+            applicationContext.unbindService(mConnection)
     }
 
     /**

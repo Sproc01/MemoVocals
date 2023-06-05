@@ -28,7 +28,7 @@ interface ServiceListener{
 
 /**
  * class that represent the service that manage the player,
- * it is a foreground service and it function only in bound mode
+ * it is a foreground service
  */
 class PlayerService: Service() {
     private var myPlayer: MediaPlayer? = null
@@ -53,6 +53,9 @@ class PlayerService: Service() {
             get() = this@PlayerService
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
+    }
 
     /**
      * function to set the callback of the service
@@ -62,18 +65,10 @@ class PlayerService: Service() {
         serviceCallbacks = callbacks
     }
 
-    /**
-     * function call when a client bind to the service
-     * @param intent intent of the client
-     * @return the binder of the service
-     */
     override fun onBind(intent: Intent?): IBinder {
         return mBinder
     }
 
-    /**
-     * function call when the service is created
-     */
     override fun onCreate() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -181,6 +176,7 @@ class PlayerService: Service() {
         myPlayer?.release()
         myPlayer = null
         stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     /**
@@ -203,6 +199,10 @@ class PlayerService: Service() {
         }
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        stopPlay()
+    }
     /**
      * function to check if the player is playing
      * @return true if the player is playing, false otherwise
@@ -218,9 +218,6 @@ class PlayerService: Service() {
         return title
     }
 
-    /**
-     * function call when all the client unbind from the service
-     */
     override fun onUnbind(intent: Intent?): Boolean {
         return true
     }

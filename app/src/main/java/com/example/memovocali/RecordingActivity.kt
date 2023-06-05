@@ -67,9 +67,7 @@ class RecordingActivity : AppCompatActivity() {
      * Timer for the recording
      */
     private var timer: CountDownTimer =object: CountDownTimer(31000, 100) {
-        /**
-         * Function call every tick of the timer
-         */
+
         override fun onTick(millisUntilFinished: Long) {
             noiseIndicator3?.progress=20* log10(amplitude().toDouble()).toInt()
             noiseIndicator2?.progress=noiseIndicator3?.progress?.div(2)?:0
@@ -81,18 +79,12 @@ class RecordingActivity : AppCompatActivity() {
             txtRecordGoing?.text=getString(R.string.Recording,s)
         }
 
-        /**
-         * Function call when the timer is finished
-         */
         override fun onFinish() {
             //call method to close the activty
             buStop?.callOnClick()
         }
     }
 
-    /**
-     * Function call when the activity is created
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)

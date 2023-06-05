@@ -17,19 +17,11 @@ import java.io.File
  * class that represent the adapter for the recyclerview
  * @param Records list of records
  */
-class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): RecyclerView.Adapter<RecordAdapter.ViewHolderRecord>()
-{
-    /**
-     * function that returns the number of records
-     * @return the number of records
-     */
+class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): RecyclerView.Adapter<RecordAdapter.ViewHolderRecord>() {
     override fun getItemCount():Int {
         return Records.size
     }
 
-    /**
-     * function that creates a new empty viewholder
-     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderRecord {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_item, parent, false)
         return ViewHolderRecord(view, this, parent)
@@ -58,11 +50,6 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         notifyItemInserted(Records.size-1)
     }
 
-    /**
-     * function that fill a new viewholder with the data of a record in the specified position
-     * @param holder viewholder to fill
-     * @param position position of the record in the list
-     */
     override fun onBindViewHolder(holder: ViewHolderRecord, position: Int) {
         holder.bind(Records[position])
     }
@@ -181,6 +168,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         /**
          * function that fill the viewholder with the data of the record in the specified position
          * @param r record to show
+         * @see Record
          */
         fun bind(r:Record) {
             txtTitle.text=r.getTitle().subSequence(0,r.getTitle().length-4)
