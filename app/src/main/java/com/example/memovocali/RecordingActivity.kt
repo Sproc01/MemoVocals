@@ -26,56 +26,20 @@ class RecordingActivity : AppCompatActivity() {
     private var noiseIndicator4: ProgressBar?=null
     private var noiseIndicator5: ProgressBar?=null
     private var txtTitle:TextView?=null
-    private var recorder: MediaRecorder?=null
-
-    /**
-     * Function for start the record
-     */
-    private fun startRecord(){
-        //construct and start of the record
-        recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            MediaRecorder(applicationContext)
-        }
-        else
-            MediaRecorder()
-        recorder?.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
-        recorder?.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
-        recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        recorder?.setMaxDuration(30000)
-        recorder?.setOutputFile(path+ title)
-        recorder?.prepare()
-        recorder?.start()
-    }
-
-    /**
-     * Function for stop the record
-     */
-    private fun stopRecord(){
-        recorder?.stop()
-        recorder?.release()
-        recorder=null
-    }
-
-    /**
-     * Function to get the amplitude of the registration
-     */
-    private fun amplitude():Int{
-        return recorder?.maxAmplitude?:0
-    }
+    private var timer:TimerRecording?=null
 
     /**
      * Timer for the recording
      */
-    private var timer: CountDownTimer =object: CountDownTimer(31000, 100) {
-
+    inner class TimerRecording(x: Long) : CountDownTimer(x, 100) {
         override fun onTick(millisUntilFinished: Long) {
             noiseIndicator3?.progress=20* log10(amplitude().toDouble()).toInt()
             noiseIndicator2?.progress=noiseIndicator3?.progress?.div(2)?:0
             noiseIndicator1?.progress=noiseIndicator2?.progress?.div(2)?:0
             noiseIndicator4?.progress=noiseIndicator3?.progress?.div(2)?:0
             noiseIndicator5?.progress=noiseIndicator4?.progress?.div(2)?:0
-            seekMainB?.progress=(30000-millisUntilFinished).toInt()
-            val s="00:"+String.format("%02d",(30000-millisUntilFinished)/1000)
+            seekMainB?.progress=seekMainB?.progress?.plus(100)!!
+            val s="00:"+String.format("%02d",seekMainB?.progress?.div(1000)!!)
             txtRecordGoing?.text=getString(R.string.Recording,s)
         }
 
@@ -83,17 +47,13 @@ class RecordingActivity : AppCompatActivity() {
             //call method to close the activty
             buStop?.callOnClick()
         }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
 
-        //if the activity is recreated, close it, the recording function only if the activity stay in the foreground
-        if(savedInstanceState!=null){
-            finish()
-        }
-        else {
             //set the back button
             val actionBar: ActionBar? = supportActionBar
             actionBar?.setDisplayHomeAsUpEnabled(true)
@@ -109,10 +69,6 @@ class RecordingActivity : AppCompatActivity() {
             noiseIndicator5=findViewById(R.id.NoiseLevelIndicator5)
             txtTitle=findViewById(R.id.textViewTitle)
 
-            //set the toast and show it
-            Toast.makeText(applicationContext, "When you are recording the screen orientation cannot change, if the record stop and it is saved", Toast.LENGTH_SHORT).show()
-
-
             //set the seekbar
             seekMainB?.isEnabled=false
             seekMainB?.max=30000
@@ -121,14 +77,25 @@ class RecordingActivity : AppCompatActivity() {
             title=intent.getStringExtra("title")?:""
             path=intent.getStringExtra("path")?:""
             txtTitle?.text=title.replace(".aac","")
-            startRecord()
-            timer.start()
-        }
+        
+            if(savedInstanceState!=null){
+                seekMainB?.progress=savedInstanceState.getInt("progress")
+                timer=TimerRecording((31000-seekMainB?.progress!!).toLong())
+                timer?.start()
+            }
+            else
+            {
+                startRecord(path, title, applicationContext)
+                timer=TimerRecording(31000)
+                timer?.start()
+            }
+
 
         /**
          * Function call when the stop button is pressed
          */
         buStop?.setOnClickListener {
+            stopRecord()
             finish()
         }
     }
@@ -136,14 +103,14 @@ class RecordingActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         //recording is possible only if the activity stay in foreground
-        timer.cancel()
-        stopRecord()
+        timer?.cancel()
+        if(!isChangingConfigurations)
+            buStop?.callOnClick()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        //flag to know if the activity is recreating or not
-        outState.putBoolean("isRecording",true)
+        outState.putInt("progress",seekMainB?.progress?:0)
     }
 
     override fun onSupportNavigateUp(): Boolean {
