@@ -38,7 +38,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     private lateinit var path:String
     private lateinit var recordtitle:String
     private var thS:ServiceThread?=null
-    private var paused=false
     /**
      * object that manage the connection to the service
      */
@@ -60,7 +59,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             else if(mService?.isPaused()!! && mService?.getTitle()==recordtitle)
             {
                 seekDetailB?.max = duration
-                paused=true
                 seekDetailB?.progress = mService?.getProgress() ?: 0
                 seekDetailB?.visibility = SeekBar.VISIBLE
                 buSubstitute?.visibility = Button.VISIBLE
@@ -74,7 +72,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
         override fun onServiceDisconnected(name: ComponentName) {
             mBound=false
-            paused=false
             mService=null
             mBinder=null
             stopPlay()
@@ -98,14 +95,12 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     inner class Timer(x: Long) : CountDownTimer(x, 100) {
 
         override fun onTick(millisUntilFinished: Long) {
-            if(!paused)
+            if(mService?.isPaused()==false)
                 seekDetailB?.progress = seekDetailB?.progress?.plus(100)!!
         }
 
         override fun onFinish() {
             stopPlay()
-            if(paused)
-                paused=false
         }
 
     }
@@ -154,9 +149,13 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 mService?.seekTo(seekBar.progress)
-                time?.cancel()
-                time = Timer((duration - seekBar.progress).toLong())
-                time?.start()
+                if(mService?.isPaused() == false)
+                {
+                    time?.cancel()
+                    time = Timer((duration - seekBar.progress).toLong())
+                    time?.start()
+                    mService?.resumePlay()
+                }
             }
         })
 
@@ -164,7 +163,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
          * function that is called when the substitute button is clicked
          */
         buSubstitute?.setOnClickListener {
-            if(paused)
+            if(mBound && mService?.isPaused()==true)
                 stopPlay()
             if(thS==null)//if thS is null it means that this instance of detailActivty doesn't have a service playing
             {
@@ -201,10 +200,9 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 PermissionChecker.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
                 PermissionChecker.PERMISSION_GRANTED)
                 return@setOnClickListener
-            if(paused) {
+            if(mService?.isPaused() == true) {
                 mService?.resumePlay()
                 time?.cancel()
-                paused=false
                 time = Timer((duration - seekDetailB?.progress!!).toLong())
                 time?.start()
             }
@@ -237,7 +235,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             time = null
             time=Timer(5000)
             time?.start()
-            paused=true
             buPlay?.visibility = View.VISIBLE
             buStopPlay?.visibility = View.INVISIBLE
             buSubstitute?.visibility = View.VISIBLE
@@ -271,7 +268,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
     override fun onPause() {
         super.onPause()
-        if(paused && isFinishing)
+        if(mBound && mService?.isPaused()==true && isFinishing)
             stopPlay()
         else if(mBound)
             applicationContext.unbindService(mConnection)
@@ -284,14 +281,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         //back button pressed so the activity must be destroyed
         finish()
         return true
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //stop the timer if it is running
-        /*time?.cancel()
-        if(mBound)
-            applicationContext.unbindService(mConnection)*/
     }
 
     /**

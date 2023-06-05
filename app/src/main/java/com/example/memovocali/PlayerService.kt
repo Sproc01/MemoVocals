@@ -229,7 +229,6 @@ class PlayerService: Service() {
     fun seekTo(seek:Int) {
         myPlayer?.pause()
         myPlayer?.seekTo(seek)
-        myPlayer?.start()
     }
 
     /**

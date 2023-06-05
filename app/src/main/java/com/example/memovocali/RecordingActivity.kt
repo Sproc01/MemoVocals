@@ -77,7 +77,7 @@ class RecordingActivity : AppCompatActivity() {
             title=intent.getStringExtra("title")?:""
             path=intent.getStringExtra("path")?:""
             txtTitle?.text=title.replace(".aac","")
-        
+
             if(savedInstanceState!=null){
                 seekMainB?.progress=savedInstanceState.getInt("progress")
                 timer=TimerRecording((31000-seekMainB?.progress!!).toLong())
