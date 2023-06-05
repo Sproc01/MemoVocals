@@ -38,7 +38,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     private lateinit var path:String
     private lateinit var recordtitle:String
     private var thS:ServiceThread?=null
-
+    private var paused=false
     /**
      * object that manage the connection to the service
      */
@@ -57,6 +57,16 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 time=Timer((duration - seekDetailB?.progress!!).toLong())
                 time?.start()
             }
+            else if(mService?.isPaused()!! && mService?.getTitle()==recordtitle)
+            {
+                seekDetailB?.max = duration
+                paused=true
+                seekDetailB?.progress = mService?.getProgress() ?: 0
+                seekDetailB?.visibility = SeekBar.VISIBLE
+                buSubstitute?.visibility = Button.VISIBLE
+                time=Timer(5000)
+                time?.start()
+            }
             else if(thS!=null)
                 mService?.startPlay(recordtitle, path)
             mService?.setCallbacks(this@DetailActivity)
@@ -64,7 +74,10 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
         override fun onServiceDisconnected(name: ComponentName) {
             mBound=false
-            buStopPlay?.callOnClick()
+            paused=false
+            mService=null
+            mBinder=null
+            stopPlay()
         }
     }
 
@@ -85,11 +98,14 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     inner class Timer(x: Long) : CountDownTimer(x, 100) {
 
         override fun onTick(millisUntilFinished: Long) {
-            seekDetailB?.progress = seekDetailB?.progress?.plus(100)!!
+            if(!paused)
+                seekDetailB?.progress = seekDetailB?.progress?.plus(100)!!
         }
 
         override fun onFinish() {
-            buStopPlay?.callOnClick()
+            stopPlay()
+            if(paused)
+                paused=false
         }
 
     }
@@ -132,19 +148,10 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
          * function that is called when the seekbar is clicked
          */
         seekDetailB?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-            /**
-             * function that is called when the seekbar progress change
-             */
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
 
-            /**
-             * function that is called when the seekbar start to be clicked
-             */
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
-            /**
-             * function that is called when the seekbar stop to be clicked
-             */
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 mService?.seekTo(seekBar.progress)
                 time?.cancel()
@@ -157,6 +164,8 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
          * function that is called when the substitute button is clicked
          */
         buSubstitute?.setOnClickListener {
+            if(paused)
+                stopPlay()
             if(thS==null)//if thS is null it means that this instance of detailActivty doesn't have a service playing
             {
                 //check if the app have the permission to record
@@ -192,20 +201,29 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 PermissionChecker.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
                 PermissionChecker.PERMISSION_GRANTED)
                 return@setOnClickListener
-            if(thS==null && mBound)//unbind from the existing service and start a new one in a separate thread
-                applicationContext.unbindService(mConnection)
-            thS=ServiceThread()
-            thS?.start()
+            if(paused) {
+                mService?.resumePlay()
+                time?.cancel()
+                paused=false
+                time = Timer((duration - seekDetailB?.progress!!).toLong())
+                time?.start()
+            }
+            else {
+                if(thS==null && mBound)//unbind from the existing service and start a new one in a separate thread
+                    applicationContext.unbindService(mConnection)
+                thS=ServiceThread()
+                thS?.start()
 
-            //start timer
-            time = Timer(duration.toLong())
-            time?.start()
+                //start timer
+                time = Timer(duration.toLong())
+                time?.start()
 
-            //update the interface
-            seekDetailB?.max = duration
-            seekDetailB?.progress = 0
+                //update the interface
+                seekDetailB?.max = duration
+                seekDetailB?.progress = 0
+                seekDetailB?.visibility = View.VISIBLE
+            }
             buStopPlay?.visibility = View.VISIBLE
-            seekDetailB?.visibility = View.VISIBLE
             buPlay?.visibility = View.INVISIBLE
             buSubstitute?.visibility = View.INVISIBLE
         }
@@ -214,8 +232,25 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
          * function that is called when the stop button is clicked
          */
         buStopPlay?.setOnClickListener {
+            mService?.pausePlay()
+            time?.cancel()
+            time = null
+            time=Timer(5000)
+            time?.start()
+            paused=true
+            buPlay?.visibility = View.VISIBLE
+            buStopPlay?.visibility = View.INVISIBLE
+            buSubstitute?.visibility = View.VISIBLE
+        }
+    }
+
+    private fun stopPlay()
+    {
+        if(mBound)
+        {
             //stop the service and unbind
             mService?.stopPlay()
+
             applicationContext.unbindService(mConnection)
             mBound = false
 
@@ -234,6 +269,14 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        if(paused && isFinishing)
+            stopPlay()
+        else if(mBound)
+            applicationContext.unbindService(mConnection)
+        time?.cancel()
+    }
     /**
      * function that is called when the back button is pressed
      */
@@ -246,9 +289,9 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     override fun onDestroy() {
         super.onDestroy()
         //stop the timer if it is running
-        time?.cancel()
+        /*time?.cancel()
         if(mBound)
-            applicationContext.unbindService(mConnection)
+            applicationContext.unbindService(mConnection)*/
     }
 
     /**
@@ -256,7 +299,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
      */
     override fun onAudioFocusLose() {
         //when service lose the audio focus update the interface and unbind
-        buStopPlay?.callOnClick()
+        stopPlay()
     }
 
     companion object{
