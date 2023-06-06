@@ -68,9 +68,6 @@ class RecordingActivity : AppCompatActivity() {
             noiseIndicator5=findViewById(R.id.NoiseLevelIndicator5)
             txtTitle=findViewById(R.id.textViewTitle)
 
-            //show a toast
-            Toast.makeText(this,getString(R.string.RecordingStart),Toast.LENGTH_LONG).show()
-
             //set the seekbar
             seekMainB?.isEnabled=false
             seekMainB?.max=30000
@@ -87,6 +84,9 @@ class RecordingActivity : AppCompatActivity() {
                 timer?.start()
             }
             else {
+                //show a toast
+                Toast.makeText(this,getString(R.string.RecordingStart),Toast.LENGTH_LONG).show()
+                //start the record
                 startRecord(path, title, applicationContext)
                 timer=TimerRecording(31000)
                 timer?.start()
