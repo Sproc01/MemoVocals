@@ -1,7 +1,5 @@
 package com.example.memovocali
 
-import android.media.MediaRecorder
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.ImageButton
@@ -33,6 +31,7 @@ class RecordingActivity : AppCompatActivity() {
      */
     inner class TimerRecording(x: Long) : CountDownTimer(x, 100) {
         override fun onTick(millisUntilFinished: Long) {
+            //update the seekbar, the noise indicator and the textview
             noiseIndicator3?.progress=20* log10(amplitude().toDouble()).toInt()
             noiseIndicator2?.progress=noiseIndicator3?.progress?.div(2)?:0
             noiseIndicator1?.progress=noiseIndicator2?.progress?.div(2)?:0
@@ -69,6 +68,9 @@ class RecordingActivity : AppCompatActivity() {
             noiseIndicator5=findViewById(R.id.NoiseLevelIndicator5)
             txtTitle=findViewById(R.id.textViewTitle)
 
+            //show a toast
+            Toast.makeText(this,getString(R.string.RecordingStart),Toast.LENGTH_LONG).show()
+
             //set the seekbar
             seekMainB?.isEnabled=false
             seekMainB?.max=30000
@@ -78,22 +80,18 @@ class RecordingActivity : AppCompatActivity() {
             path=intent.getStringExtra("path")?:""
             txtTitle?.text=title.replace(".aac","")
 
+            //restore instance state if there is one(only if the activity stay in foreground)
             if(savedInstanceState!=null){
                 seekMainB?.progress=savedInstanceState.getInt("progress")
                 timer=TimerRecording((31000-seekMainB?.progress!!).toLong())
                 timer?.start()
             }
-            else
-            {
+            else {
                 startRecord(path, title, applicationContext)
                 timer=TimerRecording(31000)
                 timer?.start()
             }
 
-
-        /**
-         * Function call when the stop button is pressed
-         */
         buStop?.setOnClickListener {
             stopRecord()
             finish()
@@ -104,12 +102,13 @@ class RecordingActivity : AppCompatActivity() {
         super.onPause()
         //recording is possible only if the activity stay in foreground
         timer?.cancel()
-        if(!isChangingConfigurations)
+        if(!isChangingConfigurations)//the app is recording if and only if it stays in foreground otherwise it will stop and save the record
             buStop?.callOnClick()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        //save the progress of the seekbar
         outState.putInt("progress",seekMainB?.progress?:0)
     }
 

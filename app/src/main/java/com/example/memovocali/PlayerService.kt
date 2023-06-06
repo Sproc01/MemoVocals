@@ -16,6 +16,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 
+
 /**
  * class that represent the interface that must be implemented in order to manage callback of the service
  */
@@ -186,6 +187,36 @@ class PlayerService: Service() {
         if (myPlayer?.isPlaying==true) {
             myPlayer?.pause()
             isPaused=true
+            //update notification
+            val notificationBuilder: Notification.Builder =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    Notification.Builder(applicationContext, CHANNEL_ID)
+                else
+                    Notification.Builder(applicationContext)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
+            }
+            notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
+            notificationBuilder.setContentTitle(title)
+            notificationBuilder.setLargeIcon(
+                Icon.createWithResource(
+                    applicationContext,
+                    R.drawable.baseline_audiotrack_24
+                )
+            )
+            notificationBuilder.setContentText("Paused")
+            notificationBuilder.style = Notification.MediaStyle()
+            val intent = Intent(applicationContext, DetailActivity::class.java)
+            intent.putExtra("recordName", title)
+            intent.putExtra("recordPath", path)
+            val pendingIntent = PendingIntent.getActivity(
+                applicationContext, 0, intent,
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+            notificationBuilder.setContentIntent(pendingIntent)
+            val notification = notificationBuilder.build()
+            val mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            mNotificationManager.notify(notificationID, notification)
         }
     }
 
@@ -196,10 +227,42 @@ class PlayerService: Service() {
         if (myPlayer?.isPlaying==false) {
             myPlayer?.start()
             isPaused=false
+            //update the notification
+            val notificationBuilder: Notification.Builder =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    Notification.Builder(applicationContext, CHANNEL_ID)
+                else
+                    Notification.Builder(applicationContext)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
+            }
+            notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
+            notificationBuilder.setContentTitle(title)
+            notificationBuilder.setLargeIcon(
+                Icon.createWithResource(
+                    applicationContext,
+                    R.drawable.baseline_audiotrack_24
+                )
+            )
+            notificationBuilder.setContentText("Playing")
+            notificationBuilder.style = Notification.MediaStyle()
+            val intent = Intent(applicationContext, DetailActivity::class.java)
+            intent.putExtra("recordName", title)
+            intent.putExtra("recordPath", path)
+            val pendingIntent = PendingIntent.getActivity(
+                applicationContext, 0, intent,
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+            notificationBuilder.setContentIntent(pendingIntent)
+            val notification = notificationBuilder.build()
+            val mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            mNotificationManager.notify(notificationID, notification)
+
         }
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
+        //if the user swipe up the app the service will stop
         super.onTaskRemoved(rootIntent)
         stopPlay()
     }

@@ -48,6 +48,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             mBound=true
             mService=mBinder?.service
             if(mService?.isPlaying()!! && mService?.getTitle()==recordtitle){
+                //there is a service and it is playing
                 seekDetailB?.max = duration
                 seekDetailB?.progress = mService?.getProgress() ?: 0
                 seekDetailB?.visibility = SeekBar.VISIBLE
@@ -56,25 +57,24 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 time=Timer((duration - seekDetailB?.progress!!).toLong())
                 time?.start()
             }
-            else if(mService?.isPaused()!! && mService?.getTitle()==recordtitle)
-            {
+            else if(mService?.isPaused()!! && mService?.getTitle()==recordtitle) {
+                //there is a service but it is paused
                 seekDetailB?.max = duration
                 seekDetailB?.progress = mService?.getProgress() ?: 0
                 seekDetailB?.visibility = SeekBar.VISIBLE
                 buSubstitute?.visibility = Button.VISIBLE
-                time=Timer(5000)
-                time?.start()
             }
             else if(thS!=null)
-                mService?.startPlay(recordtitle, path)
+                mService?.startPlay(recordtitle, path)//there are no service so you pressed the play button and start a new thread
+            //set the callbacks for lose the audio focus
             mService?.setCallbacks(this@DetailActivity)
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
+            stopPlay()
             mBound=false
             mService=null
             mBinder=null
-            stopPlay()
         }
     }
 
@@ -95,8 +95,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     inner class Timer(x: Long) : CountDownTimer(x, 100) {
 
         override fun onTick(millisUntilFinished: Long) {
-            if(mService?.isPaused()==false)
-                seekDetailB?.progress = seekDetailB?.progress?.plus(100)!!
+            seekDetailB?.progress = seekDetailB?.progress?.plus(100)!!
         }
 
         override fun onFinish() {
@@ -139,9 +138,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         seekDetailB?.visibility = View.INVISIBLE
         buStopPlay?.visibility = View.INVISIBLE
 
-        /**
-         * function that is called when the seekbar is clicked
-         */
         seekDetailB?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
@@ -159,9 +155,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             }
         })
 
-        /**
-         * function that is called when the substitute button is clicked
-         */
         buSubstitute?.setOnClickListener {
             if(mBound && mService?.isPaused()==true)
                 stopPlay()
@@ -191,9 +184,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             }
         }
 
-        /**
-         * function that is called when the play button is clicked
-         */
         buPlay?.setOnClickListener {
             //check if the app has the permission to start a foreground service
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)!=
@@ -201,12 +191,12 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 PermissionChecker.PERMISSION_GRANTED)
                 return@setOnClickListener
             if(mService?.isPaused() == true) {
+                //if paused it will resume the playback
                 mService?.resumePlay()
-                time?.cancel()
                 time = Timer((duration - seekDetailB?.progress!!).toLong())
                 time?.start()
             }
-            else {
+            else {//if not it start a new playback
                 if(thS==null && mBound)//unbind from the existing service and start a new one in a separate thread
                     applicationContext.unbindService(mConnection)
                 thS=ServiceThread()
@@ -226,21 +216,19 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             buSubstitute?.visibility = View.INVISIBLE
         }
 
-        /**
-         * function that is called when the stop button is clicked
-         */
-        buStopPlay?.setOnClickListener {
+        buStopPlay?.setOnClickListener {//pause the playback
             mService?.pausePlay()
             time?.cancel()
             time = null
-            time=Timer(5000)
-            time?.start()
             buPlay?.visibility = View.VISIBLE
             buStopPlay?.visibility = View.INVISIBLE
             buSubstitute?.visibility = View.VISIBLE
         }
     }
 
+    /**
+     * function that is called when the service must be stopped
+     */
     private fun stopPlay()
     {
         if(mBound)
@@ -269,7 +257,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     override fun onPause() {
         super.onPause()
         if(mBound && mService?.isPaused()==true && isFinishing)
-            stopPlay()
+            stopPlay()//if is paused and the activity will no longer exist stop the service
         else if(mBound)
             applicationContext.unbindService(mConnection)
         time?.cancel()

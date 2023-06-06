@@ -37,11 +37,10 @@ class MainActivity : AppCompatActivity() {
             for (f in file.listFiles()!!){
                 records.add(Record(f.name,file.absolutePath+File.separator))
             }
-
         //sort the list
         records.sortBy{ it.getTitle() }
+        //set the adapter
         rc?.adapter=RecordAdapter(records)
-
 
         buNewRecord?.setOnClickListener {
             //check permission
@@ -53,6 +52,7 @@ class MainActivity : AppCompatActivity() {
             val intent= Intent(this,RecordingActivity::class.java)
             val title=Calendar.getInstance().time.toString().replace(":","").replace("GMT+","") + ".aac"
             val path=applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator
+
             //check if there is enough space
             val stat = StatFs(path)
             val megAvailable = stat.availableBytes/1000000
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                 //update the recycler view and the list
                 (rc?.adapter as RecordAdapter).addRecord(Record(title,path))
             }
-            else {
+            else {//error message
                 val error= MaterialAlertDialogBuilder(applicationContext)
                 error.setTitle(getString(R.string.DialogSpace))
                 error.setMessage(getString(R.string.errorEnoughSpace))
