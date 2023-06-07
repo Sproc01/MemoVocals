@@ -6,9 +6,9 @@ import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import kotlin.math.log10
 
 class RecordingActivity : AppCompatActivity() {
@@ -70,7 +70,7 @@ class RecordingActivity : AppCompatActivity() {
 
             //set the seekbar
             seekMainB?.isEnabled=false
-            seekMainB?.max=30000
+            seekMainB?.max= maxDurationRecord
 
             //read data from intent
             title=intent.getStringExtra("title")?:""
@@ -80,15 +80,15 @@ class RecordingActivity : AppCompatActivity() {
             //restore instance state if there is one(only if the activity stay in foreground)
             if(savedInstanceState!=null){
                 seekMainB?.progress=savedInstanceState.getInt("progress")
-                timer=TimerRecording((31000-seekMainB?.progress!!).toLong())
+                timer=TimerRecording((maxDurationRecord-seekMainB?.progress!!).toLong())
                 timer?.start()
             }
             else {
-                //show a toast
-                Toast.makeText(this,getString(R.string.RecordingStart),Toast.LENGTH_LONG).show()
+                //show a snackbar
+                Snackbar.make(findViewById(R.id.textViewRecording),getString(R.string.RecordingStart),Snackbar.LENGTH_LONG).show()
                 //start the record
                 startRecord(path, title, applicationContext)
-                timer=TimerRecording(31000)
+                timer=TimerRecording(maxDurationRecord.toLong())
                 timer?.start()
             }
 
@@ -116,5 +116,9 @@ class RecordingActivity : AppCompatActivity() {
         //if the back button is pressed, call the stop button
         buStop?.callOnClick()
         return true
+    }
+
+    companion object{
+        private const val maxDurationRecord=32000
     }
 }
