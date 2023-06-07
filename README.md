@@ -1,5 +1,5 @@
 # MemoVocals
- App to record audio of max 32 seconds on an android device. The user must grant permission to record using microphone, to listen the audio user must grant the permission to start a service in foreground.
+ App to record audio of max 30 seconds on an android device. The user must grant permission to record using microphone, to listen the audio user must grant the permission to start a service in foreground.
  
  When the app is first launched the mainActivity is created with an empty recycler view and a button record. When the button is pressed the app starts to   record audio creating a file with date-time as name.
  From the main activity you can delete a record and open a detailActivty.
