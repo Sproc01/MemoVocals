@@ -116,7 +116,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/buttonStopDetail"
+        android:id="@+id/buttonPauseDetail"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         style="@style/Widget.Material3.Button.TonalButton.Icon"

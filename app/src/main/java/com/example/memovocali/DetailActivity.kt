@@ -29,7 +29,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     private var duration = 0
     private var buSubstitute: Button? = null
     private var buPlay: Button? = null
-    private var buStopPlay: Button? = null
+    private var buPausePlay: Button? = null
     private var seekDetailB: SeekBar? = null
     private var time: Timer? = null
     private var mService:PlayerService?=null
@@ -52,7 +52,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 seekDetailB?.max = duration
                 seekDetailB?.progress = mService?.getProgress() ?: 0
                 seekDetailB?.visibility = SeekBar.VISIBLE
-                buStopPlay?.visibility = Button.VISIBLE
+                buPausePlay?.visibility = Button.VISIBLE
                 buSubstitute?.visibility = Button.INVISIBLE
                 time=Timer((duration - seekDetailB?.progress!!).toLong())
                 time?.start()
@@ -117,7 +117,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         txtpath = findViewById(R.id.RecordPath)
         txtDuration = findViewById(R.id.RecordDuration)
         buSubstitute = findViewById(R.id.buttonSubstitute)
-        buStopPlay = findViewById(R.id.buttonStopDetail)
+        buPausePlay = findViewById(R.id.buttonPauseDetail)
         buPlay = findViewById(R.id.buttonPlayDetail)
         seekDetailB = findViewById(R.id.progressBarDetail)
 
@@ -136,7 +136,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         //bind the service to found if an audio is playing
         applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
         seekDetailB?.visibility = View.INVISIBLE
-        buStopPlay?.visibility = View.INVISIBLE
+        buPausePlay?.visibility = View.INVISIBLE
 
         seekDetailB?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
 
@@ -211,17 +211,17 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 seekDetailB?.progress = 0
                 seekDetailB?.visibility = View.VISIBLE
             }
-            buStopPlay?.visibility = View.VISIBLE
+            buPausePlay?.visibility = View.VISIBLE
             buPlay?.visibility = View.INVISIBLE
             buSubstitute?.visibility = View.INVISIBLE
         }
 
-        buStopPlay?.setOnClickListener {//pause the playback
+        buPausePlay?.setOnClickListener {//pause the playback
             mService?.pausePlay()
             time?.cancel()
             time = null
             buPlay?.visibility = View.VISIBLE
-            buStopPlay?.visibility = View.INVISIBLE
+            buPausePlay?.visibility = View.INVISIBLE
             buSubstitute?.visibility = View.VISIBLE
         }
     }
@@ -248,7 +248,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
             //update the interface
             seekDetailB?.visibility = View.INVISIBLE
-            buStopPlay?.visibility = View.INVISIBLE
+            buPausePlay?.visibility = View.INVISIBLE
             buPlay?.visibility = View.VISIBLE
             buSubstitute?.visibility = View.VISIBLE
         }
@@ -256,7 +256,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
     override fun onPause() {
         super.onPause()
-        if(mBound && mService?.isPaused()==true && isFinishing)
+        if(mBound && mService?.isPaused()==true && !isChangingConfigurations)
             stopPlay()//if is paused and the activity will no longer exist stop the service
         else if(mBound)
             applicationContext.unbindService(mConnection)
@@ -273,7 +273,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
     override fun onAudioFocusLose() {
         //when service lose the audio focus update the interface and unbind
-       buStopPlay?.callOnClick()
+       buPausePlay?.callOnClick()
     }
 
     override fun onAudioFocusGain() {
