@@ -26,6 +26,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     private var title: TextView? = null
     private var txtpath: TextView? = null
     private var txtDuration: TextView? = null
+    private var txtProgress: TextView? = null
     private var duration = 0
     private var buSubstitute: Button? = null
     private var buPlay: Button? = null
@@ -54,6 +55,8 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 seekDetailB?.visibility = SeekBar.VISIBLE
                 buPausePlay?.visibility = Button.VISIBLE
                 buSubstitute?.visibility = Button.INVISIBLE
+                txtProgress?.text=String.format("00:%02d", (seekDetailB?.progress!!) / 1000)
+                txtProgress?.visibility=TextView.VISIBLE
                 time=Timer((duration - seekDetailB?.progress!!).toLong())
                 time?.start()
             }
@@ -63,6 +66,8 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 seekDetailB?.progress = mService?.getProgress() ?: 0
                 seekDetailB?.visibility = SeekBar.VISIBLE
                 buSubstitute?.visibility = Button.VISIBLE
+                txtProgress?.text=String.format("00:%02d", (seekDetailB?.progress!!) / 1000)
+                txtProgress?.visibility=TextView.VISIBLE
             }
             else if(thS!=null)
                 mService?.startPlay(recordtitle, path)//there are no service so you pressed the play button and start a new thread
@@ -96,10 +101,12 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
         override fun onTick(millisUntilFinished: Long) {
             seekDetailB?.progress = seekDetailB?.progress?.plus(100)!!
+            txtProgress?.text=String.format("00:%02d", (seekDetailB?.progress!!) / 1000)
         }
 
         override fun onFinish() {
             stopPlay()
+            txtProgress?.text=""
         }
 
     }
@@ -120,6 +127,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         buPausePlay = findViewById(R.id.buttonPauseDetail)
         buPlay = findViewById(R.id.buttonPlayDetail)
         seekDetailB = findViewById(R.id.progressBarDetail)
+        txtProgress=findViewById(R.id.txtProgress)
 
         //read data from intent
         recordtitle = (intent.getStringExtra("recordName") ?: "")
@@ -135,12 +143,15 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
         //bind the service to found if an audio is playing
         applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
-        seekDetailB?.visibility = View.INVISIBLE
-        buPausePlay?.visibility = View.INVISIBLE
+        seekDetailB?.visibility = SeekBar.INVISIBLE
+        buPausePlay?.visibility = Button.INVISIBLE
+        txtProgress?.visibility=TextView.INVISIBLE
 
         seekDetailB?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
 
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                txtProgress?.text=String.format("00:%02d", progress / 1000)
+            }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
@@ -168,7 +179,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 val stat = StatFs(path)
                 val megAvailable = stat.availableBytes/1000000
                 if(megAvailable>size) {
-
                     val intent=Intent(this, RecordingActivity::class.java)
                     intent.putExtra("title", recordtitle)
                     intent.putExtra("path", path)
@@ -209,20 +219,21 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 //update the interface
                 seekDetailB?.max = duration
                 seekDetailB?.progress = 0
-                seekDetailB?.visibility = View.VISIBLE
+                seekDetailB?.visibility = SeekBar.VISIBLE
+                txtProgress?.visibility=TextView.VISIBLE
             }
-            buPausePlay?.visibility = View.VISIBLE
-            buPlay?.visibility = View.INVISIBLE
-            buSubstitute?.visibility = View.INVISIBLE
+            buPausePlay?.visibility = Button.VISIBLE
+            buPlay?.visibility = Button.INVISIBLE
+            buSubstitute?.visibility = Button.INVISIBLE
         }
 
         buPausePlay?.setOnClickListener {//pause the playback
             mService?.pausePlay()
             time?.cancel()
             time = null
-            buPlay?.visibility = View.VISIBLE
-            buPausePlay?.visibility = View.INVISIBLE
-            buSubstitute?.visibility = View.VISIBLE
+            buPlay?.visibility = Button.VISIBLE
+            buPausePlay?.visibility = Button.INVISIBLE
+            buSubstitute?.visibility = Button.VISIBLE
         }
     }
 
@@ -247,10 +258,11 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             time?.cancel()
 
             //update the interface
-            seekDetailB?.visibility = View.INVISIBLE
-            buPausePlay?.visibility = View.INVISIBLE
-            buPlay?.visibility = View.VISIBLE
-            buSubstitute?.visibility = View.VISIBLE
+            seekDetailB?.visibility = SeekBar.INVISIBLE
+            buPausePlay?.visibility = Button.INVISIBLE
+            buPlay?.visibility = Button.VISIBLE
+            buSubstitute?.visibility = Button.VISIBLE
+            txtProgress?.visibility=TextView.INVISIBLE
         }
     }
 
