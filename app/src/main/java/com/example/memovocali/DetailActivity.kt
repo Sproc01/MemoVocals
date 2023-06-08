@@ -256,7 +256,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
     override fun onPause() {
         super.onPause()
-        if(mBound && mService?.isPaused()==true && isFinishing)
+        if(mBound && mService?.isPaused()==true && !isChangingConfigurations)
             stopPlay()//if is paused and the activity will no longer exist stop the service
         else if(mBound)
             applicationContext.unbindService(mConnection)
@@ -271,12 +271,14 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         return true
     }
 
-    /**
-     * function that is called when the service lose audio focus
-     */
     override fun onAudioFocusLose() {
         //when service lose the audio focus update the interface and unbind
-        stopPlay()
+       buStopPlay?.callOnClick()
+    }
+
+    override fun onAudioFocusGain() {
+        //when service gain the audio focus update the interface and bind
+        buPlay?.callOnClick()
     }
 
     companion object{
