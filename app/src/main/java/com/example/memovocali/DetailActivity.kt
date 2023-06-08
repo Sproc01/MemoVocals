@@ -256,7 +256,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
     override fun onPause() {
         super.onPause()
-        if(mBound && mService?.isPaused()==true && !isChangingConfigurations)
+        if(mBound && mService?.isPaused()==true && isFinishing)
             stopPlay()//if is paused and the activity will no longer exist stop the service
         else if(mBound)
             applicationContext.unbindService(mConnection)
