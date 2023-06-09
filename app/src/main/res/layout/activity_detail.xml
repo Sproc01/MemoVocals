@@ -98,6 +98,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/NameRecordDetail" />
 
+    <!--I want the button to stay on the other button -->
     <Button
         android:id="@+id/buttonPlayDetail"
         style="@style/Widget.Material3.Button.TonalButton.Icon"
@@ -106,7 +107,8 @@
         app:icon="@drawable/baseline_play_arrow_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtProgress" />
+        app:layout_constraintTop_toBottomOf="@id/txtProgress"
+        tools:ignore="DuplicateClickableBoundsCheck,SpeakableTextPresentCheck" />
 
     <Button
         android:id="@+id/buttonSubstitute"
@@ -121,6 +123,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
 
+    <!--I want the button to stay on the other button -->
     <Button
         android:id="@+id/buttonPauseDetail"
         style="@style/Widget.Material3.Button.TonalButton.Icon"
@@ -129,7 +132,8 @@
         app:icon="@drawable/baseline_pause_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtProgress" />
+        app:layout_constraintTop_toBottomOf="@id/txtProgress"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txtProgress"

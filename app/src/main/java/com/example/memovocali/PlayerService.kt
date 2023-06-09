@@ -45,6 +45,7 @@ class PlayerService: Service() {
     private var serviceCallbacks: ServiceListener? = null
     private val mBinder: IBinder = LocalBinder()
     private var isPaused: Boolean = false
+    private var focusChangeListener: OnAudioFocusChangeListener? = null
 
 
     /**
@@ -86,7 +87,7 @@ class PlayerService: Service() {
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
             audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-            val focusChangeListener = OnAudioFocusChangeListener { focusChange ->
+            focusChangeListener = OnAudioFocusChangeListener { focusChange ->
                 when (focusChange) {
                     AudioManager.AUDIOFOCUS_GAIN -> {
                         serviceCallbacks?.onAudioFocusGain()
@@ -109,7 +110,7 @@ class PlayerService: Service() {
                         .build()
                 )
                 .setAcceptsDelayedFocusGain(false)
-                .setOnAudioFocusChangeListener(focusChangeListener)
+                .setOnAudioFocusChangeListener(focusChangeListener!!)
                 .build()
         }
     }
@@ -131,7 +132,11 @@ class PlayerService: Service() {
             stopPlay()
         }
         myPlayer!!.setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
-        val result = audioManager?.requestAudioFocus(audioRequest!!)
+        val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioManager?.requestAudioFocus(audioRequest!!)
+        } else {
+            audioManager?.requestAudioFocus(focusChangeListener!!, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
+        }
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             // have audio focus now.
             myPlayer?.start()
@@ -170,7 +175,9 @@ class PlayerService: Service() {
      * public function to stop the player and remove the notification
      */
     fun stopPlay() {
-        audioManager?.abandonAudioFocusRequest(audioRequest!!)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioManager?.abandonAudioFocusRequest(audioRequest!!)
+        }
         title=""
         path=""
         myPlayer?.stop()
@@ -185,7 +192,9 @@ class PlayerService: Service() {
      */
     fun pausePlay() {
         if (myPlayer?.isPlaying==true) {
-            audioManager?.abandonAudioFocusRequest(audioRequest!!)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                audioManager?.abandonAudioFocusRequest(audioRequest!!)
+            }
             myPlayer?.pause()
             isPaused=true
             //update notification
@@ -225,7 +234,11 @@ class PlayerService: Service() {
      * public function to resume the player
      */
     fun resumePlay() {
-        val result = audioManager?.requestAudioFocus(audioRequest!!)
+        val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioManager?.requestAudioFocus(audioRequest!!)
+        } else {
+            audioManager?.requestAudioFocus(focusChangeListener!!, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
+        }
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             if (myPlayer?.isPlaying==false) {
                 myPlayer?.start()
