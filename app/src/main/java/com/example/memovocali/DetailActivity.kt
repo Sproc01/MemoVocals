@@ -23,7 +23,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 class DetailActivity : AppCompatActivity(),ServiceListener {
 
     private var title: TextView? = null
-    private var txtpath: TextView? = null
     private var txtDuration: TextView? = null
     private var txtProgress: TextView? = null
     private var duration = 0
@@ -120,7 +119,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
         //initialize variables referring to the layout
         title = findViewById(R.id.NameRecordDetail)
-        txtpath = findViewById(R.id.RecordPath)
         txtDuration = findViewById(R.id.RecordDuration)
         buSubstitute = findViewById(R.id.buttonSubstitute)
         buPausePlay = findViewById(R.id.buttonPauseDetail)
@@ -131,8 +129,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         //read data from intent
         recordtitle = (intent.getStringExtra("recordName") ?: "")
         path = (intent.getStringExtra("recordPath") ?: "")
-        txtpath?.text = path
-        title?.text = getString(R.string.TitleDetail, recordtitle)
+        title?.text = getString(R.string.TitleDetail, recordtitle.replace(".aac", ""))
 
         //get the duration of the audio
         val dataMedia=MediaMetadataRetriever()
