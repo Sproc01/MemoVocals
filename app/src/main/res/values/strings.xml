@@ -11,9 +11,6 @@
     <string name="errorInvalidName">Characters not supported are present</string>
     <string name="errorAlreadyPresent">File already present</string>
     <string name="Substitute">SUBSTITUTE</string>
-    <string name="labelName">Name:</string>
-    <string name="labelPath">Path:</string>
-    <string name="labelDuration">Duration:</string>
     <string name="Ok">OK</string>
     <string name="RecordingStart">The app will continue to record if and only if this activity stay in foreground</string>
     <string name="channel_name">Player service</string>
