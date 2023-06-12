@@ -70,9 +70,11 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 txtProgress?.visibility=TextView.VISIBLE
             }
             else if(thS!=null)
+            {
                 mService?.startPlay(recordtitle, path)//there are no service so you pressed the play button and start a new thread
-            //set the callbacks for lose the audio focus
-            mService?.setCallbacks(this@DetailActivity)
+                //set the callbacks for lose the audio focus
+                mService?.setCallbacks(this@DetailActivity)
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
