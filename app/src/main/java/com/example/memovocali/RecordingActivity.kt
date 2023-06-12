@@ -102,7 +102,7 @@ class RecordingActivity : AppCompatActivity() {
         super.onPause()
         //recording is possible only if the activity stay in foreground
         timer?.cancel()
-        if(!isChangingConfigurations)//the app is recording if and only if it stays in foreground otherwise it will stop and save the record
+        if(!isChangingConfigurations)//the app continue recording if and only if it stays in foreground otherwise it will stop and save the record
             buStop?.callOnClick()
     }
 
