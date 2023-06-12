@@ -281,12 +281,11 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
     override fun onAudioFocusLose() {
         //when service lose the audio focus update the interface and unbind
-       buPausePlay?.callOnClick()
-    }
-
-    override fun onAudioFocusGain() {
-        //when service gain the audio focus update the interface and bind
-        buPlay?.callOnClick()
+        time?.cancel()
+        time = null
+        buPlay?.visibility = Button.VISIBLE
+        buPausePlay?.visibility = Button.INVISIBLE
+        buSubstitute?.visibility = Button.VISIBLE
     }
 
     companion object{

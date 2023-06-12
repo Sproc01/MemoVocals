@@ -25,11 +25,6 @@ interface ServiceListener{
      * function to call when the service lose the audiofocus
      */
     fun onAudioFocusLose()
-
-    /**
-     * function to call when the service gain the audiofocus
-     */
-    fun onAudioFocusGain()
 }
 
 /**
@@ -89,15 +84,14 @@ class PlayerService: Service() {
             audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
             focusChangeListener = OnAudioFocusChangeListener { focusChange ->
                 when (focusChange) {
-                    AudioManager.AUDIOFOCUS_GAIN -> {
-                        serviceCallbacks?.onAudioFocusGain()
-                    }
                     AudioManager.AUDIOFOCUS_LOSS -> {
                         //loss audio focus for an unbounded amount of time
+                        pausePlay()
                         serviceCallbacks?.onAudioFocusLose()
                     }
                     AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                         //loss audio focus for a short time
+                        pausePlay()
                         serviceCallbacks?.onAudioFocusLose()
                     }
                 }
@@ -299,6 +293,7 @@ class PlayerService: Service() {
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
+        serviceCallbacks = null
         return true
     }
 
