@@ -69,9 +69,11 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 txtProgress?.text=String.format("00:%02d", (seekDetailB?.progress!!) / 1000)
                 txtProgress?.visibility=TextView.VISIBLE
             }
-            else if(thS!=null)
-            {
-                mService?.startPlay(recordtitle, path)//there are no service so you pressed the play button and start a new thread
+            else if(thS!=null) {
+                mService?.startPlay(
+                    recordtitle,
+                    path
+                )//there are no service so you pressed the play button and start a new thread
                 //set the callbacks for lose the audio focus
                 mService?.setCallbacks(this@DetailActivity)
             }
@@ -206,7 +208,10 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             }
             else {//if not it start a new playback
                 if(thS==null && mBound)//unbind from the existing service and start a new one in a separate thread
+                {
                     applicationContext.unbindService(mConnection)
+                    stopService(Intent(this, PlayerService::class.java))
+                }
                 thS=ServiceThread()
                 thS?.start()
 
@@ -243,7 +248,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         if(mBound)
         {
             //stop the service and unbind
-            mService?.stopPlay()
+            mService?.stop()
 
             applicationContext.unbindService(mConnection)
             mBound = false
@@ -267,7 +272,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     override fun onPause() {
         super.onPause()
         if(mBound && mService?.isPaused()==true && mService?.getTitle()==recordtitle && !isChangingConfigurations)
-            stopPlay()//if is paused and the activity will no longer exist stop the service
+            stopPlay()//if is paused and the service will be stopped
         else if(mBound)
             applicationContext.unbindService(mConnection)
         time?.cancel()
@@ -282,7 +287,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     }
 
     override fun onAudioFocusLose() {
-        //when service lose the audio focus update the interface and unbind
+        //when service lose the audio focus update the interface
         time?.cancel()
         time = null
         buPlay?.visibility = Button.VISIBLE

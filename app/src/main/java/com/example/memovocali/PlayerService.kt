@@ -42,7 +42,6 @@ class PlayerService: Service() {
     private var isPaused: Boolean = false
     private var focusChangeListener: OnAudioFocusChangeListener? = null
 
-
     /**
      * inner class to represent the interface that must be used to control the service when a client is bind to it
      */
@@ -116,14 +115,14 @@ class PlayerService: Service() {
      */
     fun startPlay(t:String, p:String) {
         if(myPlayer?.isPlaying==true)
-            stopPlay()
+            stop()
         title=t
         path=p
         myPlayer= MediaPlayer()
         myPlayer?.setDataSource(path+title)
         myPlayer?.prepare()
         myPlayer?.setOnCompletionListener {
-            stopPlay()
+            stop()
         }
         myPlayer!!.setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
         val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -168,7 +167,7 @@ class PlayerService: Service() {
     /**
      * public function to stop the player and remove the notification
      */
-    fun stopPlay() {
+    fun stop() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioManager?.abandonAudioFocusRequest(audioRequest!!)
         }
@@ -275,7 +274,7 @@ class PlayerService: Service() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         //if the user swipe up the app the service will stop
         super.onTaskRemoved(rootIntent)
-        stopPlay()
+        stop()
     }
     /**
      * function to check if the player is playing
