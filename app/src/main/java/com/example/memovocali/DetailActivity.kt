@@ -52,6 +52,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 seekDetailB?.progress = mService?.getProgress() ?: 0
                 seekDetailB?.visibility = SeekBar.VISIBLE
                 buPausePlay?.visibility = Button.VISIBLE
+                buPlay?.visibility = Button.INVISIBLE
                 buSubstitute?.visibility = Button.INVISIBLE
                 txtProgress?.text=String.format("00:%02d", (seekDetailB?.progress!!) / 1000)
                 txtProgress?.visibility=TextView.VISIBLE
@@ -63,6 +64,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 seekDetailB?.max = duration
                 seekDetailB?.progress = mService?.getProgress() ?: 0
                 seekDetailB?.visibility = SeekBar.VISIBLE
+                buPausePlay?.visibility = Button.INVISIBLE
                 buSubstitute?.visibility = Button.VISIBLE
                 txtProgress?.text=String.format("00:%02d", (seekDetailB?.progress!!) / 1000)
                 txtProgress?.visibility=TextView.VISIBLE
@@ -101,10 +103,8 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             seekDetailB?.progress = seekDetailB?.progress?.plus(100)!!
             txtProgress?.text=String.format("00:%02d", (seekDetailB?.progress!!) / 1000)
         }
-
         override fun onFinish() {
             stopPlay()
-            txtProgress?.text=""
         }
 
     }
@@ -196,7 +196,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 PermissionChecker.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
                 PermissionChecker.PERMISSION_GRANTED)
                 return@setOnClickListener
-            if(mService?.isPaused() == true) {
+            if(mService?.isPaused() == true && mService?.getTitle()==recordtitle) {
                 //if paused it will resume the playback
                 mService?.resumePlay()
                 time = Timer((duration - seekDetailB?.progress!!).toLong())
@@ -264,7 +264,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
     override fun onPause() {
         super.onPause()
-        if(mBound && mService?.isPaused()==true && !isChangingConfigurations)
+        if(mBound && mService?.isPaused()==true && mService?.getTitle()==recordtitle && !isChangingConfigurations)
             stopPlay()//if is paused and the activity will no longer exist stop the service
         else if(mBound)
             applicationContext.unbindService(mConnection)
