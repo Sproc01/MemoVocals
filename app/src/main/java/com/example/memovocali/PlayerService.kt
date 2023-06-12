@@ -114,8 +114,6 @@ class PlayerService: Service() {
      * @param p path of the audio
      */
     fun startPlay(t:String, p:String) {
-        if(myPlayer?.isPlaying==true)
-            stop()
         title=t
         path=p
         myPlayer= MediaPlayer()

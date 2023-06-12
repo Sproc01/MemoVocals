@@ -73,7 +73,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 mService?.startPlay(
                     recordtitle,
                     path
-                )//there are no service so you pressed the play button and start a new thread
+                )//there are no service so you pressed the play button
                 //set the callbacks for lose the audio focus
                 mService?.setCallbacks(this@DetailActivity)
             }
