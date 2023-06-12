@@ -209,8 +209,8 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             else {//if not it start a new playback
                 if(thS==null && mBound)//unbind from the existing service and start a new one in a separate thread
                 {
+                    mService?.stop()
                     applicationContext.unbindService(mConnection)
-                    stopService(Intent(this, PlayerService::class.java))
                 }
                 thS=ServiceThread()
                 thS?.start()
