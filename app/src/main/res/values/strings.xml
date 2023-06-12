@@ -10,7 +10,7 @@
     <string name="Recording">Recording: %1$s</string>
     <string name="errorInvalidName">Characters not supported are present</string>
     <string name="errorAlreadyPresent">File already present</string>
-    <string name="Substitute">Substitute</string>
+    <string name="Substitute">SUBSTITUTE</string>
     <string name="labelName">Name:</string>
     <string name="labelPath">Path:</string>
     <string name="labelDuration">Duration:</string>

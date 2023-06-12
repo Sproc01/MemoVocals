@@ -93,45 +93,50 @@
         app:layout_constraintBottom_toTopOf="@id/RecordDuration"
         app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintTop_toBottomOf="@id/NameRecordDetail" />
+
     <!--I want the button to stay on the other button -->
     <Button
         android:id="@+id/buttonPlayDetail"
-        style="@style/Widget.Material3.Button.TonalButton.Icon"
-        android:layout_width="50dp"
+        style="?attr/materialIconButtonStyle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         app:icon="@drawable/baseline_play_arrow_24"
+        app:iconSize="35dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtProgress" />
+        app:layout_constraintTop_toBottomOf="@id/txtProgress"
+        tools:ignore="VisualLintOverlap,SpeakableTextPresentCheck,DuplicateClickableBoundsCheck" />
+
+    <!--I want the button to stay on the other button -->
+    <Button
+        android:id="@+id/buttonPauseDetail"
+        style="?attr/materialIconButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:icon="@drawable/baseline_pause_24"
+        app:iconSize="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtProgress"
+        tools:ignore="DuplicateClickableBoundsCheck,SpeakableTextPresentCheck,VisualLintOverlap" />
 
     <Button
         android:id="@+id/buttonSubstitute"
         android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:text="@string/Substitute"
         app:layout_constraintBottom_toBottomOf="parent"
         app:icon="@drawable/baseline_circle_24"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!--I want the button to stay on the other button -->
-    <Button
-        android:id="@+id/buttonPauseDetail"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        style="@style/Widget.Material3.Button.TonalButton.Icon"
-        app:icon="@drawable/baseline_pause_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtProgress" />
-
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txtProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_margin="15dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toTopOf="@id/buttonPlayDetail"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

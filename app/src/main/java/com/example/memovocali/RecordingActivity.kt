@@ -53,48 +53,48 @@ class RecordingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
 
-            //set the back button
-            val actionBar: ActionBar? = supportActionBar
-            actionBar?.setDisplayHomeAsUpEnabled(true)
+        //set the back button
+        val actionBar: ActionBar? = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
 
-            //initialize variables referring to the layout
-            buStop=findViewById(R.id.button_Stop)
-            txtRecordGoing=findViewById(R.id.textViewRecording)
-            seekMainB=findViewById(R.id.seekBar)
-            noiseIndicator1=findViewById(R.id.NoiseLevelIndicator1)
-            noiseIndicator2=findViewById(R.id.NoiseLevelIndicator2)
-            noiseIndicator3=findViewById(R.id.NoiseLevelIndicator3)
-            noiseIndicator4=findViewById(R.id.NoiseLevelIndicator4)
-            noiseIndicator5=findViewById(R.id.NoiseLevelIndicator5)
-            txtTitle=findViewById(R.id.textViewTitle)
+        //initialize variables referring to the layout
+        buStop=findViewById(R.id.button_Stop)
+        txtRecordGoing=findViewById(R.id.textViewRecording)
+        seekMainB=findViewById(R.id.seekBar)
+        noiseIndicator1=findViewById(R.id.NoiseLevelIndicator1)
+        noiseIndicator2=findViewById(R.id.NoiseLevelIndicator2)
+        noiseIndicator3=findViewById(R.id.NoiseLevelIndicator3)
+        noiseIndicator4=findViewById(R.id.NoiseLevelIndicator4)
+        noiseIndicator5=findViewById(R.id.NoiseLevelIndicator5)
+        txtTitle=findViewById(R.id.textViewTitle)
 
-            //set the seekbar
-            seekMainB?.isEnabled=false
-            seekMainB?.max= maxDurationRecord
+        //set the seekbar
+        seekMainB?.isEnabled=false
+        seekMainB?.max= maxDurationRecord
 
-            //read data from intent
-            title=intent.getStringExtra("title")?:""
-            path=intent.getStringExtra("path")?:""
-            txtTitle?.text=title.replace(".aac","")
+        //read data from intent
+        title=intent.getStringExtra("title")?:""
+        path=intent.getStringExtra("path")?:""
+        txtTitle?.text=title.replace(".aac","")
 
-            //restore instance state if there is one(only if the activity stay in foreground)
-            if(savedInstanceState!=null){
-                seekMainB?.progress=savedInstanceState.getInt("progress")
-                timer=TimerRecording((maxDurationRecord-seekMainB?.progress!!).toLong())
-                timer?.start()
-            }
-            else {
-                //show a snackbar
-                Snackbar.make(findViewById(R.id.textViewRecording),getString(R.string.RecordingStart),Snackbar.LENGTH_LONG).show()
-                //start the record
-                startRecord(path, title, applicationContext)
-                timer=TimerRecording(maxDurationRecord.toLong())
-                timer?.start()
-            }
+        //restore instance state if there is one(only if the activity stay in foreground)
+        if(savedInstanceState!=null){
+            seekMainB?.progress=savedInstanceState.getInt("progress")
+            timer=TimerRecording((maxDurationRecord-seekMainB?.progress!!).toLong())
+            timer?.start()
+        }
+        else {
+            //show a snackbar
+            Snackbar.make(findViewById(R.id.textViewRecording),getString(R.string.RecordingStart),Snackbar.LENGTH_LONG).show()
+            //start the record
+            startRecord(path, title, applicationContext)
+            timer=TimerRecording(maxDurationRecord.toLong())
+            timer?.start()
+        }
 
         buStop?.setOnClickListener {
-            stopRecord()
-            finish()
+                stopRecord()
+                finish()
         }
     }
 
