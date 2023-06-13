@@ -140,7 +140,7 @@ class PlayerService: Service() {
                 notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
             }
             notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
-            notificationBuilder.setContentTitle(title)
+            notificationBuilder.setContentTitle(title.replace(".aac",""))
             notificationBuilder.setLargeIcon(
                 Icon.createWithResource(
                     applicationContext,
@@ -198,7 +198,7 @@ class PlayerService: Service() {
                 notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
             }
             notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
-            notificationBuilder.setContentTitle(title)
+            notificationBuilder.setContentTitle(title.replace(".aac",""))
             notificationBuilder.setLargeIcon(
                 Icon.createWithResource(
                     applicationContext,
@@ -244,7 +244,7 @@ class PlayerService: Service() {
                     notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
                 }
                 notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
-                notificationBuilder.setContentTitle(title)
+                notificationBuilder.setContentTitle(title.replace(".aac",""))
                 notificationBuilder.setLargeIcon(
                     Icon.createWithResource(
                         applicationContext,
