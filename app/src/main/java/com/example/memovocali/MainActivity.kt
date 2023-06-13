@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                 records.add(Record(f.name,file.absolutePath+File.separator))
             }
         //sort the list
-        records.sortBy{ it.getTitle() }
+        records.sortBy{ it.getTitle().uppercase() }
         //set the adapter
         rc?.adapter=RecordAdapter(records)
 
@@ -62,6 +62,8 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 //update the recycler view and the list
                 (rc?.adapter as RecordAdapter).addRecord(Record(title,path))
+                records.sortBy{ it.getTitle().uppercase() }
+                rc?.adapter?.notifyDataSetChanged()
             }
             else {//error message
                 val error= MaterialAlertDialogBuilder(applicationContext)

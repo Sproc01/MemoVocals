@@ -161,6 +161,9 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                 file.renameTo(newFile)
                 //update the record
                 record.setTitle(txt)
+                //update the recyclerview
+                rA.Records.sortBy { it.getTitle().uppercase() }
+                rA.notifyDataSetChanged()
                 return
             }
         }
