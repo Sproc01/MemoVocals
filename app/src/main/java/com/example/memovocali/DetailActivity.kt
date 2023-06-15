@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.io.File
 
 class DetailActivity : AppCompatActivity(),ServiceListener {
 
@@ -37,6 +38,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     private lateinit var path:String
     private lateinit var recordtitle:String
     private var thS:ServiceThread?=null
+
     /**
      * object that manage the connection to the service
      */
@@ -69,14 +71,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 txtProgress?.text=String.format("00:%02d", (seekDetailB?.progress!!) / 1000)
                 txtProgress?.visibility=TextView.VISIBLE
             }
-            else if(thS!=null) {
-                mService?.startPlay(
-                    recordtitle,
-                    path
-                )//there are no service so you pressed the play button
-                //set the callbacks for lose the audio focus
-                mService?.setCallbacks(this@DetailActivity)
-            }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -94,7 +88,10 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         override fun run() {
             val i=Intent(applicationContext, PlayerService::class.java)
             startService(i)
-            applicationContext.bindService(i, mConnection, Context.BIND_AUTO_CREATE)
+            mService?.startPlay(
+                recordtitle,
+                path
+            )
         }
     }
 
@@ -135,11 +132,27 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         path = (intent.getStringExtra("recordPath") ?: "")
         title?.text = getString(R.string.TitleDetail, recordtitle.replace(".aac", ""))
 
-        //get the duration of the audio
-        val dataMedia=MediaMetadataRetriever()
-        dataMedia.setDataSource(path+recordtitle)
-        duration=dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()?:0
-        txtDuration?.text = String.format("00:%02d", duration / 1000)
+        val file= File(path+recordtitle)
+        if(!file.exists())
+        {
+            //if the file doesn't exist,the user wil be informed and the activity is closed
+            val error= MaterialAlertDialogBuilder(this)
+            error.setTitle(getString(R.string.FileNotExistErrorTitle))
+            error.setMessage(getString(R.string.notExist))
+            error.setPositiveButton(getString(R.string.Ok)) { _, _ -> finish() }
+            error.show()
+
+        }
+        else
+        {
+            //get the duration of the audio
+            val dataMedia=MediaMetadataRetriever()
+            dataMedia.setDataSource(path+recordtitle)
+            duration=dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()?:0
+            txtDuration?.text = String.format("00:%02d", duration / 1000)
+        }
+
+
 
         //bind the service to found if an audio is playing
         applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
@@ -208,10 +221,10 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             }
             else {//if not it start a new playback
                 if(thS==null && mBound)//unbind from the existing service and start a new one in a separate thread
-                {
                     mService?.stop()
-                    applicationContext.unbindService(mConnection)
-                }
+                if(!mBound)//if the service is destroy by the system for whatever reason before start playing, bind it again
+                    applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
+
                 thS=ServiceThread()
                 thS?.start()
 
@@ -247,11 +260,8 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     {
         if(mBound)
         {
-            //stop the service and unbind
+            //stop the service
             mService?.stop()
-
-            applicationContext.unbindService(mConnection)
-            mBound = false
 
             //stop the thread
             thS?.interrupt()
@@ -273,10 +283,11 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         super.onPause()
         if(mBound && mService?.isPaused()==true && mService?.getTitle()==recordtitle && !isChangingConfigurations)
             stopPlay()//if is paused and the service will be stopped
-        else if(mBound)
+        if(mBound)//if only bound unbind
             applicationContext.unbindService(mConnection)
         time?.cancel()
     }
+
     /**
      * function that is called when the back button is pressed
      */

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Registrazioni</string>
+    <string name="ImageDescription">Simbolo Musica</string>
+    <string name="labelInput">Inserire un titolo</string>
+    <string name="errorEmptyTitle">Inserire un titolo non vuoto</string>
+    <string name="deleteTitle">Elimina</string>
+    <string name="deletePressed">Sei sicuro di voler cancellare in maniera permanente il file?</string>
+    <string name="DialogSpace">Errore spazio disponibile</string>
+    <string name="DialogErrorTitle">Errore sul titolo</string>
+    <string name="stop">Stop</string>
+    <string name="record">Registra</string>
+    <string name="TitleDetail">%1$s</string>
+    <string name="Recording">Registrando: %1$s</string>
+    <string name="errorInvalidName">Ci sono caratteri non supportati(solo lettere e numeri)</string>
+    <string name="errorAlreadyPresent">Un file con questo titolo è già presente</string>
+    <string name="Substitute">SOSTITUISCI</string>
+    <string name="FileNotExistErrorTitle">Errore file</string>
+    <string name="notExist">Errore durante apertura: Il file non esiste</string>
+    <string name="Ok">@android:string/ok</string>
+    <string name="Cancel">@android:string/cancel</string>
+    <string name="RecordingStart">L\'app continuerà a registrare solo se rimarrà in foreground</string>
+    <string name="channel_name">Service per playback</string>
+    <string name="channel_description">Ascolto %1s</string>
+    <string name="errorEnoughSpace">Non c\'è abbastanza spazio</string>
+</resources>

@@ -1,5 +1,6 @@
 package com.example.memovocali
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -117,7 +118,14 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
              * function called when the user click on the delete button
              */
             buDelete.setOnClickListener {
-                rA.removeRecord(record)
+                val error= MaterialAlertDialogBuilder(parent.context)
+                error.setTitle(parent.context.getString(R.string.deleteTitle))
+                error.setMessage(parent.context.getString(R.string.deletePressed))
+                error.setPositiveButton(parent.context.getString(R.string.Ok)) { _, _ ->
+                    rA.removeRecord(record)
+                }
+                error.setNegativeButton(parent.context.getString(R.string.Cancel), null)
+                error.show()
             }
 
 
@@ -126,6 +134,7 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
         /**
          * function that change the name of the record
          */
+        @SuppressLint("NotifyDataSetChanged") //I use it because i reorder the list so the recycler view must be updated
         private fun changeName(){
             var txt=txtName.text.toString()
             for(i in txt)//only certain characters are allowed
@@ -134,7 +143,11 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
                     return
                 }
             if(txt=="")//the name can't be empty
+            {
+                txtName.error=parent.context.getString(R.string.errorEmptyTitle)
                 return
+            }
+
             val n=record.getTitle()
             if(txtName.text.toString().contains(".aac"))
                 txtName.text=txtName.text.toString().replace(".aac","")

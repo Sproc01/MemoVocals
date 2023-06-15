@@ -1,6 +1,7 @@
 package com.example.memovocali
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private val records:MutableList<Record> = mutableListOf()
     private var rc:RecyclerView?=null
 
+    @SuppressLint("NotifyDataSetChanged") //I use it because i reorder the list so the recycler view must be updated
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -66,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                 rc?.adapter?.notifyDataSetChanged()
             }
             else {//error message
-                val error= MaterialAlertDialogBuilder(applicationContext)
+                val error= MaterialAlertDialogBuilder(this)
                 error.setTitle(getString(R.string.DialogSpace))
                 error.setMessage(getString(R.string.errorEnoughSpace))
                 error.setPositiveButton(getString(R.string.Ok),null)
