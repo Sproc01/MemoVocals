@@ -239,7 +239,7 @@ class PlayerService: Service() {
             audioManager?.requestAudioFocus(focusChangeListener!!, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
         }
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            if (myPlayer?.isPlaying==false && isPaused) {
+            if (myPlayer?.isPlaying==false) {
                 myPlayer?.start()
                 isPaused = false
                 //update the notification
