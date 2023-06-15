@@ -147,7 +147,7 @@ class PlayerService: Service() {
                     R.drawable.baseline_audiotrack_24
                 )
             )
-            notificationBuilder.setContentText("Playing")
+            notificationBuilder.setContentText(applicationContext.getString(R.string.Playing))
             notificationBuilder.style = Notification.MediaStyle()
             val intent = Intent(applicationContext, DetailActivity::class.java)
             intent.putExtra("recordName", title)
@@ -205,7 +205,7 @@ class PlayerService: Service() {
                     R.drawable.baseline_audiotrack_24
                 )
             )
-            notificationBuilder.setContentText("Paused")
+            notificationBuilder.setContentText(applicationContext.getString(R.string.Paused))
             notificationBuilder.style = Notification.MediaStyle()
             val intent = Intent(applicationContext, DetailActivity::class.java)
             intent.putExtra("recordName", title)
@@ -251,7 +251,7 @@ class PlayerService: Service() {
                         R.drawable.baseline_audiotrack_24
                     )
                 )
-                notificationBuilder.setContentText("Playing")
+                notificationBuilder.setContentText(applicationContext.getString(R.string.Playing))
                 notificationBuilder.style = Notification.MediaStyle()
                 val intent = Intent(applicationContext, DetailActivity::class.java)
                 intent.putExtra("recordName", title)

@@ -23,4 +23,6 @@
     <string name="channel_name">Service per playback</string>
     <string name="channel_description">Ascolto %1s</string>
     <string name="errorEnoughSpace">Non c\'è abbastanza spazio</string>
+    <string name="Playing">In riproduzione</string>
+    <string name="Paused">In pausa</string>
 </resources>
