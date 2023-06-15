@@ -129,8 +129,9 @@ class PlayerService: Service() {
             audioManager?.requestAudioFocus(focusChangeListener!!, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
         }
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            // have audio focus now.
+            // have audio focus now
             myPlayer?.start()
+            isPaused=false
             val notificationBuilder: Notification.Builder =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                     Notification.Builder(applicationContext, CHANNEL_ID)
@@ -177,6 +178,7 @@ class PlayerService: Service() {
         myPlayer?.stop()
         myPlayer?.release()
         myPlayer = null
+        isPaused=false
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
@@ -237,7 +239,7 @@ class PlayerService: Service() {
             audioManager?.requestAudioFocus(focusChangeListener!!, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
         }
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            if (myPlayer?.isPlaying==false) {
+            if (myPlayer?.isPlaying==false && isPaused) {
                 myPlayer?.start()
                 isPaused = false
                 //update the notification

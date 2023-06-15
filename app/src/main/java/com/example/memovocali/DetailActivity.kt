@@ -154,8 +154,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             txtDuration?.text = String.format("00:%02d", duration / 1000)
         }
 
-
-
         //bind the service to found if an audio is playing
         applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
         seekDetailB?.visibility = SeekBar.INVISIBLE
@@ -211,8 +209,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
 
         buPlay?.setOnClickListener {
             //check if the app has the permission to start a foreground service
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)!=
-                PermissionChecker.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
                 PermissionChecker.PERMISSION_GRANTED)
                 return@setOnClickListener
             if(mService?.isPaused() == true && mService?.getTitle()==recordtitle) {
@@ -227,6 +224,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 if(!mBound)//if the service is destroy by the system for whatever reason before start playing, bind it again
                     applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
 
+                //start the service in a separate thread
                 thS=ServiceThread()
                 thS?.start()
 
