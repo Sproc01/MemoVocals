@@ -60,6 +60,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 txtProgress?.visibility=TextView.VISIBLE
                 time=Timer((duration - seekDetailB?.progress!!).toLong())
                 time?.start()
+                mService?.setCallbacks(this@DetailActivity)
             }
             else if(mService?.isPaused()!! && mService?.getTitle()==recordtitle) {
                 //there is a service but it is paused
@@ -70,6 +71,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 buSubstitute?.visibility = Button.VISIBLE
                 txtProgress?.text=String.format("00:%02d", (seekDetailB?.progress!!) / 1000)
                 txtProgress?.visibility=TextView.VISIBLE
+                mService?.setCallbacks(this@DetailActivity)
             }
         }
 
@@ -92,6 +94,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 recordtitle,
                 path
             )
+            mService?.setCallbacks(this@DetailActivity)
         }
     }
 
@@ -141,7 +144,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             error.setMessage(getString(R.string.notExist))
             error.setPositiveButton(getString(R.string.Ok)) { _, _ -> finish() }
             error.show()
-
         }
         else
         {

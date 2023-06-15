@@ -89,11 +89,6 @@ class MainActivity : AppCompatActivity() {
                 PermissionChecker.PERMISSION_GRANTED)
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE)
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)!=
-                PermissionChecker.PERMISSION_GRANTED)
-                requestPermissions(arrayOf(Manifest.permission.FOREGROUND_SERVICE), REQUEST_CODE)
-        }
     }
 
     companion object{

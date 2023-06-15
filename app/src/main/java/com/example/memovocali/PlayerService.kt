@@ -169,6 +169,9 @@ class PlayerService: Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioManager?.abandonAudioFocusRequest(audioRequest!!)
         }
+        else {
+            audioManager?.abandonAudioFocus(focusChangeListener!!)
+        }
         title=""
         path=""
         myPlayer?.stop()
@@ -185,6 +188,9 @@ class PlayerService: Service() {
         if (myPlayer?.isPlaying==true) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 audioManager?.abandonAudioFocusRequest(audioRequest!!)
+            }
+            else {
+                audioManager?.abandonAudioFocus(focusChangeListener!!)
             }
             myPlayer?.pause()
             isPaused=true
