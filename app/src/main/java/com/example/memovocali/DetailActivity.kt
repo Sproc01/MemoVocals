@@ -90,10 +90,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         override fun run() {
             val i=Intent(applicationContext, PlayerService::class.java)
             startService(i)
-            mService?.startPlay(
-                recordtitle,
-                path
-            )
+            mService?.startPlay(recordtitle, path)
             mService?.setCallbacks(this@DetailActivity)
         }
     }
@@ -136,8 +133,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         title?.text = getString(R.string.TitleDetail, recordtitle.replace(".aac", ""))
 
         val file= File(path+recordtitle)
-        if(!file.exists())
-        {
+        if(!file.exists()) {
             //if the file doesn't exist,the user wil be informed and the activity is closed
             val error= MaterialAlertDialogBuilder(this)
             error.setTitle(getString(R.string.FileNotExistErrorTitle))
@@ -145,8 +141,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             error.setPositiveButton(getString(R.string.Ok)) { _, _ -> finish() }
             error.show()
         }
-        else
-        {
+        else {
             //get the duration of the audio
             val dataMedia=MediaMetadataRetriever()
             dataMedia.setDataSource(path+recordtitle)
@@ -182,12 +177,18 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         buSubstitute?.setOnClickListener {
             if(mBound && mService?.isPaused()==true)
                 stopPlay()
-            if(thS==null)//if thS is null it means that this instance of detailActivty doesn't have a service playing
-            {
+            //if thS is null it means that this instance of detailActivty doesn't have a service playing
+            if(thS==null) {
                 //check if the app have the permission to record
                 if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                    != PermissionChecker.PERMISSION_GRANTED)
+                    != PermissionChecker.PERMISSION_GRANTED) {
+                    val error= MaterialAlertDialogBuilder(this)
+                    error.setTitle(getString(R.string.errorNoPermission))
+                    error.setMessage(getString(R.string.errorNoPermissionAudio))
+                    error.setPositiveButton(getString(R.string.Ok),null)
+                    error.show()
                     return@setOnClickListener
+                }
                 //check if there is enough space to record(15 MB)
                 val stat = StatFs(path)
                 val megAvailable = stat.availableBytes/1000000
@@ -210,8 +211,14 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         buPlay?.setOnClickListener {
             //check if the app has the permission to start a foreground service
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
-                PermissionChecker.PERMISSION_GRANTED)
+                PermissionChecker.PERMISSION_GRANTED) {
+                val error= MaterialAlertDialogBuilder(this)
+                error.setTitle(getString(R.string.errorNoPermission))
+                error.setMessage(getString(R.string.errorNoPermissionAudio))
+                error.setPositiveButton(getString(R.string.Ok),null)
+                error.show()
                 return@setOnClickListener
+            }
             if(mService?.isPaused() == true && mService?.getTitle()==recordtitle) {
                 //if paused it will resume the playback
                 mService?.resumePlay()
@@ -258,8 +265,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
      */
     private fun stopPlay()
     {
-        if(mBound)
-        {
+        if(mBound) {
             //stop the service
             mService?.stop()
 

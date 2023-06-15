@@ -47,8 +47,14 @@ class MainActivity : AppCompatActivity() {
         buNewRecord?.setOnClickListener {
             //check permission
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                != PermissionChecker.PERMISSION_GRANTED)
+                != PermissionChecker.PERMISSION_GRANTED) {
+                val error= MaterialAlertDialogBuilder(this)
+                error.setTitle(getString(R.string.errorNoPermission))
+                error.setMessage(getString(R.string.errorNoPermissionAudio))
+                error.setPositiveButton(getString(R.string.Ok),null)
+                error.show()
                 return@setOnClickListener
+            }
 
             //start the recording activity
             val intent= Intent(this,RecordingActivity::class.java)

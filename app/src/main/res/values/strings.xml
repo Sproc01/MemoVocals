@@ -24,4 +24,7 @@
     <string name="errorEnoughSpace">Not enough space</string>
     <string name="Playing">Playing</string>
     <string name="Paused">Paused</string>
+    <string name="errorNoPermission">Permission denied</string>
+    <string name="errorNoPermissionAudio">You have to grant record audio permission in the settings to use this function</string>
+    <string name="errorNoPermissionNotification">You have to grant the post notification permission in the settings to use this function</string>
 </resources>
