@@ -27,7 +27,7 @@ class RecordingActivity : AppCompatActivity() {
     private var timer:TimerRecording?=null
 
     /**
-     * Timer for the recording
+     * Timer for the recording(max 30 seconds)
      */
     inner class TimerRecording(x: Long) : CountDownTimer(x, 100) {
         override fun onTick(millisUntilFinished: Long) {
@@ -43,7 +43,7 @@ class RecordingActivity : AppCompatActivity() {
         }
 
         override fun onFinish() {
-            //call method to close the activty
+            //call method to close the activity
             buStop?.callOnClick()
         }
 
@@ -84,8 +84,9 @@ class RecordingActivity : AppCompatActivity() {
             timer?.start()
         }
         else {
-            //show a snackbar
+            //show a snackbar to inform the user that the recording will continue only if this activity stay in foreground
             Snackbar.make(findViewById(R.id.textViewRecording),getString(R.string.RecordingStart),Snackbar.LENGTH_LONG).show()
+
             //start the record
             startRecord(path, title, applicationContext)
             timer=TimerRecording(maxDurationRecord.toLong())
@@ -93,8 +94,9 @@ class RecordingActivity : AppCompatActivity() {
         }
 
         buStop?.setOnClickListener {
-                stopRecord()
-                finish()
+            //stop the record and close the activity
+            stopRecord()
+            finish()
         }
     }
 
@@ -119,6 +121,9 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     companion object{
+        /**
+         * max duration of the timer use for recording
+         */
         private const val maxDurationRecord=32000
     }
 }

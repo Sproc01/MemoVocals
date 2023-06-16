@@ -118,14 +118,14 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
              * function called when the user click on the delete button
              */
             buDelete.setOnClickListener {
-                val error= MaterialAlertDialogBuilder(parent.context)
-                error.setTitle(parent.context.getString(R.string.deleteTitle))
-                error.setMessage(parent.context.getString(R.string.deletePressed))
-                error.setPositiveButton(parent.context.getString(R.string.Ok)) { _, _ ->
+                val confirm= MaterialAlertDialogBuilder(parent.context)
+                confirm.setTitle(parent.context.getString(R.string.deleteTitle))
+                confirm.setMessage(parent.context.getString(R.string.deletePressed))
+                confirm.setPositiveButton(parent.context.getString(R.string.Ok)) { _, _ ->
                     rA.removeRecord(record)
                 }
-                error.setNegativeButton(parent.context.getString(R.string.Cancel), null)
-                error.show()
+                confirm.setNegativeButton(parent.context.getString(R.string.Cancel), null)
+                confirm.show()
             }
 
 
@@ -149,8 +149,6 @@ class RecordAdapter(private val Records:MutableList<Record> =mutableListOf()): R
             }
 
             val n=record.getTitle()
-            if(txtName.text.toString().contains(".aac"))
-                txtName.text=txtName.text.toString().replace(".aac","")
             if(!(txt.contains(".aac")))
                 txt+=".aac"
             if(txt==n)//if the name is the same of the old one, nothing change

@@ -27,4 +27,6 @@
     <string name="errorNoPermission">Permission denied</string>
     <string name="errorNoPermissionAudio">You have to grant record audio permission in the settings to use this function</string>
     <string name="errorNoPermissionNotification">You have to grant the post notification permission in the settings to use this function</string>
+    <string name="buttonDeleteDescription">Delete</string>
+    <string name="buttonOpenDescription">Open</string>
 </resources>

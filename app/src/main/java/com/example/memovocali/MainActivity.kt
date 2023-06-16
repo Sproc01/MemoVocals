@@ -13,6 +13,7 @@ import androidx.core.content.PermissionChecker
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
+import java.text.DateFormat
 import java.util.*
 
 
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         buNewRecord?.setOnClickListener {
             //check permission
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                != PermissionChecker.PERMISSION_GRANTED) {
+                != PermissionChecker.PERMISSION_GRANTED) { //if the app haven't the permission dialog to inform the user
                 val error= MaterialAlertDialogBuilder(this)
                 error.setTitle(getString(R.string.errorNoPermission))
                 error.setMessage(getString(R.string.errorNoPermissionAudio))
@@ -58,7 +59,10 @@ class MainActivity : AppCompatActivity() {
 
             //start the recording activity
             val intent= Intent(this,RecordingActivity::class.java)
-            val title=Calendar.getInstance().time.toString().replace(":","").replace("GMT+","") + ".aac"
+            val title=if(Locale.getDefault().language == "it" || Locale.getDefault().language == "en")
+                (DateFormat.getDateInstance().format(Calendar.getInstance().time)+" "+DateFormat.getTimeInstance().format(Calendar.getInstance().time)).replace(":"," ").replace(",","")+".aac"
+            else
+                Calendar.getInstance().time.toString().replace(":"," ").replace("GMT+","") + ".aac"
             val path=applicationContext.filesDir.toString() + File.separator + "Memo" + File.separator
 
             //check if there is enough space
@@ -83,12 +87,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         //ask permission if the app haven't them
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             != PermissionChecker.PERMISSION_GRANTED)
-                requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_CODE)
+            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_CODE)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
@@ -102,6 +106,10 @@ class MainActivity : AppCompatActivity() {
          * Request code for permission
          */
         private const val REQUEST_CODE = 12345
+
+        /**
+         * Size of the file in MB
+         */
         private const val size=15
     }
 

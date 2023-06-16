@@ -31,6 +31,7 @@ interface ServiceListener{
  * class that represent the service that manage the player,
  * it is a foreground service
  */
+@Suppress("DEPRECATION") //suppress all the deprecation because the app support older version that request the deprecated methods
 class PlayerService: Service() {
     private var myPlayer: MediaPlayer? = null
     private var path:String=""
@@ -43,11 +44,11 @@ class PlayerService: Service() {
     private var focusChangeListener: OnAudioFocusChangeListener? = null
 
     /**
-     * inner class to represent the interface that must be used to control the service when a client is bind to it
+     * inner class to represent the interface that will be returned from the onBind method to control the service when a client is bind to it
      */
     inner class LocalBinder : Binder() {
         /**
-         * function to get the service
+         * property to get the service
          * @return the service
          */
         val service: PlayerService
@@ -73,6 +74,7 @@ class PlayerService: Service() {
     override fun onCreate() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //create the notification channel
             val name: CharSequence = getString(R.string.channel_name)
             val description = getString(R.string.channel_description, title)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
@@ -80,6 +82,7 @@ class PlayerService: Service() {
             channel.description = description
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
+            //create the focusChangeListener and the audio manager to requestAudioFocus
             audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
             focusChangeListener = OnAudioFocusChangeListener { focusChange ->
                 when (focusChange) {
@@ -270,8 +273,7 @@ class PlayerService: Service() {
                 )
                 notificationBuilder.setContentIntent(pendingIntent)
                 val notification = notificationBuilder.build()
-                val mNotificationManager =
-                    getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                val mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
                 mNotificationManager.notify(notificationID, notification)
             }
         }

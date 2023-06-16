@@ -142,7 +142,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             error.show()
         }
         else {
-            //get the duration of the audio
+            //get the duration of the audio only if the file exist
             val dataMedia=MediaMetadataRetriever()
             dataMedia.setDataSource(path+recordtitle)
             duration=dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()?:0
@@ -165,7 +165,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 mService?.seekTo(seekBar.progress)
                 if(mService?.isPaused() == false)
-                {
+                {//if the audio weren't playing before the seekbar was moved, the audio will continue
                     time?.cancel()
                     time = Timer((duration - seekBar.progress).toLong())
                     time?.start()
@@ -181,7 +181,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             if(thS==null) {
                 //check if the app have the permission to record
                 if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                    != PermissionChecker.PERMISSION_GRANTED) {
+                    != PermissionChecker.PERMISSION_GRANTED) {//if the permission is not granted the user will be informed
                     val error= MaterialAlertDialogBuilder(this)
                     error.setTitle(getString(R.string.errorNoPermission))
                     error.setMessage(getString(R.string.errorNoPermissionAudio))
@@ -211,7 +211,8 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         buPlay?.setOnClickListener {
             //check if the app has the permission to start a foreground service
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
-                PermissionChecker.PERMISSION_GRANTED) {
+                PermissionChecker.PERMISSION_GRANTED) { //if the permission is not granted the user will be informed
+                //this permission is requested because the service use the notification to communicate with the user
                 val error= MaterialAlertDialogBuilder(this)
                 error.setTitle(getString(R.string.errorNoPermission))
                 error.setMessage(getString(R.string.errorNoPermissionAudio))
@@ -226,7 +227,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 time?.start()
             }
             else {//if not it start a new playback
-                if(thS==null && mBound)//unbind from the existing service and start a new one in a separate thread
+                if(thS==null && mBound)//stop the existing service and start a new one in a separate thread
                     mService?.stop()
                 if(!mBound)//if the service is destroy by the system for whatever reason before start playing, bind it again
                     applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
@@ -289,7 +290,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         super.onPause()
         if(mBound && mService?.isPaused()==true && mService?.getTitle()==recordtitle && !isChangingConfigurations)
             stopPlay()//if is paused and the service will be stopped
-        if(mBound)//if only bound unbind
+        if(mBound)//if only bound unbind so if the service is not playing it will be destroyed
             applicationContext.unbindService(mConnection)
         time?.cancel()
     }
@@ -313,6 +314,9 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     }
 
     companion object{
+        /**
+         * Size of the file in MB
+         */
         private const val size=15
     }
 }

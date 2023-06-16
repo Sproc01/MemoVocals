@@ -11,11 +11,11 @@ private var title:String=""
 /**
  * Function for start the record
  */
+@Suppress("DEPRECATION") //suppress all the deprecation because the app support older version that request the deprecated methods
 fun startRecord(p:String, t:String, applicationContext: Context){
     //construct and start of the record
-    recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
         MediaRecorder(applicationContext)
-    }
     else
         MediaRecorder()
     path =p
@@ -39,7 +39,7 @@ fun stopRecord(){
 }
 
 /**
- * Function to get the amplitude of the registration
+ * Function to get the max amplitude from the previous call, if it is the first call it will return 0
  */
 fun amplitude():Int{
     return recorder?.maxAmplitude?:0

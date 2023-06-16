@@ -28,4 +28,6 @@
     <string name="errorNoPermission">Permesso non concesso</string>
     <string name="errorNoPermissionAudio">Devi dare il permesso di accedere al microfono per usare questa funzione</string>
     <string name="errorNoPermissionNotification">Devi dare il permesso per inviare le notifche per usare qeusta funzione</string>
+    <string name="buttonDeleteDescription">Elimina</string>
+    <string name="buttonOpenDescription">Apri</string>
 </resources>
