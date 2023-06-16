@@ -28,8 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/RecordDuration"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/buttonPauseDetail"
-        />
+        app:layout_constraintBottom_toTopOf="@id/buttonPauseDetail" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
@@ -61,12 +60,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        app:iconSize="50dp"
         app:icon="@drawable/baseline_play_arrow_24"
+        app:iconSize="50dp"
+        android:contentDescription="@string/play"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtProgress"
-        tools:ignore="DuplicateClickableBoundsCheck,SpeakableTextPresentCheck,VisualLintOverlap" />
+        tools:ignore="VisualLintOverlap,DuplicateClickableBoundsCheck" />
 
     <Button
         android:id="@+id/buttonSubstitute"
@@ -77,8 +77,7 @@
         app:icon="@drawable/baseline_circle_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!--I want the button to stay on the other button -->
     <Button
@@ -87,12 +86,12 @@
         android:layout_width="wrap_content"
         app:iconSize="50dp"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/pause"
         android:layout_margin="10dp"
         app:icon="@drawable/baseline_pause_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtProgress"
-        tools:ignore="SpeakableTextPresentCheck" />
+        app:layout_constraintTop_toBottomOf="@id/txtProgress" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txtProgress"

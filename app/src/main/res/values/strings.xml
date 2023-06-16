@@ -29,4 +29,6 @@
     <string name="errorNoPermissionNotification">You have to grant the post notification permission in the settings to use this function</string>
     <string name="buttonDeleteDescription">Delete</string>
     <string name="buttonOpenDescription">Open</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
 </resources>

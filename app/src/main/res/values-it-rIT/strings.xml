@@ -19,7 +19,7 @@
     <string name="notExist">Errore durante apertura: Il file non esiste</string>
     <string name="Ok">@android:string/ok</string>
     <string name="Cancel">@android:string/cancel</string>
-    <string name="RecordingStart">L\'app continuerà a registrare solo se rimarrà in foreground</string>
+    <string name="RecordingStart">L\'app continuerà a registrare solo se questa schermata rimarrà in foreground</string>
     <string name="channel_name">Service per playback</string>
     <string name="channel_description">Ascolto %1s</string>
     <string name="errorEnoughSpace">Non c\'è abbastanza spazio</string>
@@ -30,4 +30,6 @@
     <string name="errorNoPermissionNotification">Devi dare il permesso per inviare le notifche per usare qeusta funzione</string>
     <string name="buttonDeleteDescription">Elimina</string>
     <string name="buttonOpenDescription">Apri</string>
+    <string name="play">Ascolta</string>
+    <string name="pause">Metti in pausa</string>
 </resources>
