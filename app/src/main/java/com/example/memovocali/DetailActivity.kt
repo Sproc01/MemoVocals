@@ -291,7 +291,10 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         if(mBound && mService?.isPaused()==true && mService?.getTitle()==recordtitle && !isChangingConfigurations)
             stopPlay()//if is paused and the service will be stopped
         if(mBound)//if only bound unbind so if the service is not playing it will be destroyed
+        {
             applicationContext.unbindService(mConnection)
+            mBound=false
+        }
         time?.cancel()
     }
 
@@ -304,6 +307,11 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         return true
     }
 
+    override fun onResume(){//if the user lock and unlock the phone with this activity in foreground the service will be bound again
+        super.onResume()
+        if(!mBound)
+            applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
+    }
     override fun onAudioFocusLose() {
         //when service lose the audio focus update the interface
         time?.cancel()
