@@ -73,6 +73,13 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 txtProgress?.visibility=TextView.VISIBLE
                 mService?.setCallbacks(this@DetailActivity)
             }
+            else {
+                seekDetailB?.visibility = SeekBar.INVISIBLE
+                buPausePlay?.visibility = Button.INVISIBLE
+                txtProgress?.visibility=TextView.INVISIBLE
+                buPlay?.visibility = Button.VISIBLE
+                buSubstitute?.visibility = Button.VISIBLE
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -148,12 +155,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             duration=dataMedia.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toInt()?:0
             txtDuration?.text = String.format("00:%02d", duration / 1000)
         }
-
-        //bind the service to found if an audio is playing
-        applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
-        seekDetailB?.visibility = SeekBar.INVISIBLE
-        buPausePlay?.visibility = Button.INVISIBLE
-        txtProgress?.visibility=TextView.INVISIBLE
 
         seekDetailB?.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
 
@@ -307,10 +308,11 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         return true
     }
 
-    override fun onResume(){//if the user lock and unlock the phone with this activity in foreground the service will be bound again
+    override fun onResume(){
         super.onResume()
-        if(!mBound)
-            applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
+        //bind the service to found if an audio is playing or not
+        applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
+
     }
     override fun onAudioFocusLose() {
         //when service lose the audio focus update the interface
