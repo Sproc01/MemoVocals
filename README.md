@@ -8,7 +8,7 @@
  In the detailActivity you can listen to the record or substitute the record.
  You can listen a record while the app is in foreground or in background, while you can record audio only if the recordingActivity is in foreground.
 
- ## Tecnichal information
+ ## Technical information
  The app is written in kotlin(https://kotlinlang.org/docs/home.html) and it uses material3(https://m3.material.io) for interface components. This app is compatible with android device with android 7.0 or newer(android SDK 24 or higher). The app is tested onto two devices: a device with android 9 and a device with android 13.
  To allow the user to listen while the app is in background the app use a service in bound and started mode.
 
