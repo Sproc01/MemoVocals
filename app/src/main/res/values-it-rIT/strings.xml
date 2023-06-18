@@ -17,8 +17,8 @@
     <string name="Substitute">SOSTITUISCI</string>
     <string name="FileNotExistErrorTitle">Errore file</string>
     <string name="notExist">Errore durante apertura: Il file non esiste</string>
-    <string name="Ok">@android:string/ok</string>
-    <string name="Cancel">@android:string/cancel</string>
+    <string name="Ok">OK</string>
+    <string name="Cancel">Annulla</string>
     <string name="RecordingStart">L\'app continuerà a registrare solo se questa schermata rimarrà in foreground</string>
     <string name="channel_name">Service per playback</string>
     <string name="channel_description">Ascolto %1s</string>
