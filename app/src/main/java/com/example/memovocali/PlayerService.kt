@@ -243,6 +243,7 @@ class PlayerService: Service() {
         super.onTaskRemoved(rootIntent)
         stop()
     }
+
     /**
      * function to check if the player is playing
      * @return true if the player is playing, false otherwise

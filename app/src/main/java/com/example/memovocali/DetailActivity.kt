@@ -216,7 +216,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 //this permission is requested because the service use the notification to communicate with the user
                 val error= MaterialAlertDialogBuilder(this)
                 error.setTitle(getString(R.string.errorNoPermission))
-                error.setMessage(getString(R.string.errorNoPermissionAudio))
+                error.setMessage(getString(R.string.errorNoPermissionNotification))
                 error.setPositiveButton(getString(R.string.Ok),null)
                 error.show()
                 return@setOnClickListener
