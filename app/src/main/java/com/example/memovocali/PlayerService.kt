@@ -135,37 +135,46 @@ class PlayerService: Service() {
             // have audio focus now
             myPlayer?.start()
             isPaused=false
-            val notificationBuilder: Notification.Builder =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    Notification.Builder(applicationContext, CHANNEL_ID)
-                else
-                    Notification.Builder(applicationContext)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
-            }
-            notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
-            notificationBuilder.setContentTitle(title.replace(".aac",""))
-            notificationBuilder.setLargeIcon(
-                Icon.createWithResource(
-                    applicationContext,
-                    R.drawable.baseline_audiotrack_24
-                )
-            )
-            notificationBuilder.setContentText(applicationContext.getString(R.string.Playing))
-            notificationBuilder.style = Notification.MediaStyle()
-            val intent = Intent(applicationContext, DetailActivity::class.java)
-            intent.putExtra("recordName", title)
-            intent.putExtra("recordPath", path)
-            val pendingIntent = PendingIntent.getActivity(
-                applicationContext, 0, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE
-            )
-            notificationBuilder.setContentIntent(pendingIntent)
-            val notification = notificationBuilder.build()
+            val notification = createNotification(applicationContext.getString(R.string.Playing))
             startForeground(notificationID, notification)
         }
+        else
+            serviceCallbacks?.onAudioFocusLose()
     }
 
+    /**
+     * private function to create the notification
+     * @param s string to show in the notification(Playing, Paused from the strings file)
+     */
+    private fun createNotification(s:String):Notification{
+        val notificationBuilder: Notification.Builder =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                Notification.Builder(applicationContext, CHANNEL_ID)
+            else
+                Notification.Builder(applicationContext)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
+        }
+        notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
+        notificationBuilder.setContentTitle(title.replace(".aac",""))
+        notificationBuilder.setLargeIcon(
+            Icon.createWithResource(
+                applicationContext,
+                R.drawable.baseline_audiotrack_24
+            )
+        )
+        notificationBuilder.setContentText(s)
+        notificationBuilder.style = Notification.MediaStyle()
+        val intent = Intent(applicationContext, DetailActivity::class.java)
+        intent.putExtra("recordName", title)
+        intent.putExtra("recordPath", path)
+        val pendingIntent = PendingIntent.getActivity(
+            applicationContext, 0, intent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE
+        )
+        notificationBuilder.setContentIntent(pendingIntent)
+        return notificationBuilder.build()
+    }
     /**
      * public function to stop the player and remove the notification
      */
@@ -200,33 +209,7 @@ class PlayerService: Service() {
             myPlayer?.pause()
             isPaused=true
             //update notification
-            val notificationBuilder: Notification.Builder =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    Notification.Builder(applicationContext, CHANNEL_ID)
-                else
-                    Notification.Builder(applicationContext)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
-            }
-            notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
-            notificationBuilder.setContentTitle(title.replace(".aac",""))
-            notificationBuilder.setLargeIcon(
-                Icon.createWithResource(
-                    applicationContext,
-                    R.drawable.baseline_audiotrack_24
-                )
-            )
-            notificationBuilder.setContentText(applicationContext.getString(R.string.Paused))
-            notificationBuilder.style = Notification.MediaStyle()
-            val intent = Intent(applicationContext, DetailActivity::class.java)
-            intent.putExtra("recordName", title)
-            intent.putExtra("recordPath", path)
-            val pendingIntent = PendingIntent.getActivity(
-                applicationContext, 0, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE
-            )
-            notificationBuilder.setContentIntent(pendingIntent)
-            val notification = notificationBuilder.build()
+            val notification=createNotification(applicationContext.getString(R.string.Paused))
             val mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             mNotificationManager.notify(notificationID, notification)
         }
@@ -246,37 +229,13 @@ class PlayerService: Service() {
                 myPlayer?.start()
                 isPaused = false
                 //update the notification
-                val notificationBuilder: Notification.Builder =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                        Notification.Builder(applicationContext, CHANNEL_ID)
-                    else
-                        Notification.Builder(applicationContext)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
-                }
-                notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
-                notificationBuilder.setContentTitle(title.replace(".aac",""))
-                notificationBuilder.setLargeIcon(
-                    Icon.createWithResource(
-                        applicationContext,
-                        R.drawable.baseline_audiotrack_24
-                    )
-                )
-                notificationBuilder.setContentText(applicationContext.getString(R.string.Playing))
-                notificationBuilder.style = Notification.MediaStyle()
-                val intent = Intent(applicationContext, DetailActivity::class.java)
-                intent.putExtra("recordName", title)
-                intent.putExtra("recordPath", path)
-                val pendingIntent = PendingIntent.getActivity(
-                    applicationContext, 0, intent,
-                    PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE
-                )
-                notificationBuilder.setContentIntent(pendingIntent)
-                val notification = notificationBuilder.build()
+                val notification = createNotification(applicationContext.getString(R.string.Playing))
                 val mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
                 mNotificationManager.notify(notificationID, notification)
             }
         }
+        else
+            serviceCallbacks?.onAudioFocusLose()
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {

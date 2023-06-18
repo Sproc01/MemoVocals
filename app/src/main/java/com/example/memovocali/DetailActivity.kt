@@ -97,8 +97,8 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         override fun run() {
             val i=Intent(applicationContext, PlayerService::class.java)
             startService(i)
-            mService?.startPlay(recordtitle, path)
             mService?.setCallbacks(this@DetailActivity)
+            mService?.startPlay(recordtitle, path)
         }
     }
 
@@ -312,9 +312,8 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         if(!mBound) { //bind the service to found if an audio is playing or not
             applicationContext.bindService(Intent(this, PlayerService::class.java), mConnection, Context.BIND_AUTO_CREATE)
         }
-
-
     }
+
     override fun onAudioFocusLose() {
         //when service lose the audio focus update the interface
         time?.cancel()
