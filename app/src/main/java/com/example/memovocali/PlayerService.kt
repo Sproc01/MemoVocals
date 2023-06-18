@@ -77,7 +77,7 @@ class PlayerService: Service() {
             //create the notification channel
             val name: CharSequence = getString(R.string.channel_name)
             val description = getString(R.string.channel_description, title)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(CHANNEL_ID, name, importance)
             channel.description = description
             val notificationManager = getSystemService(NotificationManager::class.java)
@@ -126,44 +126,7 @@ class PlayerService: Service() {
             stop()
         }
         myPlayer!!.setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
-        val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            audioManager?.requestAudioFocus(audioRequest!!)
-        } else {
-            audioManager?.requestAudioFocus(focusChangeListener!!, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
-        }
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            // have audio focus now
-            myPlayer?.start()
-            isPaused=false
-            val notificationBuilder: Notification.Builder =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    Notification.Builder(applicationContext, CHANNEL_ID)
-                else
-                    Notification.Builder(applicationContext)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                notificationBuilder.setBadgeIconType(Notification.BADGE_ICON_SMALL)
-            }
-            notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
-            notificationBuilder.setContentTitle(title.replace(".aac",""))
-            notificationBuilder.setLargeIcon(
-                Icon.createWithResource(
-                    applicationContext,
-                    R.drawable.baseline_audiotrack_24
-                )
-            )
-            notificationBuilder.setContentText(applicationContext.getString(R.string.Playing))
-            notificationBuilder.style = Notification.MediaStyle()
-            val intent = Intent(applicationContext, DetailActivity::class.java)
-            intent.putExtra("recordName", title)
-            intent.putExtra("recordPath", path)
-            val pendingIntent = PendingIntent.getActivity(
-                applicationContext, 0, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE
-            )
-            notificationBuilder.setContentIntent(pendingIntent)
-            val notification = notificationBuilder.build()
-            startForeground(notificationID, notification)
-        }
+        resumePlay()
     }
 
     /**
