@@ -77,7 +77,7 @@ class PlayerService: Service() {
             //create the notification channel
             val name: CharSequence = getString(R.string.channel_name)
             val description = getString(R.string.channel_description, title)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(CHANNEL_ID, name, importance)
             channel.description = description
             val notificationManager = getSystemService(NotificationManager::class.java)
