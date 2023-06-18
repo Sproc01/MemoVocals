@@ -1,14 +1,15 @@
 # MemoVocals
- App to record audio of max 30 seconds on an android device. The user must grant permission to record using microphone, to listen the audio user must grant the permission to send notification.
+ App to record audio of max 30 seconds on an android device.
 
  ## Usage
+ The user must grant permission to record using microphone and to listen the audio user must grant the permission to send notification.
  When the app is first launched the mainActivity is created with an empty recycler view and a button record. When the button is pressed the app starts to   record audio, the record is saved in a new file with date-time as name.
  From the mainActivity you can delete a record and open a detailActivty.
  In the detailActivity you can listen to the record or substitute the record.
  You can listen a record while the app is in foreground or in background, while you can record audio only if the recordingActivity is in foreground.
 
  ## Tecnichal information
- The app is written in kotlin and it uses material3 for interface components. This app is compatible with android device with android 7.0 or newer(android SDK 24 or higher). 
+ The app is written in kotlin(https://kotlinlang.org/docs/home.html) and it uses material3(https://m3.material.io) for interface components. This app is compatible with android device with android 7.0 or newer(android SDK 24 or higher). 
  To allow the user to listen while the app is in background the app use a service in bound and started mode.
 
 
