@@ -138,8 +138,12 @@ class PlayerService: Service() {
             val notification = createNotification(applicationContext.getString(R.string.Playing))
             startForeground(notificationID, notification)
         }
-        else
+        else {
             serviceCallbacks?.onAudioFocusLose()
+            isPaused=true
+            val notification = createNotification(applicationContext.getString(R.string.Paused))
+            startForeground(notificationID, notification)
+        }
     }
 
     /**
@@ -234,8 +238,10 @@ class PlayerService: Service() {
                 mNotificationManager.notify(notificationID, notification)
             }
         }
-        else
+        else {
             serviceCallbacks?.onAudioFocusLose()
+            isPaused=true
+        }
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {

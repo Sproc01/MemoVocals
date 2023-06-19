@@ -38,6 +38,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     private lateinit var path:String
     private lateinit var recordtitle:String
     private var thS:ServiceThread?=null
+    private var focus=false
 
     /**
      * object that manage the connection to the service
@@ -98,7 +99,6 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             val i=Intent(applicationContext, PlayerService::class.java)
             startService(i)
             mService?.setCallbacks(this@DetailActivity)
-            mService?.startPlay(recordtitle, path)
         }
     }
 
@@ -210,6 +210,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
         }
 
         buPlay?.setOnClickListener {
+            focus=true
             //check if the app has the permission to start a foreground service
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)!=
                 PermissionChecker.PERMISSION_GRANTED) { //if the permission is not granted the user will be informed
@@ -223,9 +224,9 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
             }
             if(mService?.isPaused() == true && mService?.getTitle()==recordtitle) {
                 //if paused it will resume the playback
-                mService?.resumePlay()
                 time = Timer((duration - seekDetailB?.progress!!).toLong())
                 time?.start()
+                mService?.resumePlay()
             }
             else {//if not it start a new playback
                 if(thS==null && mBound)//stop the existing service and start a new one in a separate thread
@@ -240,6 +241,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 //start timer
                 time = Timer(duration.toLong())
                 time?.start()
+                mService?.startPlay(recordtitle, path)
 
                 //update the interface
                 seekDetailB?.max = duration
@@ -247,9 +249,12 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 seekDetailB?.visibility = SeekBar.VISIBLE
                 txtProgress?.visibility=TextView.VISIBLE
             }
-            buPausePlay?.visibility = Button.VISIBLE
-            buPlay?.visibility = Button.INVISIBLE
-            buSubstitute?.visibility = Button.INVISIBLE
+            if(focus)
+            {
+                buPausePlay?.visibility = Button.VISIBLE
+                buPlay?.visibility = Button.INVISIBLE
+                buSubstitute?.visibility = Button.INVISIBLE
+            }
         }
 
         buPausePlay?.setOnClickListener {//pause the playback
@@ -317,6 +322,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
     override fun onAudioFocusLose() {
         //when service lose the audio focus update the interface
         time?.cancel()
+        focus=false
         time = null
         buPlay?.visibility = Button.VISIBLE
         buPausePlay?.visibility = Button.INVISIBLE
