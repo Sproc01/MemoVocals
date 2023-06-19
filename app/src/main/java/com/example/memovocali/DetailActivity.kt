@@ -249,8 +249,7 @@ class DetailActivity : AppCompatActivity(),ServiceListener {
                 seekDetailB?.visibility = SeekBar.VISIBLE
                 txtProgress?.visibility=TextView.VISIBLE
             }
-            if(focus)
-            {
+            if(focus) {
                 buPausePlay?.visibility = Button.VISIBLE
                 buPlay?.visibility = Button.INVISIBLE
                 buSubstitute?.visibility = Button.INVISIBLE
